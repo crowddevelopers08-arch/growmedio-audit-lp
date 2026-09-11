@@ -110,6 +110,7 @@ export async function syncOrderFromRazorpay(orderId: string) {
         Authorization: `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}`,
       },
       cache: "no-store",
+      signal: AbortSignal.timeout(8_000),
     }
   );
   if (!res.ok) throw new Error(`Razorpay HTTP ${res.status}`);

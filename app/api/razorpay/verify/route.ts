@@ -24,9 +24,10 @@ function signatureMatches(orderId: string, paymentId: string, signature: string,
 // payer details are saved rather than trusted from the browser.
 async function fetchPayment(paymentId: string, keyId: string, keySecret: string) {
   const auth = `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}`;
-  const res = await fetch(`https://api.razorpay.com/v1/payments/${paymentId}`, {
+  const res = await fetch(`https://api.razorpay.com/v1/payments/${encodeURIComponent(paymentId)}`, {
     headers: { Authorization: auth },
     cache: "no-store",
+    signal: AbortSignal.timeout(8_000),
   });
   if (!res.ok) throw new Error(`Razorpay HTTP ${res.status}`);
   return (await res.json()) as RazorpayPayment;
@@ -39,9 +40,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Payments are not configured." }, { status: 500 });
   }
 
-  let body: Record<string, string>;
+  let body: Record<string, unknown>;
   try {
     body = await req.json();
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+    }
   } catch {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
@@ -50,7 +54,8 @@ export async function POST(req: NextRequest) {
   const paymentId = body.razorpay_payment_id || "";
   const signature = body.razorpay_signature || "";
 
-  if (!orderId || !paymentId || !signature) {
+  if (typeof orderId !== "string" || typeof paymentId !== "string" ||
+      typeof signature !== "string" || !orderId || !paymentId || !signature) {
     return NextResponse.json({ error: "Incomplete payment details." }, { status: 400 });
   }
 

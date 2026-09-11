@@ -25,9 +25,11 @@ export default function FounderSection() {
           {/* Phones: a compact avatar beside the name. Desktop: the large
               centred portrait column. */}
           <div className="flex items-center gap-4 min-[820px]:block">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(160deg,var(--color-brand),var(--color-gold))] font-display text-[1.75rem] font-bold text-[#08110D] min-[820px]:mx-auto min-[820px]:h-[180px] min-[820px]:w-[180px] min-[820px]:text-[3rem]">
-              SA
-            </div>
+            <img
+              src="/images/soma-arunagiri.jpg"
+              alt="Soma Arunagiri, Founder of Grow Medico"
+              className="h-20 w-20 shrink-0 rounded-full object-cover min-[820px]:mx-auto min-[820px]:h-[180px] min-[820px]:w-[180px]"
+            />
             <div className="min-w-0">
               <div className="font-display text-[1.25rem] font-semibold leading-[1.12] tracking-[-0.01em] min-[820px]:mt-5 min-[820px]:text-center min-[820px]:text-[1.4rem]">
                 Soma Arunagiri

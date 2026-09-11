@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ctaClass } from "@/components/ui/CtaButton";
 import { SESSION_PRICE_LABEL, SITE } from "@/lib/site";
@@ -58,10 +57,10 @@ function loadCheckout() {
 const thankYouUrl = (orderId: string) => `/thank-you?order=${encodeURIComponent(orderId)}`;
 
 export default function PayButton({ leadId }: { leadId: string }) {
-  const router = useRouter();
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const lastFailure = useRef("");
+  const confirming = useRef(false);
 
   // Warm up checkout.js while they review their details.
   useEffect(() => {
@@ -74,23 +73,35 @@ export default function PayButton({ leadId }: { leadId: string }) {
   };
 
   async function verifyPayment(resp: RazorpaySuccess) {
+    if (confirming.current) return;
+    confirming.current = true;
     setBusy("Confirming your payment…");
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 12_000);
     try {
       const res = await fetch("/api/razorpay/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(resp),
+        signal: controller.signal,
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.verified) {
-        throw new Error(data.error || "We could not verify this payment.");
+      // A deployment timeout/network failure must not strand a paid customer.
+      // The destination independently reconciles the order with Razorpay.
+      if (res.status >= 500 || res.status === 408 || res.status === 429) {
+        window.location.replace(thankYouUrl(resp.razorpay_order_id));
+        return;
       }
-      router.replace(thankYouUrl(data.orderId));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "We could not verify this payment.";
-      fail(
-        `${message} If money was deducted, you're covered — note your payment ID (${resp.razorpay_payment_id}) and our team will reconcile it when they call you.`
-      );
+      if (!res.ok || !data.verified) {
+        confirming.current = false;
+        fail(data.error || "We could not verify this payment. Please contact our team before trying again.");
+        return;
+      }
+      window.location.replace(thankYouUrl(resp.razorpay_order_id));
+    } catch {
+      window.location.replace(thankYouUrl(resp.razorpay_order_id));
+    } finally {
+      window.clearTimeout(timeout);
     }
   }
 
@@ -110,7 +121,7 @@ export default function PayButton({ leadId }: { leadId: string }) {
     const order = await res?.json().catch(() => null);
 
     if (order?.alreadyPaid && order.orderId) {
-      router.replace(thankYouUrl(order.orderId));
+      window.location.replace(thankYouUrl(order.orderId));
       return;
     }
     if (!res?.ok || !order?.orderId) {
@@ -132,12 +143,14 @@ export default function PayButton({ leadId }: { leadId: string }) {
       handler: (resp: RazorpaySuccess) => verifyPayment(resp),
       modal: {
         confirm_close: true,
-        ondismiss: () =>
+        ondismiss: () => {
+          if (confirming.current) return;
           fail(
             lastFailure.current
               ? `${lastFailure.current} You can try again.`
               : "Payment was cancelled. Tap Pay whenever you're ready."
-          ),
+          );
+        },
       },
     });
 
