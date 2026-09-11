@@ -1,15 +1,7 @@
 import BookNowButton from "@/components/booking/BookNowButton";
-import Ph from "@/components/ui/Ph";
-import { PlayIcon } from "@/components/ui/Icons";
+import VideoCarousel from "@/components/sections/VideoCarousel";
 
-const VIDEO_SPECIALTIES = [
-  "Dermatology",
-  "Dental",
-  "IVF & Fertility",
-  "Ortho",
-  "Multi-Specialty",
-  "Cosmetic & Aesthetic",
-];
+const VIDEO_SPECIALTIES = ["Dermatology", "Dental", "IVF & Fertility", "Ortho"];
 
 export default function CampaignsSection() {
   return (
@@ -28,33 +20,9 @@ export default function CampaignsSection() {
           </p>
         </div>
 
-        {/* Narrower cards on phones so the next one peeks in and the 9:16
-            frames don't fill the whole screen height. */}
-        <div className="hide-scrollbar-thumb flex snap-x snap-mandatory gap-3 overflow-x-auto px-0.5 pt-1.5 pb-3 md:gap-4 md:pb-[18px]">
-          {VIDEO_SPECIALTIES.map((specialty) => (
-            <div
-              key={specialty}
-              className="flex-[0_0_172px] snap-start overflow-hidden rounded-[16px] border border-line bg-surface min-[480px]:flex-[0_0_210px] md:flex-[0_0_240px]"
-            >
-              <div className="relative flex aspect-[9/16] items-center justify-center bg-[linear-gradient(160deg,#161C22,#0C0F12_70%)]">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-white/[0.12] text-white backdrop-blur-[6px] md:h-[52px] md:w-[52px]">
-                  <PlayIcon className="ml-0.5 h-5 w-5" />
-                </div>
-                <Ph
-                  title="Add real video clip"
-                  className="absolute right-3 bottom-3 left-3 text-[0.72rem] text-faint"
-                >
-                  Video testimonial — add clip
-                </Ph>
-              </div>
-              <div className="px-3 py-2.5 text-[0.8rem] text-dim md:px-[14px] md:py-3 md:text-[0.82rem]">
-                {specialty} clinic
-              </div>
-            </div>
-          ))}
-        </div>
+        <VideoCarousel items={VIDEO_SPECIALTIES} />
 
-        <div className="mx-auto mt-4 text-center md:mt-2">
+        <div className="mx-auto mt-6 text-center md:mt-8">
           <BookNowButton variant="ghost">
             Get An Audit Of What&apos;s Holding Yours Back · ₹199
           </BookNowButton>
