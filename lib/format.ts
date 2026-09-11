@@ -11,7 +11,7 @@ const IST = new Intl.DateTimeFormat("en-IN", {
 /** 11 Sept 2026, 4:05 pm — always in India time, whatever the server's zone. */
 export const formatIST = (date: Date) => IST.format(date);
 
-/** Razorpay amounts are in paise: 29900 → ₹299. */
+/** Razorpay amounts are in paise: 19900 → ₹199. */
 export const formatPaise = (paise: number, currency = "INR") => {
   const value = (paise / 100).toLocaleString("en-IN", { maximumFractionDigits: 2 });
   return currency === "INR" ? `₹${value}` : `${currency} ${value}`;

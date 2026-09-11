@@ -14,7 +14,7 @@ const LAST_UPDATED = "11 September 2026";
 export default function PrivacyPolicyPage() {
   return (
     <PageShell>
-      <article className="mx-auto w-full max-w-[760px] px-6 pt-8 pb-[72px] min-[860px]:pt-12">
+      <article className="mx-auto w-full max-w-[760px] px-6 pt-8 pb-12 md:pb-16 min-[860px]:pt-12 lg:pb-[72px]">
         <span className="mb-[14px] inline-block text-[0.85rem] font-semibold text-brand">
           Legal
         </span>
@@ -23,9 +23,9 @@ export default function PrivacyPolicyPage() {
         </h1>
         <p className="mt-3 text-[0.9rem] text-faint">Last updated: {LAST_UPDATED}</p>
 
-        <p className="mt-8 text-[1.02rem] leading-[1.75] text-dim">
+        <p className="mt-6 text-[1.02rem] leading-[1.75] text-dim md:mt-8">
           {SITE.name} (&ldquo;we&rdquo;, &ldquo;us&rdquo;) runs this website and the
-          ₹299 Revenue Strategy Session. This policy explains what information we
+          ₹199 Revenue Strategy Session. This policy explains what information we
           collect when you book a session, why we collect it, who we share it
           with, and the choices you have.
         </p>
@@ -61,7 +61,7 @@ export default function PrivacyPolicyPage() {
             </li>
             <li>To prepare for your call with a strategist.</li>
             <li>
-              To process payments and refunds, including our ₹299-back
+              To process payments and refunds, including our ₹199-back
               guarantee.
             </li>
             <li>
@@ -116,8 +116,9 @@ export default function PrivacyPolicyPage() {
             Under India&apos;s Digital Personal Data Protection Act, 2023, you can
             ask to access, correct, update or erase your personal data, withdraw
             your consent, and raise a grievance about how your data is handled.
-            To make a request, email us at the address below. We will respond as
-            soon as reasonably possible and within the time the law requires.
+            To make a request, raise it with the {SITE.name} strategist who
+            contacts you about your session. We will respond as soon as
+            reasonably possible and within the time the law requires.
           </p>
         </Section>
 
@@ -141,16 +142,6 @@ export default function PrivacyPolicyPage() {
             updated&rdquo; date at the top shows when it last changed.
           </p>
         </Section>
-
-        <Section title="10. Contact us">
-          <p>
-            For privacy questions, data requests or grievances, email{" "}
-            <a href={`mailto:${SITE.email}`} className="text-brand hover:underline">
-              {SITE.email}
-            </a>
-            .
-          </p>
-        </Section>
       </article>
     </PageShell>
   );
@@ -158,7 +149,7 @@ export default function PrivacyPolicyPage() {
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="mt-10">
+    <section className="mt-8 md:mt-10">
       <h2 className="font-display text-[1.25rem] font-semibold leading-[1.2] tracking-[-0.01em]">
         {title}
       </h2>

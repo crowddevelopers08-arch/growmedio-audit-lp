@@ -10,10 +10,8 @@
 
 export const SITE = {
   name: "Grow Medico",
-  price: "₹299",
+  price: "₹199",
   listPrice: "₹2,999",
-  phone: "+91 XXXXX XXXXX",
-  email: "hello@growmedico.in",
 } as const;
 
 /** Shown in the checkout modal — keep in sync with RAZORPAY_SESSION_AMOUNT. */

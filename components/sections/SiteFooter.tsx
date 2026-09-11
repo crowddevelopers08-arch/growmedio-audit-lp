@@ -1,5 +1,4 @@
 import Logo from "@/components/ui/Logo";
-import Ph from "@/components/ui/Ph";
 
 const FOOTER_LINKS = [
   { href: "/privacy-policy", label: "Privacy" },
@@ -9,7 +8,7 @@ const FOOTER_LINKS = [
 
 export default function SiteFooter() {
   return (
-    <footer className="border-t border-line bg-bg-alt pt-14 pb-[120px] min-[900px]:pb-14">
+    <footer className="border-t border-line bg-bg-alt pt-10 pb-8 min-[900px]:pt-14 min-[900px]:pb-14">
       <div className="mx-auto w-full max-w-[1180px] px-6">
         <div className="flex flex-wrap justify-between gap-7 pb-7">
           <div>
@@ -25,15 +24,6 @@ export default function SiteFooter() {
                 {link.label}
               </a>
             ))}
-          </div>
-
-          <div className="flex flex-col gap-1.5 text-[0.88rem] text-dim">
-            <Ph title="Add real phone number" className="w-fit">
-              +91 XXXXX XXXXX
-            </Ph>
-            <Ph title="Add real email" className="w-fit">
-              hello@growmedico.in
-            </Ph>
           </div>
         </div>
 

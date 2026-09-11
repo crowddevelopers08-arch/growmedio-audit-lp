@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { ctaClass, type CtaStyleProps } from "@/components/ui/CtaButton";
 import { useBooking } from "@/components/booking/BookingProvider";
 
-/** A CTA that opens the ₹299 checkout modal instead of navigating. */
+/** A CTA that opens the ₹199 checkout modal instead of navigating. */
 export default function BookNowButton({
   children,
   ...style

@@ -320,7 +320,7 @@ function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-[100dvh]">
       <header className="border-b border-line bg-bg-alt">
-        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-4 px-6 py-4">
+        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-4 px-4 py-3 min-[480px]:px-6 md:py-4">
           <div className="flex items-center gap-4">
             <Link href="/" aria-label="Grow Medico — home">
               <Logo height={36} />
@@ -335,7 +335,7 @@ function Shell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1280px] px-6 py-8">
+      <main className="mx-auto w-full max-w-[1280px] px-4 py-6 min-[480px]:px-6 md:py-8">
         <h1 className="font-display text-[1.6rem] font-semibold leading-[1.15]">Leads</h1>
         <p className="mt-1 mb-6 text-[0.9rem] text-dim">
           Every booking-form submission, with its Razorpay payment.

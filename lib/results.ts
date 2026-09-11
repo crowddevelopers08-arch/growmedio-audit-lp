@@ -6,6 +6,8 @@
  */
 export interface SpecialtyResult {
   name: string;
+  /** Chart label on phones, where a column is only ~45px wide. */
+  shortName: string;
   clinic: string;
   adSpend: number;
   revenue: number;
@@ -29,6 +31,7 @@ export const CAMPAIGNS = 32;
 export const RESULTS: SpecialtyResult[] = [
   {
     name: "Dermatology",
+    shortName: "Derma",
     clinic: "Dermatology & Skin Clinic",
     adSpend: 13_42_854,
     revenue: 1_57_40_000,
@@ -39,6 +42,7 @@ export const RESULTS: SpecialtyResult[] = [
   // source dashboard — replace them with verified numbers before launch.
   {
     name: "Dental",
+    shortName: "Dental",
     clinic: "Dental Clinic",
     adSpend: 6_00_000,
     revenue: 49_20_000,
@@ -47,6 +51,7 @@ export const RESULTS: SpecialtyResult[] = [
   },
   {
     name: "Ortho",
+    shortName: "Ortho",
     clinic: "Orthopedic Clinic",
     adSpend: 4_50_000,
     revenue: 33_30_000,
@@ -55,6 +60,7 @@ export const RESULTS: SpecialtyResult[] = [
   },
   {
     name: "IVF",
+    shortName: "IVF",
     clinic: "IVF & Fertility Center",
     adSpend: 8_00_000,
     revenue: 72_80_000,
@@ -63,6 +69,7 @@ export const RESULTS: SpecialtyResult[] = [
   },
   {
     name: "Multi-Specialty",
+    shortName: "Multi",
     clinic: "Multi-Specialty Hospital",
     adSpend: 7_00_000,
     revenue: 53_20_000,
@@ -71,6 +78,7 @@ export const RESULTS: SpecialtyResult[] = [
   },
   {
     name: "Pain / Ayurveda",
+    shortName: "Pain",
     clinic: "Pain & Ayurveda Clinic",
     adSpend: 4_05_692,
     revenue: 44_00_000,

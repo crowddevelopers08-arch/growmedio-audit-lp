@@ -49,13 +49,13 @@ export default async function PaymentPage({
 
   return (
     <PageShell>
-      <section className="relative overflow-hidden py-14 min-[860px]:py-20">
+      <section className="relative overflow-hidden pt-8 pb-12 md:pb-16 min-[860px]:pt-12 lg:pb-20">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -top-[220px] left-1/2 h-[480px] w-[900px] -translate-x-1/2 bg-[radial-gradient(closest-side,rgba(22,212,146,0.12),transparent_72%)]"
         />
 
-        <div className="relative mx-auto grid w-full max-w-[1000px] items-start gap-8 px-6 min-[860px]:grid-cols-[1fr_390px]">
+        <div className="relative mx-auto grid w-full max-w-[1000px] items-start gap-6 px-6 min-[860px]:grid-cols-[minmax(0,1fr)_390px] min-[860px]:gap-8">
           <div>
             <span className="text-[0.85rem] font-semibold text-brand">
               Step 2 of 2 · Payment
@@ -69,7 +69,7 @@ export default async function PaymentPage({
               within one working day to fix your slot.
             </p>
 
-            <div className="mt-8 rounded-[18px] border border-line bg-surface p-5">
+            <div className="mt-6 rounded-[18px] border border-line bg-surface p-5 md:mt-8">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <h2 className="font-display text-[1rem] font-semibold">
                   Your booking details
@@ -98,7 +98,7 @@ export default async function PaymentPage({
             </ul>
           </div>
 
-          <aside className="rounded-[22px] border border-line-strong bg-surface p-6 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.55)] min-[860px]:sticky min-[860px]:top-[96px]">
+          <aside className="rounded-[22px] border border-line-strong bg-surface p-5 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.55)] md:p-6 min-[860px]:sticky min-[860px]:top-[96px]">
             <div className="border-b border-dashed border-line-strong pb-4 text-[0.75rem] tracking-[0.04em] text-faint">
               GROW MEDICO — ORDER SUMMARY
             </div>

@@ -89,7 +89,7 @@ export default function PayButton({ leadId }: { leadId: string }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : "We could not verify this payment.";
       fail(
-        `${message} If money was deducted, you're covered — email ${SITE.email} with payment ID ${resp.razorpay_payment_id}.`
+        `${message} If money was deducted, you're covered — note your payment ID (${resp.razorpay_payment_id}) and our team will reconcile it when they call you.`
       );
     }
   }

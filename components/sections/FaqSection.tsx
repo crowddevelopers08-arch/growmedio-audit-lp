@@ -2,8 +2,8 @@ import { ChevronDownIcon } from "@/components/ui/Icons";
 
 const FAQS: { q: string; a: string }[] = [
   {
-    q: "Why ₹299 and not free?",
-    a: "Because clinic owners who invest even ₹299 show up serious, and serious conversations are where real progress happens. Some attendees later work with us on the full 90-day rollout — most just take the roadmap and run with it. Either way, you walk out ahead.",
+    q: "Why ₹199 and not free?",
+    a: "Because clinic owners who invest even ₹199 show up serious, and serious conversations are where real progress happens. Some attendees later work with us on the full 90-day rollout — most just take the roadmap and run with it. Either way, you walk out ahead.",
   },
   {
     q: "Is this secretly a sales pitch for your agency?",
@@ -27,16 +27,16 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What if I need to reschedule?",
-    a: "One free reschedule, no questions asked — and the ₹299-back guarantee still applies.",
+    a: "One free reschedule, no questions asked — and the ₹199-back guarantee still applies.",
   },
 ];
 
 export default function FaqSection() {
   return (
-    <section id="faq" className="relative border-t border-line py-[88px]">
+    <section id="faq" className="relative border-t border-line py-12 md:py-16 lg:py-[88px]">
       <div className="mx-auto w-full max-w-[1180px] px-6">
-        <div className="mx-auto mb-12 text-center">
-          <span className="mb-[14px] inline-block text-[0.85rem] font-semibold text-brand">
+        <div className="mx-auto mb-6 text-center md:mb-12">
+          <span className="mb-2.5 inline-block text-[0.85rem] font-semibold text-brand md:mb-[14px]">
             Before you ask
           </span>
           <h2 className="mx-auto max-w-[720px] font-display text-[clamp(1.7rem,3.2vw_+_0.9rem,2.6rem)] font-semibold leading-[1.12] tracking-[-0.01em]">
@@ -47,11 +47,11 @@ export default function FaqSection() {
         <div className="mx-auto max-w-[760px]">
           {FAQS.map((faq) => (
             <details key={faq.q} className="group border-b border-line">
-              <summary className="flex cursor-pointer items-center justify-between gap-4 px-1 py-[22px] text-[1.02rem] font-semibold">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-1 py-4 text-[0.98rem] font-semibold md:py-[22px] md:text-[1.02rem]">
                 {faq.q}
                 <ChevronDownIcon className="h-[19px] w-[19px] shrink-0 text-faint transition-transform duration-200 group-open:rotate-180 group-open:text-brand" />
               </summary>
-              <div className="max-w-[640px] px-1 pb-6 text-[0.96rem] leading-[1.65] text-dim">
+              <div className="max-w-[640px] px-1 pb-4 text-[0.96rem] leading-[1.65] text-dim md:pb-6">
                 {faq.a}
               </div>
             </details>

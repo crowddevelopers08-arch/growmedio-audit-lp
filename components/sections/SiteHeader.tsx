@@ -24,24 +24,17 @@ export default function SiteHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-[100] flex h-[72px] items-center border-b border-line backdrop-blur-[14px] transition-[background-color,box-shadow] duration-200 ${
+      className={`sticky top-0 z-[100] flex h-16 items-center md:h-[72px] border-b border-line backdrop-blur-[14px] transition-[background-color,box-shadow] duration-200 ${
         scrolled
           ? "bg-[rgba(7,8,10,0.92)] shadow-[0_12px_30px_-18px_rgba(0,0,0,0.8)]"
           : "bg-[rgba(7,8,10,0.7)]"
       }`}
     >
-      <div className="mx-auto flex w-full max-w-[1180px] items-center justify-between px-6">
-        {/* Below 480px the two-line wordmark gets too small to read, so the
-            G mark carries the brand on its own. */}
+      {/* Phones get a 16px gutter so the full wordmark (113px wide at 36px
+          tall) and the Book button both fit on a 320px screen. */}
+      <div className="mx-auto flex w-full max-w-[1180px] items-center justify-between gap-3 px-4 min-[480px]:px-6">
         <a href="#" aria-label="Grow Medico — back to top" className="shrink-0">
-          <Logo
-            variant="mark"
-            height={34}
-            priority
-            className="min-[480px]:hidden"
-          />
-          {/* 44px keeps the stacked GROW / MEDICO lines readable; much smaller
-              and the two-line wordmark turns to mush. */}
+          <Logo height={36} priority className="min-[480px]:hidden" />
           <Logo height={44} priority className="hidden min-[480px]:block" />
         </a>
 
@@ -57,7 +50,7 @@ export default function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-[18px]">
-          <BookNowButton size="sm">Book ₹299 Session</BookNowButton>
+          <BookNowButton size="sm">Book ₹199 Session</BookNowButton>
         </div>
       </div>
     </header>

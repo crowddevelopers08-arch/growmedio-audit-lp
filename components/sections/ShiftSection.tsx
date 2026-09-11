@@ -18,16 +18,16 @@ const AUDIT_CHECKS = [
 
 export default function ShiftSection() {
   return (
-    <section className="relative border-t border-line bg-bg-alt py-[88px]">
+    <section className="relative border-t border-line bg-bg-alt py-12 md:py-16 lg:py-[88px]">
       <div className="mx-auto w-full max-w-[1180px] px-6">
-        <div className="mb-12">
-          <span className="mb-[14px] inline-block text-[0.85rem] font-semibold text-brand">
+        <div className="mb-8 md:mb-12">
+          <span className="mb-2.5 inline-block text-[0.85rem] font-semibold text-brand md:mb-[14px]">
             The shift
           </span>
           <h2 className="max-w-[720px] font-display text-[clamp(1.7rem,3.2vw_+_0.9rem,2.6rem)] font-semibold leading-[1.12] tracking-[-0.01em]">
             Stop Buying Reach. Start Buying Patients.
           </h2>
-          <p className="mt-4 max-w-[600px] text-[1.05rem] leading-[1.65] text-dim">
+          <p className="mt-3 max-w-[600px] text-[1.05rem] leading-[1.65] text-dim md:mt-4">
             We&apos;re not pitching &ldquo;revenue-first marketing&rdquo; as a
             service — we audit your account against it. Every creative, every
             campaign and every rupee gets checked against one number: patients
@@ -35,18 +35,18 @@ export default function ShiftSection() {
           </p>
         </div>
 
-        <div className="mt-2 grid grid-cols-1 gap-4 min-[800px]:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 md:mt-2 md:gap-4 min-[800px]:grid-cols-2">
           {/* What most clinics are doing */}
-          <div className="rounded-[16px] border border-[rgba(255,107,107,0.2)] bg-danger-wash px-[26px] py-[30px]">
-            <h4 className="mb-[18px] flex items-center gap-2 font-display text-base font-bold leading-[1.12] tracking-[-0.01em] text-danger">
-              <XIcon className="inline h-4 w-4 align-[-2px]" /> What most clinics
+          <div className="rounded-[16px] border border-[rgba(255,107,107,0.2)] bg-danger-wash px-5 py-5 md:px-[26px] md:py-[30px]">
+            <h4 className="mb-2 flex items-center gap-2 font-display text-base font-bold leading-[1.12] tracking-[-0.01em] text-danger md:mb-[18px]">
+              <XIcon className="inline h-4 w-4 shrink-0 align-[-2px]" /> What most clinics
               are doing
             </h4>
             <ul>
               {DOING_NOW.map((item) => (
                 <li
                   key={item}
-                  className="flex gap-2.5 py-[9px] text-[0.95rem] text-dim"
+                  className="flex gap-2.5 py-[7px] text-[0.95rem] text-dim md:py-[9px]"
                 >
                   <MinusIcon className="mt-[3px] h-[17px] w-[17px] shrink-0 text-danger" />
                   {item}
@@ -56,16 +56,16 @@ export default function ShiftSection() {
           </div>
 
           {/* What your audit checks for */}
-          <div className="rounded-[16px] border border-[rgba(22,212,146,0.25)] bg-brand-wash px-[26px] py-[30px]">
-            <h4 className="mb-[18px] flex items-center gap-2 font-display text-base font-bold leading-[1.12] tracking-[-0.01em] text-brand">
-              <CheckIcon className="inline h-4 w-4 align-[-2px]" /> What your
+          <div className="rounded-[16px] border border-[rgba(22,212,146,0.25)] bg-brand-wash px-5 py-5 md:px-[26px] md:py-[30px]">
+            <h4 className="mb-2 flex items-center gap-2 font-display text-base font-bold leading-[1.12] tracking-[-0.01em] text-brand md:mb-[18px]">
+              <CheckIcon className="inline h-4 w-4 shrink-0 align-[-2px]" /> What your
               audit checks for
             </h4>
             <ul>
               {AUDIT_CHECKS.map((item) => (
                 <li
                   key={item}
-                  className="flex gap-2.5 py-[9px] text-[0.95rem] text-ink"
+                  className="flex gap-2.5 py-[7px] text-[0.95rem] text-ink md:py-[9px]"
                 >
                   <CheckIcon className="mt-[3px] h-[17px] w-[17px] shrink-0 text-brand" />
                   {item}

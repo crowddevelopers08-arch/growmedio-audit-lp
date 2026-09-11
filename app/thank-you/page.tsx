@@ -7,7 +7,7 @@ import { ClockIcon } from "@/components/ui/Icons";
 import { formatIST, formatPaise } from "@/lib/format";
 import { isPaid, syncOrderFromRazorpay } from "@/lib/payments";
 import { prisma } from "@/lib/prisma";
-import { SESSION_PRICE_LABEL, SITE } from "@/lib/site";
+import { SESSION_PRICE_LABEL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +43,7 @@ export default async function ThankYouPage({
 
   return (
     <PageShell>
-      <section className="relative overflow-hidden pt-8 pb-16 min-[860px]:pt-12 min-[860px]:pb-24">
+      <section className="relative overflow-hidden pt-8 pb-12 md:pb-16 min-[860px]:pt-12 lg:pb-24">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -top-[220px] left-1/2 h-[480px] w-[900px] -translate-x-1/2 bg-[radial-gradient(closest-side,rgba(22,212,146,0.14),transparent_72%)]"
@@ -104,7 +104,7 @@ function Confirmed({ payment }: { payment: PaymentWithLead }) {
         Session is locked in.
       </p>
 
-      <dl className="mt-8 grid gap-px overflow-hidden rounded-[18px] border border-line bg-line text-left min-[520px]:grid-cols-2">
+      <dl className="mt-6 grid gap-px overflow-hidden rounded-[18px] border border-line bg-line text-left md:mt-8 min-[520px]:grid-cols-2">
         {receipt.map(([label, value]) => (
           <div key={label} className="bg-surface px-5 py-4">
             <dt className="text-[0.75rem] text-faint">{label}</dt>
@@ -113,7 +113,7 @@ function Confirmed({ payment }: { payment: PaymentWithLead }) {
         ))}
       </dl>
 
-      <div className="mt-6 rounded-[18px] border border-line bg-surface p-6 text-left">
+      <div className="mt-4 rounded-[18px] border border-line bg-surface p-5 text-left md:mt-6 md:p-6">
         <h2 className="font-display text-[1.05rem] font-semibold">What happens next</h2>
         <ol className="mt-4 grid gap-4">
           {NEXT_STEPS(payment.lead.phone).map((step, i) => (
@@ -129,14 +129,6 @@ function Confirmed({ payment }: { payment: PaymentWithLead }) {
           ))}
         </ol>
       </div>
-
-      <p className="mt-6 text-[0.84rem] text-faint">
-        Questions? Email{" "}
-        <a href={`mailto:${SITE.email}`} className="text-brand hover:underline">
-          {SITE.email}
-        </a>{" "}
-        with your payment ID.
-      </p>
 
       <Link href="/" className={ctaClass({ variant: "ghost", size: "sm", className: "mt-6" })}>
         Back to home
@@ -182,12 +174,6 @@ function Pending({ payment }: { payment: PaymentWithLead }) {
 
       <p className="mt-6 text-[0.84rem] text-faint">
         Order ID: <span className="font-mono text-dim">{payment.razorpayOrderId}</span>
-        <br />
-        Need help? Email{" "}
-        <a href={`mailto:${SITE.email}`} className="text-brand hover:underline">
-          {SITE.email}
-        </a>
-        .
       </p>
     </>
   );
@@ -201,11 +187,7 @@ function Generic() {
       </h1>
       <p className="mx-auto mt-3 max-w-[520px] text-[1.02rem] leading-[1.65] text-dim">
         If you&apos;ve just booked your session, our team will be in touch within
-        one working day. For anything else, email{" "}
-        <a href={`mailto:${SITE.email}`} className="text-brand hover:underline">
-          {SITE.email}
-        </a>
-        .
+        one working day.
       </p>
       <Link href="/" className={ctaClass({ size: "sm", className: "mt-8" })}>
         Back to home

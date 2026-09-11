@@ -1,6 +1,6 @@
 export default function AnnouncementBar() {
   return (
-    <div className="border-b border-line bg-[linear-gradient(90deg,#0B120F,#0E1613_60%,#0B120F)] px-4 py-[10px] text-center text-[0.85rem] text-dim">
+    <div className="border-b border-line bg-[linear-gradient(90deg,#0B120F,#0E1613_60%,#0B120F)] px-4 py-2 text-center text-[0.8rem] leading-snug text-dim md:py-[10px] md:text-[0.85rem]">
       <span
         aria-hidden="true"
         className="mr-2 inline-block h-[7px] w-[7px] animate-blink rounded-full bg-brand"
@@ -9,7 +9,7 @@ export default function AnnouncementBar() {
         New 1:1 Revenue Strategy Session slots open this week
       </strong>{" "}
       — <span className="mx-1 text-faint line-through">₹2,999</span>
-      <span className="font-bold text-brand">₹299</span>
+      <span className="font-bold text-brand">₹199</span>
     </div>
   );
 }
