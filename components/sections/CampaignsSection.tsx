@@ -1,7 +1,11 @@
 import BookNowButton from "@/components/booking/BookNowButton";
 import VideoCarousel from "@/components/sections/VideoCarousel";
 
-const VIDEO_SPECIALTIES = ["Dermatology", "Dental", "IVF & Fertility", "Ortho"];
+const VIDEOS = [
+  { id: "96_CFkqBnOo", title: "Campaign video 1" },
+  { id: "8KvwD99H73Q", title: "Campaign video 2" },
+  { id: "4gyg-J7JGDs", title: "Campaign video 3" },
+];
 
 export default function CampaignsSection() {
   return (
@@ -16,11 +20,11 @@ export default function CampaignsSection() {
           </h2>
           <p className="mt-3 max-w-[600px] text-[1.05rem] leading-[1.65] text-dim md:mt-4">
             Real patient-acquisition ads, running for clinics right now. Tap any
-            card to see it during your session.
+            video to watch.
           </p>
         </div>
 
-        <VideoCarousel items={VIDEO_SPECIALTIES} />
+        <VideoCarousel items={VIDEOS} />
 
         <div className="mx-auto mt-6 text-center md:mt-8">
           <BookNowButton variant="ghost">

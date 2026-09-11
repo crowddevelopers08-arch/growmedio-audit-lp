@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Ph from "@/components/ui/Ph";
 import { PlayIcon } from "@/components/ui/Icons";
 
 const AUTOPLAY_MS = 4000;
@@ -11,12 +10,13 @@ const RESUME_AFTER_MS = 8000;
 /**
  * Phones: a swipeable carousel showing one video at a time, with prev/next
  * buttons, dots and auto-advance.
- * 640px and up: the same track becomes a 4-column grid, so every video is
+ * 640px and up: the same track becomes a 3-column grid, so every video is
  * visible and the carousel controls are hidden.
  */
-export default function VideoCarousel({ items }: { items: string[] }) {
+export default function VideoCarousel({ items }: { items: { id: string; title: string }[] }) {
   const track = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [playingId, setPlayingId] = useState<string | null>(null);
   const activeRef = useRef(0);
   const pausedUntil = useRef(0);
   const inView = useRef(false);
@@ -68,6 +68,7 @@ export default function VideoCarousel({ items }: { items: string[] }) {
   }, []);
 
   useEffect(() => {
+    if (playingId) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const id = window.setInterval(() => {
       const el = track.current;
@@ -77,7 +78,7 @@ export default function VideoCarousel({ items }: { items: string[] }) {
       goTo(activeRef.current + 1);
     }, AUTOPLAY_MS);
     return () => window.clearInterval(id);
-  }, [goTo]);
+  }, [goTo, playingId]);
 
   const step = (delta: number) => {
     pause();
@@ -95,28 +96,41 @@ export default function VideoCarousel({ items }: { items: string[] }) {
         onTouchStart={pause}
         onWheel={pause}
         onFocus={pause}
-        className="relative flex snap-x snap-mandatory gap-3 overflow-x-auto [scrollbar-width:none] sm:grid sm:grid-cols-4 sm:gap-4 sm:overflow-visible [&::-webkit-scrollbar]:hidden"
+        className="relative flex snap-x snap-mandatory gap-3 overflow-x-auto [scrollbar-width:none] sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible [&::-webkit-scrollbar]:hidden"
       >
-        {items.map((specialty, i) => (
+        {items.map((video, i) => (
           <div
-            key={specialty}
+            key={video.id}
             aria-roledescription="slide"
-            aria-label={`${i + 1} of ${items.length}: ${specialty}`}
+            aria-label={`${i + 1} of ${items.length}: ${video.title}`}
             className="w-full shrink-0 snap-center overflow-hidden rounded-[16px] border border-line bg-surface sm:w-auto"
           >
             <div className="relative flex aspect-[9/16] items-center justify-center bg-[linear-gradient(160deg,#161C22,#0C0F12_70%)]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/[0.12] text-white backdrop-blur-[6px] md:h-[52px] md:w-[52px]">
-                <PlayIcon className="ml-0.5 h-5 w-5" />
-              </div>
-              <Ph
-                title="Add real video clip"
-                className="absolute right-3 bottom-3 left-3 text-[0.72rem] text-faint"
-              >
-                Video testimonial — add clip
-              </Ph>
+              {playingId === video.id ? (
+                <iframe
+                  src={`https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&playsinline=1&rel=0`}
+                  title={video.title}
+                  className="absolute inset-0 h-full w-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setPlayingId(video.id)}
+                  aria-label={`Play ${video.title}`}
+                  className="absolute inset-0 flex cursor-pointer items-center justify-center bg-cover bg-center focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-brand"
+                  style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.15),rgba(0,0,0,0.15)), url(https://i.ytimg.com/vi/${video.id}/hqdefault.jpg)` }}
+                >
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/40 text-white backdrop-blur-[6px] md:h-[52px] md:w-[52px]">
+                    <PlayIcon className="ml-0.5 h-5 w-5" />
+                  </span>
+                </button>
+              )}
             </div>
             <div className="px-3.5 py-3 text-[0.85rem] text-dim sm:px-3 sm:py-2.5 sm:text-[0.8rem] md:px-[14px] md:py-3 md:text-[0.82rem]">
-              {specialty} clinic
+              {video.title}
             </div>
           </div>
         ))}
@@ -130,15 +144,15 @@ export default function VideoCarousel({ items }: { items: string[] }) {
         </button>
 
         <div className="flex gap-2">
-          {items.map((specialty, i) => (
+          {items.map((video, i) => (
             <button
-              key={specialty}
+              key={video.id}
               type="button"
               onClick={() => {
                 pause();
                 goTo(i);
               }}
-              aria-label={`Show ${specialty} video`}
+              aria-label={`Show ${video.title}`}
               aria-current={i === active ? "true" : undefined}
               className={`h-2 cursor-pointer rounded-full transition-[width,background-color] duration-200 ${
                 i === active ? "w-6 bg-brand" : "w-2 bg-line-strong"
