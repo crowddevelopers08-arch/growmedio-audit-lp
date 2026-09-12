@@ -61,12 +61,8 @@ export default function TermsPage() {
         </p>
         <ul>
           <li>
-            You choose your session date and time while booking. The slot is
-            held while you pay and confirmed once payment succeeds; an
-            incomplete payment releases it for someone else.
-          </li>
-          <li>
-            Sessions run Monday to Saturday between 1:00 pm and 5:00 pm IST.
+            After payment you choose your session time from our booking
+            calendar, and receive a confirmation for the slot you pick.
           </li>
           <li>
             A strategist will contact you on the mobile number you provide, by

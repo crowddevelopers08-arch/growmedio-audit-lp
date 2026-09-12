@@ -17,9 +17,12 @@ export const SITE = {
 /** Shown in the checkout modal — keep in sync with RAZORPAY_SESSION_AMOUNT. */
 export const SESSION_PRICE_LABEL = SITE.price;
 
-/*
- * The booking form's dropdowns — speciality, enquiry handling, ad spend,
- * revenue and decision-making — now live in lib/booking.ts alongside the slot
- * definitions, so the form, the API's validation and the dashboard all read
- * one list.
+/**
+ * The Calendly event clients book after paying.
+ *
+ * `primary_color` is Calendly's own brand green, from the embed snippet.
+ * `hide_gdpr_banner` suppresses the cookie bar, which would otherwise cover
+ * the first slot inside our modal.
  */
+export const CALENDLY_URL =
+  "https://calendly.com/growmedico/strategy_call?primary_color=289b57&hide_gdpr_banner=1";

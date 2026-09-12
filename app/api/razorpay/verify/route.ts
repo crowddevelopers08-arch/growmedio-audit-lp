@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { recordPayment, type RazorpayPayment } from "@/lib/payments";
 
 // Razorpay signs `order_id|payment_id` with the key secret. Recomputing it here
 // is what proves the success callback really came from Razorpay and was not
@@ -20,17 +19,15 @@ function signatureMatches(orderId: string, paymentId: string, signature: string,
   return crypto.timingSafeEqual(a, b);
 }
 
-// Look the payment up on Razorpay itself, so its real status, method and
-// payer details are saved rather than trusted from the browser.
+/** Pull the payer's details off the payment so Calendly can be prefilled. */
 async function fetchPayment(paymentId: string, keyId: string, keySecret: string) {
   const auth = `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}`;
-  const res = await fetch(`https://api.razorpay.com/v1/payments/${encodeURIComponent(paymentId)}`, {
+  const res = await fetch(`https://api.razorpay.com/v1/payments/${paymentId}`, {
     headers: { Authorization: auth },
     cache: "no-store",
-    signal: AbortSignal.timeout(8_000),
   });
   if (!res.ok) throw new Error(`Razorpay HTTP ${res.status}`);
-  return (await res.json()) as RazorpayPayment;
+  return res.json();
 }
 
 export async function POST(req: NextRequest) {
@@ -40,12 +37,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Payments are not configured." }, { status: 500 });
   }
 
-  let body: Record<string, unknown>;
+  let body: Record<string, string>;
   try {
     body = await req.json();
-    if (!body || typeof body !== "object" || Array.isArray(body)) {
-      return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
-    }
   } catch {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
@@ -54,8 +48,7 @@ export async function POST(req: NextRequest) {
   const paymentId = body.razorpay_payment_id || "";
   const signature = body.razorpay_signature || "";
 
-  if (typeof orderId !== "string" || typeof paymentId !== "string" ||
-      typeof signature !== "string" || !orderId || !paymentId || !signature) {
+  if (!orderId || !paymentId || !signature) {
     return NextResponse.json({ error: "Incomplete payment details." }, { status: 400 });
   }
 
@@ -67,17 +60,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Signature is valid — confirm with Razorpay that the payment actually
+  // succeeded before handing over the booking calendar.
+  let prefill: { name?: string; email?: string; contact?: string } = {};
   try {
     const payment = await fetchPayment(paymentId, keyId, keySecret);
-
-    if (payment.order_id !== orderId) {
-      return NextResponse.json(
-        { verified: false, error: "We could not verify this payment." },
-        { status: 400 }
-      );
-    }
-
-    await recordPayment(payment);
 
     if (payment.status !== "captured" && payment.status !== "authorized") {
       return NextResponse.json(
@@ -85,12 +72,26 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+    if (payment.order_id !== orderId) {
+      return NextResponse.json(
+        { verified: false, error: "We could not verify this payment." },
+        { status: 400 }
+      );
+    }
+
+    prefill = {
+      name: payment.notes?.name || payment.card?.name || undefined,
+      email: payment.email || undefined,
+      contact: payment.contact || undefined,
+    };
   } catch (err) {
-    // The signature already proves the payment is genuine. If the lookup or
-    // the database write failed, the thank-you page re-checks the order with
-    // Razorpay and records it there.
-    console.error("[Razorpay verify] Could not record payment:", err instanceof Error ? err.message : err);
+    // The signature already proved the payment is genuine, so don't block the
+    // booking just because this lookup failed — just skip the prefill.
+    console.error(
+      "[Razorpay verify] Payment lookup failed:",
+      err instanceof Error ? err.message : err
+    );
   }
 
-  return NextResponse.json({ verified: true, orderId, paymentId });
+  return NextResponse.json({ verified: true, paymentId, orderId, prefill });
 }

@@ -28,9 +28,8 @@ export default function PrivacyPolicyPage() {
         <p>When you book a session, we collect:</p>
         <ul>
           <li>
-            <strong>Booking details you enter</strong> — your name, mobile
-            number, email address (optional), city (optional) and medical
-            specialty.
+            <strong>Booking details you enter</strong> — your name and your
+            WhatsApp / mobile number. That is all the booking form asks for.
           </li>
           <li>
             <strong>Payment information</strong> — payments are processed by
@@ -73,9 +72,16 @@ export default function PrivacyPolicyPage() {
             Razorpay handles your payment data under its own privacy policy.
           </li>
           <li>
-            <strong>Our hosting and database providers</strong>, which store
-            booking records on our behalf and may not use them for any other
-            purpose.
+            <strong>TeleCRM</strong>, the customer-management system where your
+            enquiry is stored so our team can contact you about your session.
+          </li>
+          <li>
+            <strong>Calendly</strong>, which runs the booking calendar you use
+            to pick your session time, under its own privacy policy.
+          </li>
+          <li>
+            <strong>Our hosting provider</strong>, which serves this website and
+            may not use your information for any other purpose.
           </li>
           <li>
             <strong>Authorities</strong>, where we are required to by law.
@@ -85,9 +91,9 @@ export default function PrivacyPolicyPage() {
 
       <Section title="4. How we store and protect it">
         <p>
-          Booking and payment records are stored in a secure cloud database. Our
-          website uses HTTPS, and payments run through Razorpay&apos;s PCI-DSS
-          compliant checkout. No method of storage or transmission is completely
+          Your enquiry is held in TeleCRM, accessible only to our team; we keep
+          no separate database of our own. Our website uses HTTPS, and payments
+          run through Razorpay&apos;s PCI-DSS compliant checkout. No method of storage or transmission is completely
           secure, but we take reasonable steps to protect your information.
         </p>
       </Section>

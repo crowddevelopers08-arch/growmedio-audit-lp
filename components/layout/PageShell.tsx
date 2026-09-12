@@ -4,7 +4,7 @@ import SiteFooter from "@/components/sections/SiteFooter";
 import Logo from "@/components/ui/Logo";
 
 /**
- * Header + footer frame for the secondary pages (payment, thank-you, privacy).
+ * Header + footer frame for the legal pages (privacy, terms, refunds).
  * The landing page keeps its own sticky header with section anchors, which
  * would point nowhere from here.
  */
