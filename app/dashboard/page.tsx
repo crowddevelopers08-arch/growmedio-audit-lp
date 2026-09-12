@@ -193,151 +193,125 @@ export default async function DashboardPage({
         </form>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-[18px] border border-line bg-surface">
-        <table className="w-full min-w-[1480px] border-collapse text-left text-[0.86rem]">
-          <thead className="border-b border-line text-[0.72rem] tracking-[0.04em] text-faint uppercase">
-            <tr>
-              {[
-                "Submitted",
-                "Session slot",
-                "Lead",
-                "Contact",
-                "Clinic",
-                "Qualification",
-                "Why now",
-                "Payment",
-                "Razorpay IDs",
-              ].map(
-                (heading) => (
-                  <th key={heading} scope="col" className="px-4 py-3 font-medium">
-                    {heading}
-                  </th>
-                )
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {leads.length === 0 ? (
-              <tr>
-                <td colSpan={9} className="px-4 py-14 text-center text-dim">
-                  {q || filter !== "all"
-                    ? "No leads match these filters."
-                    : "No leads yet — they appear here as soon as someone submits the booking form."}
-                </td>
-              </tr>
-            ) : (
-              leads.map((lead) => {
-                const payment = primaryPayment(lead.payments);
-                const badge = BADGES[payment?.status ?? "NONE"];
+      {/* One card per lead. Nine columns of a table left every cell too narrow
+          to read — a card gives each answer its own labelled block and wraps
+          cleanly at any width. */}
+      <div className="mt-4 grid gap-3">
+        {leads.length === 0 ? (
+          <p className="rounded-[18px] border border-line bg-surface px-4 py-14 text-center text-dim">
+            {q || filter !== "all"
+              ? "No leads match these filters."
+              : "No leads yet — they appear here as soon as someone submits the booking form."}
+          </p>
+        ) : (
+          leads.map((lead) => {
+            const payment = primaryPayment(lead.payments);
+            const badge = BADGES[payment?.status ?? "NONE"];
+            const isPaidLead = Boolean(payment && PAID_STATUSES.includes(payment.status));
 
-                return (
-                  <tr key={lead.id} className="border-b border-line align-top last:border-0">
-                    <td className="px-4 py-3 whitespace-nowrap text-dim">
-                      {formatIST(lead.createdAt)}
-                    </td>
-                    <td className="px-4 py-3">
-                      {lead.slotAt ? (
-                        <span
-                          className={`whitespace-nowrap ${
-                            payment && PAID_STATUSES.includes(payment.status)
-                              ? "font-semibold text-brand"
-                              : "text-dim"
-                          }`}
-                        >
-                          {slotLabel(lead.slotAt)}
-                        </span>
-                      ) : (
-                        <span className="text-faint">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="font-semibold text-ink">{lead.name}</div>
-                      {lead.pageUrl && (
-                        <div
-                          className="mt-0.5 max-w-[200px] truncate text-[0.75rem] text-faint"
-                          title={lead.pageUrl}
-                        >
-                          {sourceLabel(lead.pageUrl)}
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="whitespace-nowrap">
-                        <a href={`tel:+91${lead.phone}`} className="text-ink hover:text-brand">
-                          +91 {lead.phone}
-                        </a>
-                        <span className="text-faint"> · </span>
-                        <a
-                          href={`https://wa.me/91${lead.phone}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-brand hover:underline"
-                        >
-                          WhatsApp
-                        </a>
-                      </div>
-                      <div className="mt-0.5 break-all text-dim">{lead.email ?? "—"}</div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="text-ink">{lead.clinicName ?? "—"}</div>
-                      <div className="mt-0.5 text-dim">{lead.specialty ?? "—"}</div>
-                      <div className="mt-0.5 text-faint">{lead.city ?? "—"}</div>
-                    </td>
-                    <td className="px-4 py-3 text-[0.8rem]">
-                      <Detail label="Spend" value={lead.adSpend} />
-                      <Detail label="Revenue" value={lead.monthlyRevenue} />
-                      <Detail label="Enquiries" value={lead.enquiryHandler} />
-                      <Detail label="Decides" value={lead.decisionMaker} />
-                    </td>
-                    <td className="px-4 py-3">
-                      {lead.goal ? (
-                        <p className="max-w-[260px] text-[0.8rem] leading-snug text-dim">
-                          {lead.goal}
-                        </p>
-                      ) : (
-                        <span className="text-faint">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
+            return (
+              <article
+                key={lead.id}
+                className="rounded-[18px] border border-line bg-surface p-4 md:p-5"
+              >
+                <header className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 border-b border-line pb-3">
+                  <div className="min-w-0">
+                    <h2 className="font-display text-[1.05rem] font-semibold text-ink">
+                      {lead.name}
+                    </h2>
+                    <p className="mt-0.5 text-[0.85rem] text-dim">
+                      {[lead.clinicName, lead.specialty, lead.city]
+                        .filter(Boolean)
+                        .join(" · ") || "—"}
+                    </p>
+                  </div>
+
+                  <div className="flex shrink-0 flex-wrap items-center gap-2">
+                    {lead.slotAt && (
                       <span
-                        className={`inline-block rounded-full border px-2.5 py-0.5 text-[0.75rem] font-semibold whitespace-nowrap ${badge.className}`}
+                        className={`rounded-full border px-3 py-1 text-[0.78rem] font-semibold whitespace-nowrap ${
+                          isPaidLead
+                            ? "border-[rgba(22,212,146,0.35)] bg-brand-wash text-brand"
+                            : "border-line-strong text-dim"
+                        }`}
                       >
-                        {badge.label}
+                        {slotLabel(lead.slotAt)}
                       </span>
-                      {payment && (
-                        <div className="mt-1 whitespace-nowrap text-dim">
-                          {formatPaise(payment.amount, payment.currency)}
-                          {payment.method ? ` · ${paymentMethodLabel(payment.method)}` : ""}
+                    )}
+                    <span
+                      className={`rounded-full border px-3 py-1 text-[0.78rem] font-semibold whitespace-nowrap ${badge.className}`}
+                    >
+                      {badge.label}
+                    </span>
+                  </div>
+                </header>
+
+                <div className="grid gap-x-6 gap-y-4 py-4 min-[560px]:grid-cols-2 min-[1000px]:grid-cols-4">
+                  <Cell label="Contact">
+                    <a href={`tel:+91${lead.phone}`} className="text-ink hover:text-brand">
+                      +91 {lead.phone}
+                    </a>
+                    <span className="text-faint"> · </span>
+                    <a
+                      href={`https://wa.me/91${lead.phone}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-brand hover:underline"
+                    >
+                      WhatsApp
+                    </a>
+                    <div className="mt-0.5 break-all text-dim">{lead.email ?? "—"}</div>
+                  </Cell>
+
+                  <Cell label="Ad spend">{lead.adSpend ?? "—"}</Cell>
+                  <Cell label="Monthly revenue">{lead.monthlyRevenue ?? "—"}</Cell>
+                  <Cell label="Enquiries handled by">{lead.enquiryHandler ?? "—"}</Cell>
+                  <Cell label="Decision-maker">{lead.decisionMaker ?? "—"}</Cell>
+
+                  <Cell label="Payment">
+                    {payment ? (
+                      <>
+                        {formatPaise(payment.amount, payment.currency)}
+                        {payment.method ? ` · ${paymentMethodLabel(payment.method)}` : ""}
+                        {payment.paidAt && (
+                          <div className="mt-0.5 text-faint">{formatIST(payment.paidAt)}</div>
+                        )}
+                        {payment.status === "FAILED" && payment.errorReason && (
+                          <div className="mt-0.5 text-danger">{payment.errorReason}</div>
+                        )}
+                        <div className="mt-1 font-mono text-[0.72rem] break-all text-faint">
+                          {payment.razorpayPaymentId ?? payment.razorpayOrderId}
                         </div>
-                      )}
-                      {payment?.paidAt && (
-                        <div className="mt-0.5 whitespace-nowrap text-[0.75rem] text-faint">
-                          {formatIST(payment.paidAt)}
-                        </div>
-                      )}
-                      {payment?.status === "FAILED" && payment.errorReason && (
-                        <div className="mt-1 max-w-[220px] text-[0.75rem] text-danger">
-                          {payment.errorReason}
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 font-mono text-[0.75rem]">
-                      {payment ? (
-                        <>
-                          <div className="text-dim">{payment.razorpayPaymentId ?? "—"}</div>
-                          <div className="mt-0.5 text-faint">{payment.razorpayOrderId}</div>
-                        </>
-                      ) : (
-                        <span className="text-faint">—</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                      </>
+                    ) : (
+                      "—"
+                    )}
+                  </Cell>
+
+                  <Cell label="Submitted">
+                    {formatIST(lead.createdAt)}
+                    {lead.pageUrl && (
+                      <div className="mt-0.5 truncate text-faint" title={lead.pageUrl}>
+                        {sourceLabel(lead.pageUrl)}
+                      </div>
+                    )}
+                  </Cell>
+
+                  {lead.goal && (
+                    <div className="min-[560px]:col-span-2 min-[1000px]:col-span-4">
+                      <div className="text-[0.72rem] tracking-[0.04em] text-faint uppercase">
+                        Why now
+                      </div>
+                      <p className="mt-1 text-[0.88rem] leading-relaxed text-dim">{lead.goal}</p>
+                    </div>
+                  )}
+                </div>
+              </article>
+            );
+          })
+        )}
       </div>
+
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-[0.85rem] text-dim">
         <span>
@@ -401,13 +375,12 @@ function Shell({ children }: { children: ReactNode }) {
   );
 }
 
-/** One qualification answer, compact enough for a table cell. */
-function Detail({ label, value }: { label: string; value: string | null }) {
-  if (!value) return null;
+/** One labelled block inside a lead card. */
+function Cell({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="mt-0.5 first:mt-0">
-      <span className="text-faint">{label}: </span>
-      <span className="text-dim">{value}</span>
+    <div className="min-w-0">
+      <div className="text-[0.72rem] tracking-[0.04em] text-faint uppercase">{label}</div>
+      <div className="mt-1 text-[0.88rem] leading-snug text-ink">{children}</div>
     </div>
   );
 }
