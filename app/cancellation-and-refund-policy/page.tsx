@@ -122,8 +122,8 @@ export default function RefundPolicyPage() {
 
       <Section title="8. Contact us">
         <p>
-          <Fill value={LEGAL.entityName} label="sosavi" />,{" "}
-          <Fill value={LEGAL.address} label="Shree Sai Niwas, Plot no.213, in front of NMC Corporation Office, Gokulpeth, Dharampeth, Nagpur, Maharashtra 440010" />
+          <Fill value={LEGAL.entityName} label="registered business name" />,{" "}
+          <Fill value={LEGAL.address} label="registered address" />
           <br />
           Email: <EmailLink />
           <br />

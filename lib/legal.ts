@@ -16,18 +16,16 @@ export interface LegalDetails {
   email: string | null;
   /** Support number, in full international form, e.g. "+91 98765 43210". */
   phone: string | null;
-  /** City whose courts have jurisdiction, e.g. "Chennai". */
-  jurisdictionCity: string | null;
   /** GSTIN, if registered. Leave null if not. */
   gstin: string | null;
 }
 
 export const LEGAL: LegalDetails = {
-  entityName: null,
-  address: null,
+  entityName: "Sosavi",
+  address:
+    "Shree Sai Niwas, Plot no. 213, in front of NMC Corporation Office, Gokulpeth, Dharampeth, Nagpur, Maharashtra 440010",
   email: "support@growmedico.in",
   phone: "+91 75587 72126",
-  jurisdictionCity: null,
   gstin: null,
 };
 

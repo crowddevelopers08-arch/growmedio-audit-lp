@@ -32,10 +32,10 @@ export default function TermsPage() {
         <p>
           This website and the Revenue Strategy Session are operated by{" "}
           <strong>
-            <Fill value={LEGAL.entityName} label="sosavi" />
+            <Fill value={LEGAL.entityName} label="registered business name" />
           </strong>
           , trading as {SITE.name}, with its registered address at{" "}
-          <Fill value={LEGAL.address} label="Shree Sai Niwas, Plot no.213, in front of NMC Corporation Office, Gokulpeth, Dharampeth, Nagpur, Maharashtra 440010" />.
+          <Fill value={LEGAL.address} label="registered address" />.
         </p>
         <p>
           In these terms, &ldquo;we&rdquo; and &ldquo;us&rdquo; means that
@@ -181,9 +181,10 @@ export default function TermsPage() {
 
       <Section title="13. Governing law">
         <p>
-          These terms are governed by the laws of India, and the courts at{" "}
-          <Fill value={LEGAL.jurisdictionCity} label="city" /> have exclusive
-          jurisdiction over any dispute.
+          These terms are governed by and construed in accordance with the laws
+          of India. Any dispute arising out of them is subject to the exclusive
+          jurisdiction of the courts having jurisdiction over our registered
+          address, as given in section 1.
         </p>
       </Section>
 
