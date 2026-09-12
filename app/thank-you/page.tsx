@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Script from "next/script";
+import ConversionTracking from "@/components/booking/ConversionTracking";
 import PageShell from "@/components/layout/PageShell";
 import { ctaClass } from "@/components/ui/CtaButton";
 import { SESSION_PRICE_LABEL, SITE } from "@/lib/site";
@@ -31,11 +31,10 @@ const NEXT_STEPS = [
 export default function ThankYouPage() {
   return (
     <PageShell>
-      {/* Meta Pixel — conversion. Fires once the booking is complete, which is
-          the only way anyone reaches this page. */}
-      <Script id="fb-submit-application" strategy="afterInteractive">
-        {`fbq('track', 'SubmitApplication');`}
-      </Script>
+      {/* Purchase + SubmitApplication, and the GTM dataLayer pushes alongside
+          them. Reaching this page means payment succeeded and a slot was
+          booked. */}
+      <ConversionTracking />
       <noscript>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

@@ -22,6 +22,11 @@ import {
   type Country,
 } from "@/lib/countries";
 import {
+  rememberPurchase,
+  trackInitiateCheckout,
+  trackLead,
+} from "@/lib/pixel";
+import {
   loadRazorpayCheckout,
   type RazorpayFailureResponse,
   type RazorpaySuccessResponse,
@@ -125,6 +130,7 @@ function BookingModal({ open, onClose }: { open: boolean; onClose: () => void })
           }),
         });
         leadSent.current = true;
+        trackLead();
       } catch {
         // Never block the payment on lead logging.
       }
@@ -207,6 +213,12 @@ function BookingModal({ open, onClose }: { open: boolean; onClose: () => void })
               name: result.prefill?.name || cleanName,
               email: result.prefill?.email,
             });
+            // Handed to /thank-you, which fires Purchase with an event_id the
+            // Razorpay webhook repeats server-side so Meta can deduplicate.
+            rememberPurchase({
+              paymentId: result.paymentId || response.razorpay_payment_id,
+              value: Number(order.amount) / 100,
+            });
             setPaid(true);
             setStage("idle");
             setCalendarOpen(true);
@@ -228,6 +240,7 @@ function BookingModal({ open, onClose }: { open: boolean; onClose: () => void })
       });
 
       checkout.open();
+      trackInitiateCheckout(Number(order.amount) / 100);
       // Checkout is on screen — release the button's loading state.
       setStage("idle");
     } catch (err) {
