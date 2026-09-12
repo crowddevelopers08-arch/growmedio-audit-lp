@@ -78,16 +78,7 @@ export default function RefundPolicyPage() {
         </p>
       </Section>
 
-      <Section title="4. If you do not attend">
-        <p>
-          If you miss your slot without telling us, we will try to reach you on
-          the number you provided and offer a new time. A no-show is not
-          automatically refunded, but a single missed call is not treated as
-          forfeiting your booking either — get in touch and we will sort it out.
-        </p>
-      </Section>
-
-      <Section title="5. If we cancel or reschedule">
+      <Section title="4. If we cancel or reschedule">
         <p>
           If we have to move your session, we will offer you the next available
           slot. If that does not work for you, or if we cannot deliver your
@@ -95,7 +86,7 @@ export default function RefundPolicyPage() {
         </p>
       </Section>
 
-      <Section title="6. How to request a refund">
+      <Section title="5. How to request a refund">
         <p>
           Email <EmailLink /> or call <PhoneLink /> from the number you booked
           with. Include the name and mobile number used at
@@ -107,7 +98,7 @@ export default function RefundPolicyPage() {
         </p>
       </Section>
 
-      <Section title="7. How refunds are processed">
+      <Section title="6. How refunds are processed">
         <p>
           Approved refunds are returned through Razorpay to the original payment
           method — the same card, UPI ID or account you paid from. We cannot
@@ -120,7 +111,7 @@ export default function RefundPolicyPage() {
         </p>
       </Section>
 
-      <Section title="8. Contact us">
+      <Section title="7. Contact us">
         <p>
           <Fill value={LEGAL.entityName} label="registered business name" />,{" "}
           <Fill value={LEGAL.address} label="registered address" />
