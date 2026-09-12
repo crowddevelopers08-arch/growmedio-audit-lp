@@ -119,7 +119,7 @@ export default function ProofSection() {
           </div>
         </div>
 
-        {/* Case cards */}
+        {/* Case cards — hidden for now, keep for later
         <div className="mt-6 grid grid-cols-1 gap-3 md:mt-10 md:gap-[14px] min-[700px]:grid-cols-2">
           {RESULTS.map((result) => (
             <CaseCard
@@ -128,18 +128,19 @@ export default function ProofSection() {
               flow={
                 <>
                   {inr(result.adSpend)}
-                  <span className="mx-1.5 text-faint">→</span>
+                  <span className="mx-1.5 text-faint">{"→"}</span>
                   {inr(result.revenue)}
                 </>
               }
               roas={`${roasOf(result).toFixed(2)}x ROAS`}
             >
-              {count(result.enquiries)} enquiries →{" "}
+              {count(result.enquiries)} enquiries {"→"}{" "}
               {count(result.appointments)} appointments booked, at{" "}
               {inr(costPerEnquiry(result))} per enquiry.
             </CaseCard>
           ))}
         </div>
+        */}
 
         <div className="mx-auto mt-8 text-center md:mt-10">
           <BookNowButton>
@@ -173,6 +174,7 @@ function TrackerStat({
   );
 }
 
+/* Used by the case cards above — commented out together with them.
 function CaseCard({
   tag,
   flow,
@@ -195,3 +197,4 @@ function CaseCard({
     </div>
   );
 }
+*/

@@ -1,9 +1,10 @@
+import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 
 const FOOTER_LINKS = [
   { href: "/privacy-policy", label: "Privacy" },
-  { href: "#", label: "Terms" },
-  { href: "#", label: "Refunds" },
+  { href: "/terms-and-conditions", label: "Terms" },
+  { href: "/cancellation-and-refund-policy", label: "Cancellation & Refunds" },
 ];
 
 export default function SiteFooter() {
@@ -20,9 +21,13 @@ export default function SiteFooter() {
 
           <div className="flex flex-wrap gap-[22px] text-[0.88rem] text-dim">
             {FOOTER_LINKS.map((link) => (
-              <a key={link.label} href={link.href}>
+              <Link
+                key={link.label}
+                href={link.href}
+                className="transition-colors hover:text-ink"
+              >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
         </div>
