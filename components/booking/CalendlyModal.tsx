@@ -38,6 +38,27 @@ export default function CalendlyModal({
     };
   }, [open]);
 
+  /**
+   * Calendly posts a message to the parent window at each step of its flow.
+   * `calendly.event_scheduled` is the booking actually completing, which is the
+   * moment we send people to /thank-you — where the conversion pixel fires.
+   */
+  useEffect(() => {
+    if (!open) return;
+
+    const onMessage = (e: MessageEvent) => {
+      if (typeof e.origin === "string" && !e.origin.includes("calendly.com")) return;
+      const data = e.data as { event?: string } | undefined;
+      if (data?.event === "calendly.event_scheduled") {
+        // Full navigation, so the pixel's PageView fires fresh on the page.
+        window.location.href = "/thank-you";
+      }
+    };
+
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [open]);
+
   useEffect(() => {
     if (!open || !mounted || mode !== "widget") return;
 
