@@ -6,31 +6,28 @@ import {
   TargetIcon,
   TrendingUpIcon,
 } from "@/components/ui/Icons";
+import { SITE } from "@/lib/site";
 
 const LINE_ITEMS = [
   {
     Icon: TargetIcon,
     title: "45-Minute 1:1 Revenue Strategy Session",
     body: "Deep-dive on your clinic, patient funnel and local market, live with a senior strategist.",
-    price: "₹4,999",
   },
   {
     Icon: SearchIcon,
     title: "Revenue Leak Audit",
     body: "We find the biggest places your patient-acquisition spend is bleeding money right now.",
-    price: "₹2,999",
   },
   {
     Icon: PackageIcon,
     title: "Your 90-Day Growth Roadmap",
     body: "A written, step-by-step plan: offer → creative → ads → follow-up → revenue.",
-    price: "₹3,999",
   },
   {
     Icon: TrendingUpIcon,
     title: "ROAS Projection For Your Business",
     body: "Realistic cost-per-enquiry and ROAS targets, modeled for your specialty and city.",
-    price: "₹1,999",
   },
 ];
 
@@ -69,7 +66,7 @@ export default function OfferSection() {
             {/* gap-px over a bg-line parent keeps the receipt's hairline rules
                 while laying the four items out 2×2. */}
             <div className="grid gap-px overflow-hidden rounded-[14px] border border-line bg-line sm:grid-cols-2">
-              {LINE_ITEMS.map(({ Icon, title, body, price }) => (
+              {LINE_ITEMS.map(({ Icon, title, body }) => (
                 <div
                   key={title}
                   className="flex gap-3 bg-surface p-4 md:gap-[14px] md:p-[18px]"
@@ -77,17 +74,10 @@ export default function OfferSection() {
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border border-[rgba(22,212,146,0.3)] bg-brand-wash text-brand md:h-[38px] md:w-[38px]">
                     <Icon className="h-[18px] w-[18px]" />
                   </div>
-                  {/* Price sits on the title row, so the description gets the
-                      full width instead of a narrow column beside it. */}
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-3">
-                      <h4 className="font-display text-[0.98rem] font-semibold leading-[1.2] tracking-[-0.01em]">
-                        {title}
-                      </h4>
-                      <span className="shrink-0 font-[family-name:'Courier_New',monospace] text-[0.85rem] whitespace-nowrap text-faint line-through md:text-[0.9rem]">
-                        {price}
-                      </span>
-                    </div>
+                    <h4 className="font-display text-[0.98rem] font-semibold leading-[1.2] tracking-[-0.01em]">
+                      {title}
+                    </h4>
                     <p className="mt-1 text-[0.85rem] text-dim">{body}</p>
                   </div>
                 </div>
@@ -102,7 +92,7 @@ export default function OfferSection() {
                 <div className="flex items-center justify-between">
                   <span className="text-[0.95rem] text-dim">Total value</span>
                   <span className="font-[family-name:'Courier_New',monospace] text-faint line-through">
-                    ₹13,996
+                    {SITE.listPrice}
                   </span>
                 </div>
 
