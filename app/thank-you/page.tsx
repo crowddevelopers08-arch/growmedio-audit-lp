@@ -4,6 +4,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import PageShell from "@/components/layout/PageShell";
 import { ctaClass } from "@/components/ui/CtaButton";
 import { ClockIcon } from "@/components/ui/Icons";
+import { slotLabel } from "@/lib/booking";
 import { formatIST, formatPaise } from "@/lib/format";
 import { isPaid, syncOrderFromRazorpay } from "@/lib/payments";
 import { prisma } from "@/lib/prisma";
@@ -64,12 +65,12 @@ export default async function ThankYouPage({
 
 const NEXT_STEPS = (phone: string) => [
   {
-    title: "We call you to fix your slot",
-    body: `Our strategist will reach you on WhatsApp or a call at +91 ${phone} within one working day.`,
+    title: "We confirm on WhatsApp",
+    body: `You'll get your slot confirmation at +91 ${phone}, along with anything we need before the call.`,
   },
   {
     title: "We study your clinic",
-    body: "Before the call we review your clinic, specialty and current ads, so the session starts with answers.",
+    body: "Before the call we review your clinic, speciality and current ads, so the session starts with answers.",
   },
   {
     title: "You walk out with your roadmap",
@@ -103,6 +104,18 @@ function Confirmed({ payment }: { payment: PaymentWithLead }) {
         Your {SESSION_PRICE_LABEL} payment is received and your Revenue Strategy
         Session is locked in.
       </p>
+
+      {payment.lead.slotAt && (
+        <div className="mx-auto mt-6 flex max-w-[420px] items-center justify-center gap-3 rounded-[18px] border border-[rgba(22,212,146,0.35)] bg-brand-wash px-5 py-4 text-left">
+          <ClockIcon className="h-6 w-6 shrink-0 text-brand" />
+          <div>
+            <div className="text-[0.75rem] text-faint">Your session</div>
+            <div className="mt-0.5 font-semibold text-ink">
+              {slotLabel(payment.lead.slotAt)}
+            </div>
+          </div>
+        </div>
+      )}
 
       <dl className="mt-6 grid gap-px overflow-hidden rounded-[18px] border border-line bg-line text-left md:mt-8 min-[520px]:grid-cols-2">
         {receipt.map(([label, value]) => (

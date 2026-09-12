@@ -16,26 +16,34 @@ export default function FounderSection() {
           <span className="mb-2.5 inline-block text-[0.85rem] font-semibold text-gold md:mb-[14px]">
             Who&apos;s behind this
           </span>
+          {/* Phones break the line after the name rather than mid-title, and
+              "Co-Founder" is kept whole so it never splits at its hyphen. */}
           <h2 className="max-w-[720px] font-display text-[clamp(1.7rem,3.2vw_+_0.9rem,2.6rem)] font-semibold leading-[1.12] tracking-[-0.01em]">
-            Meet Soma Arunagiri — Founder, Grow Medico
+            <span className="block min-[640px]:inline">Meet Soma Arunagiri</span>
+            <span className="hidden min-[640px]:inline"> — </span>
+            <span className="block min-[640px]:inline">
+              <span className="whitespace-nowrap">Co-Founder</span>, Grow Medico
+            </span>
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 items-center gap-6 min-[820px]:grid-cols-[280px_1fr] min-[820px]:gap-10">
-          {/* Phones: a compact avatar beside the name. Desktop: the large
-              centred portrait column. */}
-          <div className="flex items-center gap-4 min-[820px]:block">
+        <div className="grid grid-cols-1 items-center gap-6 min-[820px]:grid-cols-[400px_1fr] min-[820px]:gap-8 min-[1024px]:grid-cols-[480px_1fr] min-[1024px]:gap-10">
+          {/* Portrait with the name centred below it at every width; from
+              820px it becomes the left column beside the bio. */}
+          <div className="pt-2 min-[820px]:pt-0">
+            {/* No fixed aspect ratio and no crop — the portrait keeps its own
+                proportions so the whole photo is visible at every width. */}
             <img
-              src="/images/soma-arunagiri.jpg"
-              alt="Soma Arunagiri, Founder of Grow Medico"
-              className="h-20 w-20 shrink-0 rounded-full object-cover min-[820px]:mx-auto min-[820px]:h-[180px] min-[820px]:w-[180px]"
+              src="/soma-new.png"
+              alt="Soma Arunagiri, Co-Founder of Grow Medico"
+              className="mx-auto block h-auto w-full max-w-[400px] rounded-2xl min-[820px]:max-w-none min-[820px]:w-[340px] min-[1024px]:w-[420px]"
             />
-            <div className="min-w-0">
-              <div className="font-display text-[1.25rem] font-semibold leading-[1.12] tracking-[-0.01em] min-[820px]:mt-5 min-[820px]:text-center min-[820px]:text-[1.4rem]">
+            <div className="mt-4 text-center min-[820px]:mt-5">
+              <div className="font-display text-[1.25rem] font-semibold leading-[1.12] tracking-[-0.01em] min-[820px]:text-[1.4rem]">
                 Soma Arunagiri
               </div>
-              <div className="mt-0.5 text-[0.9rem] text-faint min-[820px]:text-center">
-                Founder, Grow Medico
+              <div className="mt-0.5 text-[0.9rem] text-faint">
+                Co-Founder, Grow Medico
               </div>
             </div>
           </div>
@@ -65,7 +73,7 @@ export default function FounderSection() {
               &lsquo;here&apos;s what your ad spend actually produced.&rsquo;
               That&apos;s the only thing we&apos;ve built here.&rdquo;
               <footer className="mt-2 text-[0.85rem] text-faint not-italic md:mt-2.5">
-                — Soma Arunagiri, Founder
+                — Soma Arunagiri, Co-Founder
               </footer>
             </blockquote>
 

@@ -1,4 +1,5 @@
 import BookNowButton from "@/components/booking/BookNowButton";
+import ClientLogos from "@/components/sections/ClientLogos";
 import {
   OVERALL,
   RESULTS,
@@ -81,6 +82,8 @@ export default function Hero() {
             ))}
           </div>
         </div>
+
+        <ClientLogos />
 
         <div className="relative z-[1] mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-[16px] border border-line bg-line md:mt-9 min-[720px]:grid-cols-4">
           <StatCell label="Patient revenue generated">

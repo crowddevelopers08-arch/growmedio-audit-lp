@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import type { PaymentStatus, Prisma } from "@/generated/prisma/client";
 import { ctaClass } from "@/components/ui/CtaButton";
 import Logo from "@/components/ui/Logo";
+import { slotLabel } from "@/lib/booking";
 import { formatCount, formatIST, formatPaise, paymentMethodLabel } from "@/lib/format";
 import { PAID_STATUSES, primaryPayment } from "@/lib/payments";
 import { prisma } from "@/lib/prisma";
@@ -19,6 +20,7 @@ const PAGE_SIZE = 50;
 
 const FILTERS = [
   { key: "all", label: "All leads" },
+  { key: "upcoming", label: "Upcoming sessions" },
   { key: "paid", label: "Paid" },
   { key: "unpaid", label: "Not paid" },
 ] as const;
@@ -62,6 +64,9 @@ async function loadDashboard({ filter, q, page }: { filter: FilterKey; q: string
 
   if (filter === "paid") conditions.push({ payments: paid });
   if (filter === "unpaid") conditions.push({ payments: { none: { status: { in: PAID_STATUSES } } } });
+  // Only paid bookings are real sessions — an unpaid lead's slot expires.
+  if (filter === "upcoming")
+    conditions.push({ payments: paid, slotAt: { gte: new Date() } });
 
   if (q) {
     const digits = q.replace(/\D/g, "");
@@ -70,6 +75,7 @@ async function loadDashboard({ filter, q, page }: { filter: FilterKey; q: string
         { name: { contains: q, mode: "insensitive" } },
         { email: { contains: q, mode: "insensitive" } },
         { city: { contains: q, mode: "insensitive" } },
+        { clinicName: { contains: q, mode: "insensitive" } },
         { specialty: { contains: q, mode: "insensitive" } },
         ...(digits ? [{ phone: { contains: digits } }] : []),
         {
@@ -88,10 +94,15 @@ async function loadDashboard({ filter, q, page }: { filter: FilterKey; q: string
 
   const where: Prisma.LeadWhereInput = { AND: conditions };
 
-  const [leads, matching, totalLeads, paidLeads, revenue] = await Promise.all([
+  // Upcoming sessions read as a call schedule, so they run soonest-first;
+  // everything else is newest-first.
+  const orderBy: Prisma.LeadOrderByWithRelationInput =
+    filter === "upcoming" ? { slotAt: "asc" } : { createdAt: "desc" };
+
+  const [leads, matching, totalLeads, paidLeads, revenue, upcoming] = await Promise.all([
     prisma.lead.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      orderBy,
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
       include: { payments: { orderBy: { updatedAt: "desc" } } },
@@ -100,9 +111,10 @@ async function loadDashboard({ filter, q, page }: { filter: FilterKey; q: string
     prisma.lead.count(),
     prisma.lead.count({ where: { payments: paid } }),
     prisma.payment.aggregate({ where: { status: "CAPTURED" }, _sum: { amount: true } }),
+    prisma.lead.count({ where: { payments: paid, slotAt: { gte: new Date() } } }),
   ]);
 
-  return { leads, matching, totalLeads, paidLeads, revenue: revenue._sum.amount ?? 0 };
+  return { leads, matching, totalLeads, paidLeads, revenue: revenue._sum.amount ?? 0, upcoming };
 }
 
 export default async function DashboardPage({
@@ -132,7 +144,7 @@ export default async function DashboardPage({
     );
   }
 
-  const { leads, matching, totalLeads, paidLeads, revenue } = data;
+  const { leads, matching, totalLeads, paidLeads, revenue, upcoming } = data;
   const pages = Math.max(1, Math.ceil(matching / PAGE_SIZE));
   const conversion = totalLeads ? Math.round((paidLeads / totalLeads) * 100) : 0;
   const from = matching ? (page - 1) * PAGE_SIZE + 1 : 0;
@@ -143,7 +155,7 @@ export default async function DashboardPage({
       <div className="grid grid-cols-2 gap-3 min-[900px]:grid-cols-5">
         <Stat label="Total leads" value={formatCount(totalLeads)} />
         <Stat label="Paid" value={formatCount(paidLeads)} accent />
-        <Stat label="Not paid" value={formatCount(totalLeads - paidLeads)} />
+        <Stat label="Upcoming sessions" value={formatCount(upcoming)} accent />
         <Stat label="Conversion" value={`${conversion}%`} />
         <Stat label="Revenue collected" value={formatPaise(revenue)} accent />
       </div>
@@ -182,10 +194,20 @@ export default async function DashboardPage({
       </div>
 
       <div className="mt-4 overflow-x-auto rounded-[18px] border border-line bg-surface">
-        <table className="w-full min-w-[1040px] border-collapse text-left text-[0.86rem]">
+        <table className="w-full min-w-[1480px] border-collapse text-left text-[0.86rem]">
           <thead className="border-b border-line text-[0.72rem] tracking-[0.04em] text-faint uppercase">
             <tr>
-              {["Submitted", "Lead", "Contact", "Clinic", "Payment", "Razorpay IDs", "Paid on"].map(
+              {[
+                "Submitted",
+                "Session slot",
+                "Lead",
+                "Contact",
+                "Clinic",
+                "Qualification",
+                "Why now",
+                "Payment",
+                "Razorpay IDs",
+              ].map(
                 (heading) => (
                   <th key={heading} scope="col" className="px-4 py-3 font-medium">
                     {heading}
@@ -197,7 +219,7 @@ export default async function DashboardPage({
           <tbody>
             {leads.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-14 text-center text-dim">
+                <td colSpan={9} className="px-4 py-14 text-center text-dim">
                   {q || filter !== "all"
                     ? "No leads match these filters."
                     : "No leads yet — they appear here as soon as someone submits the booking form."}
@@ -212,6 +234,21 @@ export default async function DashboardPage({
                   <tr key={lead.id} className="border-b border-line align-top last:border-0">
                     <td className="px-4 py-3 whitespace-nowrap text-dim">
                       {formatIST(lead.createdAt)}
+                    </td>
+                    <td className="px-4 py-3">
+                      {lead.slotAt ? (
+                        <span
+                          className={`whitespace-nowrap ${
+                            payment && PAID_STATUSES.includes(payment.status)
+                              ? "font-semibold text-brand"
+                              : "text-dim"
+                          }`}
+                        >
+                          {slotLabel(lead.slotAt)}
+                        </span>
+                      ) : (
+                        <span className="text-faint">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="font-semibold text-ink">{lead.name}</div>
@@ -242,8 +279,24 @@ export default async function DashboardPage({
                       <div className="mt-0.5 break-all text-dim">{lead.email ?? "—"}</div>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="text-ink">{lead.specialty ?? "—"}</div>
+                      <div className="text-ink">{lead.clinicName ?? "—"}</div>
+                      <div className="mt-0.5 text-dim">{lead.specialty ?? "—"}</div>
                       <div className="mt-0.5 text-faint">{lead.city ?? "—"}</div>
+                    </td>
+                    <td className="px-4 py-3 text-[0.8rem]">
+                      <Detail label="Spend" value={lead.adSpend} />
+                      <Detail label="Revenue" value={lead.monthlyRevenue} />
+                      <Detail label="Enquiries" value={lead.enquiryHandler} />
+                      <Detail label="Decides" value={lead.decisionMaker} />
+                    </td>
+                    <td className="px-4 py-3">
+                      {lead.goal ? (
+                        <p className="max-w-[260px] text-[0.8rem] leading-snug text-dim">
+                          {lead.goal}
+                        </p>
+                      ) : (
+                        <span className="text-faint">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <span
@@ -255,6 +308,11 @@ export default async function DashboardPage({
                         <div className="mt-1 whitespace-nowrap text-dim">
                           {formatPaise(payment.amount, payment.currency)}
                           {payment.method ? ` · ${paymentMethodLabel(payment.method)}` : ""}
+                        </div>
+                      )}
+                      {payment?.paidAt && (
+                        <div className="mt-0.5 whitespace-nowrap text-[0.75rem] text-faint">
+                          {formatIST(payment.paidAt)}
                         </div>
                       )}
                       {payment?.status === "FAILED" && payment.errorReason && (
@@ -272,9 +330,6 @@ export default async function DashboardPage({
                       ) : (
                         <span className="text-faint">—</span>
                       )}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-dim">
-                      {payment?.paidAt ? formatIST(payment.paidAt) : "—"}
                     </td>
                   </tr>
                 );
@@ -342,6 +397,17 @@ function Shell({ children }: { children: ReactNode }) {
         </p>
         {children}
       </main>
+    </div>
+  );
+}
+
+/** One qualification answer, compact enough for a table cell. */
+function Detail({ label, value }: { label: string; value: string | null }) {
+  if (!value) return null;
+  return (
+    <div className="mt-0.5 first:mt-0">
+      <span className="text-faint">{label}: </span>
+      <span className="text-dim">{value}</span>
     </div>
   );
 }

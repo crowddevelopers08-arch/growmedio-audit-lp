@@ -17,15 +17,9 @@ export const SITE = {
 /** Shown in the checkout modal — keep in sync with RAZORPAY_SESSION_AMOUNT. */
 export const SESSION_PRICE_LABEL = SITE.price;
 
-/** Drives the specialty dropdown in the booking form and TeleCRM's procedure field. */
-export const SPECIALTIES = [
-  "Dermatology / Skin & Hair",
-  "Dental",
-  "IVF & Fertility",
-  "Orthopedics",
-  "Multi-Specialty Hospital",
-  "Cosmetic & Aesthetics",
-  "Diagnostics",
-  "Ayurveda & Wellness",
-  "Other",
-] as const;
+/*
+ * The booking form's dropdowns — speciality, enquiry handling, ad spend,
+ * revenue and decision-making — now live in lib/booking.ts alongside the slot
+ * definitions, so the form, the API's validation and the dashboard all read
+ * one list.
+ */

@@ -3,10 +3,12 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import PageShell from "@/components/layout/PageShell";
 import PayButton from "@/components/payment/PayButton";
-import { CheckIcon, LockIcon, ShieldIcon } from "@/components/ui/Icons";
+import { CheckIcon, ClockIcon, LockIcon, ShieldIcon } from "@/components/ui/Icons";
+import { slotLabel } from "@/lib/booking";
 import { PAID_STATUSES } from "@/lib/payments";
 import { prisma } from "@/lib/prisma";
 import { SESSION_PRICE_LABEL } from "@/lib/site";
+import { HOLD_MINUTES } from "@/lib/slots";
 
 export const dynamic = "force-dynamic";
 
@@ -43,8 +45,9 @@ export default async function PaymentPage({
     ["Name", lead.name],
     ["Mobile", `+91 ${lead.phone}`],
     ["Email", lead.email || "—"],
-    ["Specialty", lead.specialty || "—"],
-    ["City", lead.city || "—"],
+    ["Clinic", lead.clinicName || "—"],
+    ["Speciality", lead.specialty || "—"],
+    ["Location", lead.city || "—"],
   ];
 
   return (
@@ -64,10 +67,25 @@ export default async function PaymentPage({
               Almost there, {lead.name}
             </h1>
             <p className="mt-3 max-w-[520px] text-[1rem] leading-[1.65] text-dim">
-              Your details are saved. Complete the {SESSION_PRICE_LABEL} payment to
-              lock in your Revenue Strategy Session — our strategist will call you
-              within one working day to fix your slot.
+              Your details are saved and your slot is held. Complete the{" "}
+              {SESSION_PRICE_LABEL} payment to confirm it.
             </p>
+
+            {lead.slotAt && (
+              <div className="mt-5 flex items-start gap-3 rounded-[16px] border border-[rgba(22,212,146,0.3)] bg-brand-wash p-4 md:mt-6">
+                <ClockIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
+                <div>
+                  <div className="text-[0.75rem] text-faint">Your session slot</div>
+                  <div className="mt-0.5 font-semibold text-ink">
+                    {slotLabel(lead.slotAt)}
+                  </div>
+                  <p className="mt-1 text-[0.82rem] text-dim">
+                    Held for {HOLD_MINUTES} minutes — complete payment to confirm
+                    it.
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div className="mt-6 rounded-[18px] border border-line bg-surface p-5 md:mt-8">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">

@@ -13,12 +13,30 @@ datasource db {
 /// A booking-form submission. Saved before checkout, so abandoned payments
 /// still show up in the dashboard.
 model Lead {
-  id        String    @id @default(cuid())
-  name      String
-  phone     String // 10-digit Indian mobile, no +91
-  email     String?
-  city      String?
-  specialty String?
+  id    String  @id @default(cuid())
+  name  String
+  phone String // 10-digit Indian mobile, no +91
+  email String?
+
+  // Clinic
+  clinicName String?
+  city       String? // city and area, as typed
+  specialty  String?
+
+  // Qualification — stored as the option label the clinic picked, so the
+  // dashboard stays readable without a lookup table.
+  enquiryHandler String?
+  adSpend        String?
+  monthlyRevenue String?
+  decisionMaker  String?
+  goal           String? // "why now", free text
+
+  /// Chosen session slot, as a UTC instant. Slot times are defined in IST in
+  /// lib/booking.ts. Deliberately NOT unique: an unpaid lead only holds its
+  /// slot for HOLD_MINUTES (lib/slots.ts), after which the slot is offered
+  /// again — otherwise every abandoned checkout would burn a slot forever.
+  slotAt DateTime?
+
   pageUrl   String? // page the form was submitted from, incl. UTM params
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -26,6 +44,7 @@ model Lead {
 
   @@index([createdAt])
   @@index([phone])
+  @@index([slotAt])
 }
 
 enum PaymentStatus {

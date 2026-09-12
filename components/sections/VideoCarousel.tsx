@@ -89,7 +89,7 @@ export default function VideoCarousel({ items }: { items: { id: string; title: s
     "flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-line-strong text-dim transition-colors hover:border-brand hover:text-brand";
 
   return (
-    <div aria-roledescription="carousel" aria-label="Campaign videos">
+    <div aria-roledescription="carousel" aria-label="Client videos">
       <div
         ref={track}
         onPointerDown={pause}
@@ -128,9 +128,6 @@ export default function VideoCarousel({ items }: { items: { id: string; title: s
                   </span>
                 </button>
               )}
-            </div>
-            <div className="px-3.5 py-3 text-[0.85rem] text-dim sm:px-3 sm:py-2.5 sm:text-[0.8rem] md:px-[14px] md:py-3 md:text-[0.82rem]">
-              {video.title}
             </div>
           </div>
         ))}
