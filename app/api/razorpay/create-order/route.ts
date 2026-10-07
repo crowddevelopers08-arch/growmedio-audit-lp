@@ -2,6 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { isLeadId } from "@/lib/leads";
+import { prisma } from "@/lib/prisma";
 
 const RAZORPAY_ORDERS_URL = "https://api.razorpay.com/v1/orders";
 
@@ -38,14 +40,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Optional context from the form, stored on the order for reconciliation —
-  // TeleCRM holds the lead itself, so nothing here is required.
+  // Optional context from the form, stored on the order for reconciliation.
+  // `lead_id` lets the webhook mark the dashboard row paid. Nothing is required.
   let pageUrl = "";
   let leadName = "";
   let leadPhone = "";
   let dialCode = "";
   let country = "";
   let iso = "";
+  let leadId = "";
   try {
     const body = await req.json();
     if (typeof body?.pageUrl === "string") pageUrl = body.pageUrl.slice(0, 200);
@@ -54,6 +57,7 @@ export async function POST(req: NextRequest) {
     if (typeof body?.dialCode === "string") dialCode = body.dialCode.replace(/\D/g, "").slice(0, 4);
     if (typeof body?.country === "string") country = body.country.trim().slice(0, 60);
     if (typeof body?.iso === "string") iso = body.iso.trim().toUpperCase().slice(0, 3);
+    if (isLeadId(body?.leadId)) leadId = body.leadId;
   } catch {
     // No body is fine.
   }
@@ -82,6 +86,7 @@ export async function POST(req: NextRequest) {
           ...(fullPhone ? { phone: fullPhone } : {}),
           ...(country ? { country } : {}),
           ...(iso ? { iso } : {}),
+          ...(leadId ? { lead_id: leadId } : {}),
         },
       }),
       signal: controller.signal,
@@ -93,6 +98,18 @@ export async function POST(req: NextRequest) {
     const order = await res.json();
     if (!res.ok) {
       throw new Error(order?.error?.description || `Razorpay HTTP ${res.status}`);
+    }
+
+    // Dashboard: this lead has now opened checkout. Never block the payment on it.
+    if (leadId) {
+      try {
+        await prisma.auditLpLead.updateMany({
+          where: { id: leadId, paymentStatus: { not: "paid" } },
+          data: { paymentStatus: "checkout", razorpayOrderId: order.id },
+        });
+      } catch (err) {
+        console.error("[Razorpay create-order DB] Error:", err instanceof Error ? err.message : err);
+      }
     }
 
     return NextResponse.json({

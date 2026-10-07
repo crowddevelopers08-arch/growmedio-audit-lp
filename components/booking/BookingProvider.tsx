@@ -37,7 +37,7 @@ import { SESSION_PRICE_LABEL, SITE } from "@/lib/site";
  * Booking flow
  * ------------
  * 1. This modal          → name + WhatsApp number
- * 2. POST /api/lead      → pushed to TeleCRM (the only system of record)
+ * 2. POST /api/lead      → saved to Neon (/dashboard) and pushed to TeleCRM
  * 3. Razorpay Checkout   → ₹199, opened in place
  * 4. POST /api/razorpay/verify → signature checked server-side
  * 5. Calendly modal      → the client picks their own slot
@@ -87,6 +87,8 @@ function BookingModal({ open, onClose }: { open: boolean; onClose: () => void })
   const [paid, setPaid] = useState(false);
   // Don't create a second TeleCRM record if they retry a failed payment.
   const leadSent = useRef(false);
+  // Dashboard row id — sent with the order so the webhook can mark it paid.
+  const leadId = useRef<string | null>(null);
   const firstField = useRef<HTMLInputElement>(null);
 
   useEffect(() => setCountry(detectCountry()), []);
@@ -117,7 +119,7 @@ function BookingModal({ open, onClose }: { open: boolean; onClose: () => void })
     async (cleanName: string, digits: string, selected: Country) => {
       if (leadSent.current) return;
       try {
-        await fetch("/api/lead", {
+        const res = await fetch("/api/lead", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -130,6 +132,8 @@ function BookingModal({ open, onClose }: { open: boolean; onClose: () => void })
           }),
         });
         leadSent.current = true;
+        const saved = await res.json().catch(() => null);
+        if (typeof saved?.leadId === "string") leadId.current = saved.leadId;
         trackLead();
       } catch {
         // Never block the payment on lead logging.
@@ -177,6 +181,7 @@ function BookingModal({ open, onClose }: { open: boolean; onClose: () => void })
           dialCode: country.dial,
           country: country.name,
           iso: country.iso,
+          leadId: leadId.current,
         }),
       });
       const order = await orderRes.json();

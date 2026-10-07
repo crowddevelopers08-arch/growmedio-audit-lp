@@ -3,7 +3,7 @@ import "server-only";
 /**
  * TeleCRM client.
  *
- * TeleCRM is the only system of record for this site — there is no database —
+ * TeleCRM is the CRM of record (Neon only keeps a copy for /dashboard),
  * so both the booking form (app/api/lead) and the Razorpay webhook
  * (app/api/razorpay/webhook) push through here.
  */

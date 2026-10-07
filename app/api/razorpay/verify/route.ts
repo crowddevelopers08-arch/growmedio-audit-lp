@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { markLeadPayment } from "@/lib/leads";
 
 // Razorpay signs `order_id|payment_id` with the key secret. Recomputing it here
 // is what proves the success callback really came from Razorpay and was not
@@ -78,6 +79,19 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Webhook does the same, but it may not be configured — mark the
+    // dashboard row paid here too. Idempotent, and never blocks the booking.
+    await markLeadPayment({
+      orderId,
+      leadId: payment.notes?.lead_id,
+      paid: true,
+      paymentId,
+      amountPaise: payment.amount,
+      method: payment.method,
+    }).catch((err) =>
+      console.error("[Razorpay verify DB] Error:", err instanceof Error ? err.message : err)
+    );
 
     prefill = {
       name: payment.notes?.name || payment.card?.name || undefined,

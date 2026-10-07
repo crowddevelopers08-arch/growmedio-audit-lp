@@ -3,16 +3,16 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse, after } from "next/server";
 import { isValidPhone } from "@/lib/countries";
+import { prisma } from "@/lib/prisma";
 import { SITE } from "@/lib/site";
 import { createdOnStamp, normaliseNumber, postToTeleCRM } from "@/lib/telecrm";
 
 /**
  * Booking-form leads.
  *
- * TeleCRM is the only system of record — there is no database and no
- * dashboard here. The lead is validated, answered immediately, and pushed to
- * TeleCRM after the response is flushed, so a slow CRM never makes the visitor
- * wait between the form and Razorpay's checkout.
+ * The lead is validated, saved to Neon (shown on /dashboard), answered, and
+ * pushed to TeleCRM after the response is flushed, so a slow CRM never makes
+ * the visitor wait between the form and Razorpay's checkout.
  */
 
 const FORM_NAME = "grow medico audit lp leads";
@@ -92,6 +92,26 @@ export async function POST(req: NextRequest) {
     pageUrl: pageUrl.slice(0, 500) || undefined,
   };
 
+  // Saved for the dashboard before responding, so the id can ride along on the
+  // Razorpay order and the webhook can mark this exact lead as paid. A database
+  // hiccup must never stop someone reaching checkout, so failures only log.
+  let leadId: string | null = null;
+  try {
+    const saved = await prisma.auditLpLead.create({
+      data: {
+        name: lead.name,
+        phone: normaliseNumber(lead.dialCode, lead.phone),
+        country: lead.country,
+        iso: lead.iso,
+        pageUrl: lead.pageUrl ?? null,
+      },
+      select: { id: true },
+    });
+    leadId = saved.id;
+  } catch (err) {
+    console.error("[lead DB] Error:", err instanceof Error ? err.message : err);
+  }
+
   after(async () => {
     try {
       await postToTeleCRM(crmPayload(lead));
@@ -100,5 +120,5 @@ export async function POST(req: NextRequest) {
     }
   });
 
-  return NextResponse.json({ success: true, queued: true }, { status: 201 });
+  return NextResponse.json({ success: true, queued: true, leadId }, { status: 201 });
 }

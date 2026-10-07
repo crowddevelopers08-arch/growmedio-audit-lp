@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { markLeadPayment } from "@/lib/leads";
 import { sendPurchaseToMeta } from "@/lib/meta";
 import { createdOnStamp, postToTeleCRM } from "@/lib/telecrm";
 
@@ -124,6 +125,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ received: true, ignored: "no payment entity" }, { status: 200 });
   }
 
+  let dashboard: "ok" | "failed" = "ok";
+  try {
+    await markLeadPayment({
+      orderId: payment.order_id,
+      leadId: payment.notes?.lead_id,
+      paid: event === "payment.captured",
+      paymentId: payment.id,
+      amountPaise: payment.amount,
+      method: payment.method,
+    });
+  } catch (err) {
+    dashboard = "failed";
+    console.error("[Razorpay webhook DB] Error:", err instanceof Error ? err.message : err);
+  }
+
   let crm: "ok" | "failed" = "ok";
   try {
     await postToTeleCRM(crmPayload(payment, event));
@@ -163,7 +179,7 @@ export async function POST(req: NextRequest) {
   // Always 200 on a verified event. Returning an error makes Razorpay retry,
   // which would duplicate a record that already went through.
   return NextResponse.json(
-    { received: true, event, paymentId: payment.id, crm, meta },
+    { received: true, event, paymentId: payment.id, dashboard, crm, meta },
     { status: 200 }
   );
 }

@@ -5,7 +5,7 @@
  *    verified figures (ad spend, revenue, ROAS, lead counts, tracker rows,
  *    video clips, written testimonials, founder credentials).
  * 2. Fill in the Neon database URLs and Razorpay keys in `.env.local` (see
- *    `.env.example`), then run `npm run db:migrate`.
+ *    `.env.example`), then run `npm run db:deploy`.
  */
 
 export const SITE = {
