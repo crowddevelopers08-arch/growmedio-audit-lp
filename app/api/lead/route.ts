@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse, after } from "next/server";
 import { isValidPhone } from "@/lib/countries";
+import { appendLeadToSheet } from "@/lib/googleSheets";
 import { prisma } from "@/lib/prisma";
 import { SITE } from "@/lib/site";
 import { createdOnStamp, normaliseNumber, postToTeleCRM } from "@/lib/telecrm";
@@ -11,8 +12,8 @@ import { createdOnStamp, normaliseNumber, postToTeleCRM } from "@/lib/telecrm";
  * Booking-form leads.
  *
  * The lead is validated, saved to Neon (shown on /dashboard), answered, and
- * pushed to TeleCRM after the response is flushed, so a slow CRM never makes
- * the visitor wait between the form and Razorpay's checkout.
+ * pushed to TeleCRM and Google Sheets after the response is flushed, so a slow
+ * CRM never makes the visitor wait between the form and Razorpay's checkout.
  */
 
 const FORM_NAME = "grow medico audit lp leads";
@@ -113,11 +114,22 @@ export async function POST(req: NextRequest) {
   }
 
   after(async () => {
-    try {
-      await postToTeleCRM(crmPayload(lead));
-    } catch (err) {
-      console.error("[lead TeleCRM] Error:", err instanceof Error ? err.message : err);
-    }
+    const results = await Promise.allSettled([
+      postToTeleCRM(crmPayload(lead)),
+      appendLeadToSheet({
+        name: lead.name,
+        phone: normaliseNumber(lead.dialCode, lead.phone),
+      }),
+    ]);
+    results.forEach((r, i) => {
+      if (r.status === "rejected") {
+        const err = r.reason;
+        console.error(
+          `[lead ${i === 0 ? "TeleCRM" : "Google Sheets"}] Error:`,
+          err instanceof Error ? err.message : err
+        );
+      }
+    });
   });
 
   return NextResponse.json({ success: true, queued: true, leadId }, { status: 201 });
