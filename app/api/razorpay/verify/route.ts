@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { markPaidInSheet } from "@/lib/googleSheets";
 import { markLeadPayment } from "@/lib/leads";
 
 // Razorpay signs `order_id|payment_id` with the key secret. Recomputing it here
@@ -81,7 +82,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Webhook does the same, but it may not be configured — mark the
-    // dashboard row paid here too. Idempotent, and never blocks the booking.
+    // dashboard row and the Sheet paid here too. Idempotent, and never blocks
+    // the booking.
     await markLeadPayment({
       orderId,
       leadId: payment.notes?.lead_id,
@@ -92,6 +94,13 @@ export async function POST(req: NextRequest) {
     }).catch((err) =>
       console.error("[Razorpay verify DB] Error:", err instanceof Error ? err.message : err)
     );
+
+    const phone = (payment.notes?.phone || payment.contact || "").replace(/\D/g, "");
+    if (phone) {
+      await markPaidInSheet({ name: payment.notes?.name, phone }).catch((err) =>
+        console.error("[Razorpay verify Google Sheets] Error:", err instanceof Error ? err.message : err)
+      );
+    }
 
     prefill = {
       name: payment.notes?.name || payment.card?.name || undefined,

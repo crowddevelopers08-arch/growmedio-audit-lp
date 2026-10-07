@@ -5,18 +5,34 @@
    Deploy → New deployment → Web app (Execute as: Me, Access: Anyone).
    The /exec URL goes in GOOGLE_SHEETS_WEBHOOK_URL.
 
-   Accepts lead payloads from lib/googleSheets.ts (app/api/lead):
-     { timestamp, name, phone }
+   Accepts payloads from lib/googleSheets.ts:
+
+     action: "lead"  (app/api/lead — booking form, before payment)
+       { timestamp, name, phone }          → new row, "Not Paid"
+
+     action: "paid"  (app/api/razorpay/verify + webhook)
+       { timestamp, name, phone }          → that number's row → "Paid"
+
+   "paid" can arrive twice (verify and webhook) — the second is a no-op.
+   If no row matches the number, a new "Paid" row is added so nothing is lost.
 
    Rows are written by header name instead of fixed column position so the
    tab can tolerate extra manual columns without breaking submissions.
    ============================================================ */
 
-var LEAD_HEADERS = ['Timestamp', 'Name', 'Phone'];
-var LEAD_WIDTHS = [190, 220, 170];
+var LEAD_HEADERS = ['Timestamp', 'Name', 'Phone', 'Payment Status'];
+var LEAD_WIDTHS = [190, 220, 170, 150];
 
 var DEFAULT_TAB = 'Audit LP Leads';
 var DEFAULT_HEADER_COLOR = '#0B3D2E';
+
+var PAID = 'Paid';
+var NOT_PAID = 'Not Paid';
+
+var STATUS_COLORS = {
+  'Paid': { bg: '#d9f7ea', fg: '#0b6b45' },
+  'Not Paid': { bg: '#fde2e2', fg: '#a61b1b' }
+};
 
 function authorize() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -36,15 +52,19 @@ function doPost(e) {
 
     var data = JSON.parse(e.postData.contents);
 
-    // Two leads at the same moment must not write to the same row.
+    // A lead and its payment can arrive seconds apart; serialise writes so
+    // "paid" never misses a row that is still being added.
     lock.waitLock(20000);
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var ts = data.timestamp || new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
     var sheet = getOrCreateLeadSheet(ss, DEFAULT_TAB);
-    var row = appendLeadRow(sheet, data, ts);
 
-    return _json({ success: true, tab: DEFAULT_TAB, row: row });
+    var row = data.action === 'paid'
+      ? markPaid(sheet, data, ts)
+      : appendLeadRow(sheet, data, ts);
+
+    return _json({ success: true, tab: DEFAULT_TAB, action: data.action || 'lead', row: row });
   } catch (err) {
     return _json({ error: err.toString() });
   } finally {
@@ -54,16 +74,20 @@ function doPost(e) {
 
 function setupSheets() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(DEFAULT_TAB);
 
-  if (!ss.getSheetByName(DEFAULT_TAB)) {
+  if (!sheet) {
     createLeadSheet(ss, DEFAULT_TAB);
     Logger.log('Created: ' + DEFAULT_TAB);
   } else {
+    _ensureHeaders(sheet, LEAD_HEADERS, DEFAULT_HEADER_COLOR);
     Logger.log('OK: ' + DEFAULT_TAB);
   }
 
   Logger.log('setupSheets complete.');
 }
+
+/* ── Helpers ─────────────────────────────────────────────────── */
 
 function _json(obj) {
   return ContentService
@@ -105,17 +129,31 @@ function _addFilter(sheet, colCount) {
   }
 }
 
-function _appendByHeaders(sheet, valueMap, defaultHeaders, headerColor) {
+/** Header row, adding any LEAD_HEADERS column an older tab is missing. */
+function _ensureHeaders(sheet, defaultHeaders, headerColor) {
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(defaultHeaders);
     _styleHeader(sheet, defaultHeaders.length, headerColor);
     sheet.setFrozenRows(1);
+    return defaultHeaders.slice();
   }
 
-  var lastCol = sheet.getLastColumn();
-  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(function (h) {
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(function (h) {
     return String(h).trim();
   });
+
+  var missing = defaultHeaders.filter(function (h) { return headers.indexOf(h) === -1; });
+  if (missing.length) {
+    sheet.getRange(1, headers.length + 1, 1, missing.length).setValues([missing]);
+    headers = headers.concat(missing);
+    _styleHeader(sheet, headers.length, headerColor);
+    sheet.setColumnWidth(headers.length, 150);
+  }
+  return headers;
+}
+
+function _appendByHeaders(sheet, valueMap, defaultHeaders, headerColor) {
+  var headers = _ensureHeaders(sheet, defaultHeaders, headerColor);
 
   var row = headers.map(function (h) {
     return Object.prototype.hasOwnProperty.call(valueMap, h) ? valueMap[h] : '';
@@ -124,7 +162,7 @@ function _appendByHeaders(sheet, valueMap, defaultHeaders, headerColor) {
   var nextRow = sheet.getLastRow() + 1;
   // Kept as text, so Sheets doesn't turn +9198... into 9.19E+11.
   sheet.getRange(nextRow, 1, 1, headers.length).setNumberFormat('@').setValues([row]);
-  styleRow(sheet, nextRow, lastCol);
+  styleRow(sheet, nextRow, headers.length);
 
   return { row: nextRow, headers: headers };
 }
@@ -135,6 +173,36 @@ function _centerColumns(sheet, headers, rowIndex, names) {
     if (idx !== -1) sheet.getRange(rowIndex, idx + 1).setHorizontalAlignment('center');
   });
 }
+
+function _setStatus(sheet, headers, rowIndex, status) {
+  var idx = headers.indexOf('Payment Status');
+  if (idx === -1) return;
+  var colors = STATUS_COLORS[status];
+  sheet.getRange(rowIndex, idx + 1)
+    .setValue(status)
+    .setBackground(colors.bg)
+    .setFontColor(colors.fg)
+    .setFontWeight('bold')
+    .setHorizontalAlignment('center');
+}
+
+function _digits(raw) {
+  return String(raw || '').replace(/\D/g, '');
+}
+
+function _phone(raw) {
+  var digits = _digits(raw);
+  return digits ? '+' + digits : '';
+}
+
+/** Same number, with or without a country code (compares the last 10 digits). */
+function _samePhone(a, b) {
+  var x = _digits(a), y = _digits(b);
+  if (!x || !y) return false;
+  return x.slice(-10) === y.slice(-10);
+}
+
+/* ── Sheet setup ─────────────────────────────────────────────── */
 
 function createLeadSheet(ss, tabName) {
   var sheet = ss.insertSheet(tabName);
@@ -150,15 +218,54 @@ function getOrCreateLeadSheet(ss, tabName) {
   return ss.getSheetByName(tabName) || createLeadSheet(ss, tabName);
 }
 
-function appendLeadRow(sheet, data, ts) {
-  var digits = String(data.phone || '').replace(/\D/g, '');
+/* ── Actions ─────────────────────────────────────────────────── */
 
+function appendLeadRow(sheet, data, ts) {
   var result = _appendByHeaders(sheet, {
     'Timestamp': ts,
     'Name': data.name || '',
-    'Phone': digits ? '+' + digits : ''
+    'Phone': _phone(data.phone)
   }, LEAD_HEADERS, DEFAULT_HEADER_COLOR);
 
   _centerColumns(sheet, result.headers, result.row, ['Phone']);
+  _setStatus(sheet, result.headers, result.row, NOT_PAID);
+  return result.row;
+}
+
+function markPaid(sheet, data, ts) {
+  var headers = _ensureHeaders(sheet, LEAD_HEADERS, DEFAULT_HEADER_COLOR);
+  var phoneIdx = headers.indexOf('Phone');
+  var statusIdx = headers.indexOf('Payment Status');
+  var lastRow = sheet.getLastRow();
+
+  if (lastRow >= 2) {
+    var values = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+    var alreadyPaid = -1;
+
+    // Newest first: the latest form submission from this number is the one that paid.
+    for (var i = values.length - 1; i >= 0; i--) {
+      if (!_samePhone(values[i][phoneIdx], data.phone)) continue;
+      var rowIndex = i + 2;
+      if (String(values[i][statusIdx]).trim() === PAID) {
+        if (alreadyPaid === -1) alreadyPaid = rowIndex;
+        continue;
+      }
+      _setStatus(sheet, headers, rowIndex, PAID);
+      return rowIndex;
+    }
+
+    // Verify and webhook both report the same payment — the second changes nothing.
+    if (alreadyPaid !== -1) return alreadyPaid;
+  }
+
+  // No form row for this number — record the payment anyway.
+  var result = _appendByHeaders(sheet, {
+    'Timestamp': ts,
+    'Name': data.name || '',
+    'Phone': _phone(data.phone)
+  }, LEAD_HEADERS, DEFAULT_HEADER_COLOR);
+
+  _centerColumns(sheet, result.headers, result.row, ['Phone']);
+  _setStatus(sheet, result.headers, result.row, PAID);
   return result.row;
 }

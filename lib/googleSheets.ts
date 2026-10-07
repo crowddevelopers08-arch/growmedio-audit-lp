@@ -3,8 +3,10 @@ import "server-only";
 /**
  * Google Sheets client (via the Apps Script web app in scripts/google-sheets.gs).
  *
- * A copy of every booking-form lead — name and number — for the team,
- * next to TeleCRM and the Neon dashboard.
+ * A copy of every booking-form lead — name, number and whether they paid —
+ * for the team, next to TeleCRM and the Neon dashboard. The booking form
+ * (app/api/lead) adds the row as "Not Paid"; the Razorpay verify route and
+ * webhook flip it to "Paid", matched by phone number.
  */
 
 /** "7 Oct 2026, 3:13 pm" in India time. */
@@ -20,7 +22,7 @@ function istStamp() {
   });
 }
 
-export async function appendLeadToSheet(lead: { name: string; phone: string }) {
+async function postToSheet(body: Record<string, unknown>) {
   const endpoint = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   if (!endpoint) throw new Error("GOOGLE_SHEETS_WEBHOOK_URL is not set");
 
@@ -32,11 +34,7 @@ export async function appendLeadToSheet(lead: { name: string; phone: string }) {
     const res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: lead.name,
-        phone: lead.phone,
-        timestamp: istStamp(),
-      }),
+      body: JSON.stringify({ ...body, timestamp: istStamp() }),
       signal: controller.signal,
       cache: "no-store",
     });
@@ -56,4 +54,13 @@ export async function appendLeadToSheet(lead: { name: string; phone: string }) {
     clearTimeout(timeout);
     throw err instanceof Error ? err : new Error(String(err));
   }
+}
+
+export function appendLeadToSheet(lead: { name: string; phone: string }) {
+  return postToSheet({ action: "lead", name: lead.name, phone: lead.phone });
+}
+
+/** Marks the lead with this number as Paid (adds a row if none matches). */
+export function markPaidInSheet(payer: { name?: string; phone: string }) {
+  return postToSheet({ action: "paid", name: payer.name || "", phone: payer.phone });
 }

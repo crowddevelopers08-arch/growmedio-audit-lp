@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { markLeadPayment } from "@/lib/leads";
 import { sendPurchaseToMeta } from "@/lib/meta";
+import { markPaidInSheet } from "@/lib/googleSheets";
 import { createdOnStamp, postToTeleCRM } from "@/lib/telecrm";
 
 /**
@@ -151,6 +152,21 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Only a captured payment changes the row — a failed one stays "Not Paid".
+  let sheet: "ok" | "failed" | "skipped" = "skipped";
+  if (event === "payment.captured" && payerPhone(payment)) {
+    try {
+      await markPaidInSheet({ name: payment.notes?.name, phone: payerPhone(payment) });
+      sheet = "ok";
+    } catch (err) {
+      sheet = "failed";
+      console.error(
+        "[Razorpay webhook Google Sheets] Error:",
+        err instanceof Error ? err.message : err
+      );
+    }
+  }
+
   // Server-side Purchase, deduplicated against the browser's event by id.
   // Only a captured payment is a conversion.
   let meta: "ok" | "failed" | "skipped" = "skipped";
@@ -179,7 +195,7 @@ export async function POST(req: NextRequest) {
   // Always 200 on a verified event. Returning an error makes Razorpay retry,
   // which would duplicate a record that already went through.
   return NextResponse.json(
-    { received: true, event, paymentId: payment.id, dashboard, crm, meta },
+    { received: true, event, paymentId: payment.id, dashboard, crm, sheet, meta },
     { status: 200 }
   );
 }
