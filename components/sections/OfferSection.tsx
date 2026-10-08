@@ -43,7 +43,7 @@ export default function OfferSection() {
             The ₹199 Revenue Strategy Session
           </h2>
           <p className="mx-auto mt-3 max-w-[600px] text-[1.05rem] leading-[1.65] text-dim md:mt-4">
-            Not a sales call. A working session with a senior strategist —
+            Not a sales call. A working session with a senior strategist
             focused on one thing: where your next patient revenue is hiding, and
             what it would take to unlock up to 5x more of it from the same ad
             spend.

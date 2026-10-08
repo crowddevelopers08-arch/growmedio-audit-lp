@@ -6,7 +6,7 @@ const STEPS = [
     num: "1",
     Icon: LockIcon,
     title: "Book & lock your slot",
-    body: "Secure checkout, takes under a minute — UPI, card, anything.",
+    body: "Secure checkout, takes under a minute UPI, card, anything.",
   },
   {
     num: "2",
@@ -18,7 +18,7 @@ const STEPS = [
     num: "3",
     Icon: TrendingUpIcon,
     title: "Walk out with your roadmap",
-    body: "Leave with your Revenue Leak Audit and 90-day plan — implement it yourself, or let us run it.",
+    body: "Leave with your Revenue Leak Audit and 90-day plan implement it yourself, or let us run it.",
   },
 ];
 

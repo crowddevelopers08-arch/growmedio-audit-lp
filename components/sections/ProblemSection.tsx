@@ -8,17 +8,17 @@ const PAINS = [
   {
     Icon: AlertTriangleIcon,
     title: "You're spending on ads blind",
-    body: "Boosted posts, random reels, “brand awareness” campaigns — but no system connecting spend to enquiry to walk-in to revenue.",
+    body: "Boosted posts, random reels, “brand awareness” campaigns but no system connecting spend to enquiry to walk-in to revenue.",
   },
   {
     Icon: LayoutIcon,
     title: "Your agency sells you pretty creatives",
-    body: "Reach, impressions and a beautifully designed grid look great in a report. But followers don't pay your clinic's rent — patients do.",
+    body: "Reach, impressions and a beautifully designed grid look great in a report. But followers don't pay your clinic's rent patients do.",
   },
   {
     Icon: TrendingDownIcon,
     title: "Enquiries come in, patients don't show up",
-    body: "No follow-up system, no front-desk conversion tracking — most enquiries quietly die in a WhatsApp chat nobody replied to.",
+    body: "No follow-up system, no front-desk conversion tracking most enquiries quietly die in a WhatsApp chat nobody replied to.",
   },
 ];
 

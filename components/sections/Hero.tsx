@@ -57,11 +57,11 @@ export default function Hero() {
           <span className="text-brand">
             ₹{(OVERALL.revenue / 1e7).toFixed(2)} Crore
           </span>{" "}
-          Of Patient Revenue — Last Quarter.
+          Of Patient Revenue Last Quarter.
         </h1>
 
         <p className="mx-auto mt-3 max-w-[640px] text-[1.02rem] leading-[1.6] text-dim md:mt-[16px] md:text-[1.15rem]">
-          Not a pitch for another marketing retainer — a focused 45-minute audit
+          Not a pitch for another marketing retainer a focused 45-minute audit
           of your actual ad account, showing exactly where it&apos;s lagging and
           what to fix first. For less than the cost of a single OPD
           consultation.

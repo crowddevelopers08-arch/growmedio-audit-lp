@@ -18,6 +18,20 @@
 
    Rows are written by header name instead of fixed column position so the
    tab can tolerate extra manual columns without breaking submissions.
+
+   Meta Custom Audience sync (bottom of this file)
+   -----------------------------------------------
+   Every 5 minutes, "Not Paid" leads are pushed (SHA-256 hashed) to a Meta
+   customer-list Custom Audience, and anyone in it who has since paid is
+   removed again. A "Meta Audience" column records each row's state.
+
+   Project Settings → Script Properties:
+     META_ACCESS_TOKEN   System-user token with ads_management
+     META_AUDIENCE_ID    Customer-list audience for unpaid leads
+
+   Then run setupMetaAudienceSync() once from the editor (installs the
+   trigger and does the first sync). The sheet also gets a
+   "Meta Audience → Sync now" menu.
    ============================================================ */
 
 var LEAD_HEADERS = ['Timestamp', 'Name', 'Phone', 'Payment Status'];
@@ -269,3 +283,217 @@ function markPaid(sheet, data, ts) {
   _setStatus(sheet, result.headers, result.row, PAID);
   return result.row;
 }
+
+/* ── Meta Custom Audience sync (unpaid leads only) ───────────── */
+
+var META_GRAPH_VERSION = 'v21.0';
+var META_SYNC_TRIGGER = 'syncMetaAudience';
+var META_COLUMN = 'Meta Audience';
+var META_BATCH_SIZE = 5000; // Meta accepts up to 10,000 users per request.
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('Meta Audience')
+    .addItem('Sync now', 'syncMetaAudienceFromMenu')
+    .addItem('Retry failed rows', 'retryMetaAudienceFromMenu')
+    .addToUi();
+}
+
+/** Run once from the editor: checks the settings, installs the trigger, syncs. */
+function setupMetaAudienceSync() {
+  _metaSettings();
+
+  removeMetaAudienceSync();
+  ScriptApp.newTrigger(META_SYNC_TRIGGER).timeBased().everyMinutes(5).create();
+  Logger.log('Trigger installed: ' + META_SYNC_TRIGGER + ' every 5 minutes');
+
+  Logger.log(JSON.stringify(syncMetaAudience()));
+}
+
+function removeMetaAudienceSync() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === META_SYNC_TRIGGER) ScriptApp.deleteTrigger(t);
+  });
+  Logger.log('Meta audience trigger removed.');
+}
+
+function syncMetaAudienceFromMenu() {
+  SpreadsheetApp.getActive().toast(_metaSummary(syncMetaAudience()), 'Meta Audience', 8);
+}
+
+/** Clears "Skipped" cells (e.g. after fixing a number) so those rows are tried again. */
+function retryMetaAudienceFromMenu() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(DEFAULT_TAB);
+  if (!sheet || sheet.getLastRow() < 2) return;
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(function (h) {
+    return String(h).trim();
+  });
+  var idx = headers.indexOf(META_COLUMN);
+  if (idx !== -1) {
+    var range = sheet.getRange(2, idx + 1, sheet.getLastRow() - 1, 1);
+    range.setValues(range.getValues().map(function (r) {
+      return [String(r[0]).indexOf('Skipped') === 0 ? '' : r[0]];
+    }));
+  }
+  syncMetaAudienceFromMenu();
+}
+
+/**
+ * Keeps the audience equal to the sheet's unpaid leads:
+ *   - Not Paid rows not yet sent        → added     ("Added <time>")
+ *   - rows that were added, then paid   → removed   ("Removed (paid) <time>")
+ *   - rows already Paid before sending  → never sent ("Not sent: paid")
+ * Errors are written into the cell and retried on the next run. A number that
+ * paid on any row counts as paid, so a duplicate older "Not Paid" row of the
+ * same person never puts them back in.
+ */
+function syncMetaAudience() {
+  var settings = _metaSettings();
+
+  // Same lock as doPost, so a row being written or marked Paid is never half-read.
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) return { busy: true };
+
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(DEFAULT_TAB);
+    if (!sheet || sheet.getLastRow() < 2) return { added: 0, removed: 0, failed: 0, skipped: 0 };
+
+    var headers = _ensureHeaders(sheet, LEAD_HEADERS.concat([META_COLUMN]), DEFAULT_HEADER_COLOR);
+    var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, headers.length).getValues();
+    var nameIdx = headers.indexOf('Name');
+    var phoneIdx = headers.indexOf('Phone');
+    var statusIdx = headers.indexOf('Payment Status');
+    var col = headers.indexOf(META_COLUMN);
+
+    var rows = values.map(function (row) {
+      return {
+        state: String(row[col]).trim(),
+        paid: String(row[statusIdx]).trim() === PAID,
+        user: _metaUser(row[nameIdx], row[phoneIdx])
+      };
+    });
+
+    var paidPhones = {};
+    rows.forEach(function (r) { if (r.paid && r.user) paidPhones[r.user[0]] = true; });
+
+    var column = values.map(function (row) { return [row[col]]; });
+    var toAdd = [], toRemove = [], skipped = 0;
+
+    rows.forEach(function (r, i) {
+      var paid = r.paid || (r.user && paidPhones[r.user[0]]);
+      var inAudience = r.state.indexOf('Added') === 0 || r.state.indexOf('Error removing') === 0;
+      var notSentYet = !r.state || r.state.indexOf('Error adding') === 0;
+
+      if (paid) {
+        if (inAudience) toRemove.push({ i: i, user: r.user });
+        else if (notSentYet) column[i][0] = 'Not sent: paid';
+        return;
+      }
+      if (!notSentYet) return;
+      if (!r.user) {
+        column[i][0] = 'Skipped: no valid phone';
+        skipped++;
+        return;
+      }
+      toAdd.push({ i: i, user: r.user });
+    });
+
+    var added = _sendBatches(settings, 'post', toAdd, column, 'Added', 'Error adding');
+    var removed = _sendBatches(settings, 'delete', toRemove, column, 'Removed (paid)', 'Error removing');
+
+    // One write for the whole column; doPost is locked out, so the rows haven't moved.
+    sheet.getRange(2, col + 1, column.length, 1).setValues(column);
+
+    return {
+      added: added.ok,
+      removed: removed.ok,
+      failed: added.failed + removed.failed,
+      skipped: skipped
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function _metaSettings() {
+  var props = PropertiesService.getScriptProperties();
+  var token = props.getProperty('META_ACCESS_TOKEN');
+  var audienceId = props.getProperty('META_AUDIENCE_ID');
+  if (!token) throw new Error('Set the META_ACCESS_TOKEN script property first');
+  if (!audienceId) throw new Error('Set the META_AUDIENCE_ID script property first');
+  return { token: token, audienceId: audienceId };
+}
+
+function _sendBatches(settings, method, items, column, okLabel, errLabel) {
+  var ok = 0, failed = 0;
+  for (var start = 0; start < items.length; start += META_BATCH_SIZE) {
+    var batch = items.slice(start, start + META_BATCH_SIZE);
+    var label;
+    try {
+      var res = _audienceUsers(settings, method, batch.map(function (p) { return p.user; }));
+      label = okLabel + ' ' + _istNow();
+      ok += batch.length - (res.num_invalid_entries || 0);
+    } catch (err) {
+      label = errLabel + ': ' + String(err.message || err).slice(0, 200);
+      failed += batch.length;
+      Logger.log(errLabel + ': ' + err);
+    }
+    batch.forEach(function (p) { column[p.i][0] = label; });
+  }
+  return { ok: ok, failed: failed };
+}
+
+/** [PHONE, FN, LN] hashed per Meta's normalisation rules, or null without a usable number. */
+function _metaUser(name, phone) {
+  var digits = _digits(phone).replace(/^0+/, '');
+  if (digits.length === 10) digits = '91' + digits; // no country code → India
+  if (digits.length < 11 || digits.length > 15) return null;
+
+  // Meta wants names lowercase with no punctuation ("Dr. O'Neil" → "dr", "oneil").
+  var parts = String(name || '').trim().toLowerCase().split(/\s+/).map(function (p) {
+    return p.replace(/[.,'"`()\-_]/g, '');
+  }).filter(Boolean);
+  var fn = parts[0] || '';
+  var ln = parts.length > 1 ? parts[parts.length - 1] : '';
+
+  return [_sha256(digits), fn ? _sha256(fn) : '', ln ? _sha256(ln) : ''];
+}
+
+/** POST adds users to the audience, DELETE removes them. */
+function _audienceUsers(settings, method, users) {
+  var url = 'https://graph.facebook.com/' + META_GRAPH_VERSION + '/' +
+    encodeURIComponent(settings.audienceId) + '/users';
+  var res = UrlFetchApp.fetch(url, {
+    method: method,
+    payload: {
+      access_token: settings.token,
+      payload: JSON.stringify({ schema: ['PHONE', 'FN', 'LN'], data: users })
+    },
+    muteHttpExceptions: true
+  });
+
+  var json = {};
+  try { json = JSON.parse(res.getContentText()); } catch (ignore) {}
+  if (res.getResponseCode() !== 200 || json.error) {
+    throw new Error((json.error && json.error.message) || ('Meta HTTP ' + res.getResponseCode()));
+  }
+  return json; // { audience_id, num_received, num_invalid_entries, ... }
+}
+
+function _sha256(value) {
+  var bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value, Utilities.Charset.UTF_8);
+  return bytes.map(function (b) { return ('0' + (b & 0xff).toString(16)).slice(-2); }).join('');
+}
+
+function _istNow() {
+  return Utilities.formatDate(new Date(), 'Asia/Kolkata', 'd MMM yyyy, h:mm a');
+}
+
+function _metaSummary(result) {
+  if (result.busy) return 'Sheet is busy - try again in a moment.';
+  return result.added + ' added, ' + result.removed + ' removed (paid)' +
+    (result.failed ? ', ' + result.failed + ' failed' : '') +
+    (result.skipped ? ', ' + result.skipped + ' skipped (no valid phone)' : '');
+}
+
+

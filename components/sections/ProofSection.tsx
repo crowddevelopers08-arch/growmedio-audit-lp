@@ -23,7 +23,7 @@ export default function ProofSection() {
             Receipts, not promises
           </span>
           <h2 className="max-w-[720px] font-display text-[clamp(1.7rem,3.2vw_+_0.9rem,2.6rem)] font-semibold leading-[1.12] tracking-[-0.01em]">
-            Straight From Our Live Client Tracker — July 2026
+            Straight From Our Live Client Tracker July 2026
           </h2>
           <p className="mt-3 max-w-[600px] text-[1.05rem] leading-[1.65] text-dim md:mt-4">
             This isn&apos;t a highlight reel. It&apos;s the same dashboard our

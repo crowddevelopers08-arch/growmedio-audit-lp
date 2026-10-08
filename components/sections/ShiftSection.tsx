@@ -9,7 +9,7 @@ const DOING_NOW = [
 ];
 
 const AUDIT_CHECKS = [
-  "Whether success is measured in booked appointments — not just likes and reach",
+  "Whether success is measured in booked appointments not just likes and reach",
   "Whether every rupee is tracked: Spend → Enquiry → Walk-in → Revenue",
   "Whether your offer and pricing were tested before ads went live",
   "Whether your creative is stale, or genuinely refreshed on a real cadence",
@@ -29,7 +29,7 @@ export default function ShiftSection() {
           </h2>
           <p className="mt-3 max-w-[600px] text-[1.05rem] leading-[1.65] text-dim md:mt-4">
             We&apos;re not pitching &ldquo;revenue-first marketing&rdquo; as a
-            service — we audit your account against it. Every creative, every
+            service we audit your account against it. Every creative, every
             campaign and every rupee gets checked against one number: patients
             booked. It&apos;s the same checklist we run on your call.
           </p>

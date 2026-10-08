@@ -17,7 +17,7 @@ export default function FinalCta() {
 
         <p className="mx-auto mt-3 max-w-[600px] text-[1.05rem] leading-[1.65] text-dim md:mt-4">
           For less than one consultation fee, get the full ₹13,996 audit,
-          90-day roadmap and ROAS projection — for just ₹199.
+          90-day roadmap and ROAS projection for just ₹199.
         </p>
 
         <div className="mt-5 flex flex-col items-center gap-[14px] md:mt-7">

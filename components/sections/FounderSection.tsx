@@ -3,8 +3,8 @@ import { CheckIcon } from "@/components/ui/Icons";
 
 const CREDENTIALS = [
   "Every audit benchmarked against a live spend → patient dashboard, not guesswork",
-  "Creative, targeting and offer reviewed against what's actually working right now — not a template from last year",
-  "Strategy built around your specialty, city and patient journey — never a copy-paste template",
+  "Creative, targeting and offer reviewed against what's actually working right now not a template from last year",
+  "Strategy built around your specialty, city and patient journey never a copy-paste template",
   "The tracker you saw above is our real scoreboard, not a highlight reel",
 ];
 
@@ -20,7 +20,7 @@ export default function FounderSection() {
               "Co-Founder" is kept whole so it never splits at its hyphen. */}
           <h2 className="max-w-[720px] font-display text-[clamp(1.7rem,3.2vw_+_0.9rem,2.6rem)] font-semibold leading-[1.12] tracking-[-0.01em]">
             <span className="block min-[640px]:inline">Meet Soma Arunagiri</span>
-            <span className="hidden min-[640px]:inline"> — </span>
+            <span className="hidden min-[640px]:inline"> </span>
             <span className="block min-[640px]:inline">
               <span className="whitespace-nowrap">Co-Founder</span>, Grow Medico
             </span>
@@ -51,11 +51,10 @@ export default function FounderSection() {
           <div>
             <p className="text-[0.98rem] leading-[1.7] text-dim md:text-base">
               Soma Arunagiri built Grow Medico on one rule: healthcare marketing
-              should be judged the way a doctor judges treatment — by outcomes,
+              should be judged the way a doctor judges treatment by outcomes,
               not activity. Working only with clinics, hospitals and healthcare
               brands across India, Grow Medico has seen every version of
-              &ldquo;we post reels but nobody&apos;s booking appointments&rdquo;
-              — and built a process specifically to fix it.
+              &ldquo;we post reels but nobody&apos;s booking appointments&rdquo; and built a process specifically to fix it.
             </p>
 
             <ul className="mt-4 grid gap-2.5 md:mt-[22px] md:gap-[11px]">
