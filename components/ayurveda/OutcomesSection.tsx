@@ -26,7 +26,7 @@ export function OutcomesSection() {
             <Reveal key={t} variant="scale" delay={i * 0.1} className="h-full">
               <div
                 style={borderDelay(i)}
-                className={`group relative h-full overflow-hidden rounded-[18px] border border-ay-line bg-ay-panel px-6 py-7 backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[1100px]:py-6 max-[560px]:flex max-[560px]:items-center max-[560px]:gap-4 max-[560px]:rounded-2xl max-[560px]:px-5 max-[560px]:py-4`}
+                className={`group relative h-full overflow-hidden rounded-[18px] border border-ay-line bg-[rgba(6,12,9,.86)] px-6 py-7 backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[1100px]:py-6 max-[560px]:flex max-[560px]:items-center max-[560px]:gap-4 max-[560px]:rounded-2xl max-[560px]:px-5 max-[560px]:py-4`}
               >
                 {/* circle pops in, then the tick draws itself; the circle glows brighter on hover */}
                 <div

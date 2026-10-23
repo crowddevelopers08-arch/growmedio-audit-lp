@@ -1,11 +1,17 @@
 /* ============================================================
-   Grow Medico - Audit LP Leads - Google Apps Script
+   Grow Medico - Audit LP + Ayurveda Leads - Google Apps Script
 
    Paste into Extensions → Apps Script of the target spreadsheet, then
    Deploy → New deployment → Web app (Execute as: Me, Access: Anyone).
    The /exec URL goes in GOOGLE_SHEETS_WEBHOOK_URL.
 
+   Updating an existing deployment: Deploy → Manage deployments → edit
+   (pencil) → Version: "New version" → Deploy. That keeps the same /exec
+   URL, so GOOGLE_SHEETS_WEBHOOK_URL does not change.
+
    Accepts payloads from lib/googleSheets.ts:
+
+   Tab "Audit LP Leads" (₹199 strategy session, homepage):
 
      action: "lead"  (app/api/lead — booking form, before payment)
        { timestamp, name, phone }          → new row, "Not Paid"
@@ -15,6 +21,15 @@
 
    "paid" can arrive twice (verify and webhook) — the second is a no-op.
    If no row matches the number, a new "Paid" row is added so nothing is lost.
+
+   Tab "Ayurveda Leads" (free session form on /ayurveda):
+
+     action: "ayurveda_lead"  (app/api/ayurveda-lead)
+       { timestamp, name, phone, email, clinic, occupation, pageUrl }
+                                           → new row (no payment involved)
+
+   Both tabs are created automatically on their first lead; run
+   setupSheets() once from the editor to create them up front.
 
    Rows are written by header name instead of fixed column position so the
    tab can tolerate extra manual columns without breaking submissions.
@@ -40,6 +55,11 @@ var LEAD_WIDTHS = [190, 220, 170, 150];
 var DEFAULT_TAB = 'Audit LP Leads';
 var DEFAULT_HEADER_COLOR = '#0B3D2E';
 
+var AYURVEDA_TAB = 'Ayurveda Leads';
+var AYURVEDA_HEADERS = ['Timestamp', 'Name', 'Phone', 'Email', 'Clinic / Hospital', 'Occupation', 'Source', 'Page URL'];
+var AYURVEDA_WIDTHS = [190, 200, 160, 240, 240, 200, 160, 320];
+var AYURVEDA_HEADER_COLOR = '#7A5410';
+
 var PAID = 'Paid';
 var NOT_PAID = 'Not Paid';
 
@@ -54,7 +74,7 @@ function authorize() {
 }
 
 function doGet() {
-  return _json({ status: 'Grow Medico Audit LP API is live' });
+  return _json({ status: 'Grow Medico Audit LP + Ayurveda leads API is live' });
 }
 
 function doPost(e) {
@@ -72,6 +92,13 @@ function doPost(e) {
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var ts = data.timestamp || new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+    // Ayurveda funnel leads live in their own tab.
+    if (data.action === 'ayurveda_lead') {
+      var ayRow = appendAyurvedaRow(getOrCreateAyurvedaSheet(ss), data, ts);
+      return _json({ success: true, tab: AYURVEDA_TAB, action: data.action, row: ayRow });
+    }
+
     var sheet = getOrCreateLeadSheet(ss, DEFAULT_TAB);
 
     var row = data.action === 'paid'
@@ -96,6 +123,15 @@ function setupSheets() {
   } else {
     _ensureHeaders(sheet, LEAD_HEADERS, DEFAULT_HEADER_COLOR);
     Logger.log('OK: ' + DEFAULT_TAB);
+  }
+
+  var ay = ss.getSheetByName(AYURVEDA_TAB);
+  if (!ay) {
+    createAyurvedaSheet(ss);
+    Logger.log('Created: ' + AYURVEDA_TAB);
+  } else {
+    _ensureHeaders(ay, AYURVEDA_HEADERS, AYURVEDA_HEADER_COLOR);
+    Logger.log('OK: ' + AYURVEDA_TAB);
   }
 
   Logger.log('setupSheets complete.');
@@ -232,6 +268,20 @@ function getOrCreateLeadSheet(ss, tabName) {
   return ss.getSheetByName(tabName) || createLeadSheet(ss, tabName);
 }
 
+function createAyurvedaSheet(ss) {
+  var sheet = ss.insertSheet(AYURVEDA_TAB);
+  sheet.appendRow(AYURVEDA_HEADERS);
+  _styleHeader(sheet, AYURVEDA_HEADERS.length, AYURVEDA_HEADER_COLOR);
+  _setWidths(sheet, AYURVEDA_WIDTHS);
+  sheet.setFrozenRows(1);
+  _addFilter(sheet, AYURVEDA_HEADERS.length);
+  return sheet;
+}
+
+function getOrCreateAyurvedaSheet(ss) {
+  return ss.getSheetByName(AYURVEDA_TAB) || createAyurvedaSheet(ss);
+}
+
 /* ── Actions ─────────────────────────────────────────────────── */
 
 function appendLeadRow(sheet, data, ts) {
@@ -282,6 +332,40 @@ function markPaid(sheet, data, ts) {
   _centerColumns(sheet, result.headers, result.row, ['Phone']);
   _setStatus(sheet, result.headers, result.row, PAID);
   return result.row;
+}
+
+function appendAyurvedaRow(sheet, data, ts) {
+  var result = _appendByHeaders(sheet, {
+    'Timestamp': ts,
+    'Name': data.name || '',
+    'Phone': _phone(data.phone),
+    'Email': data.email || '',
+    'Clinic / Hospital': data.clinic || '',
+    'Occupation': data.occupation || '',
+    'Source': _source(data.pageUrl),
+    'Page URL': data.pageUrl || ''
+  }, AYURVEDA_HEADERS, AYURVEDA_HEADER_COLOR);
+
+  _centerColumns(sheet, result.headers, result.row, ['Phone']);
+  return result.row;
+}
+
+/** utm_source · utm_campaign off the page URL ("facebook" / "google" for click ids, else "direct"). */
+function _source(url) {
+  if (!url) return '';
+  var query = String(url).split('#')[0].split('?')[1] || '';
+  var params = {};
+  query.split('&').forEach(function (pair) {
+    var kv = pair.split('=');
+    if (kv[0]) {
+      try { params[kv[0]] = decodeURIComponent((kv[1] || '').replace(/\+/g, ' ')); } catch (ignore) { params[kv[0]] = kv[1] || ''; }
+    }
+  });
+  var parts = [params.utm_source, params.utm_campaign].filter(Boolean);
+  if (parts.length) return parts.join(' · ');
+  if (params.fbclid) return 'facebook';
+  if (params.gclid) return 'google';
+  return 'direct';
 }
 
 /* ── Meta Custom Audience sync (unpaid leads only) ───────────── */

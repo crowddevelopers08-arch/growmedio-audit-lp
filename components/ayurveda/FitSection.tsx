@@ -26,7 +26,7 @@ export function FitSection() {
           <Reveal variant="left" className="h-full">
             <div
               style={borderDelay(0)}
-              className={`relative h-full rounded-[20px] border border-ay-gold/50 px-8 py-8 backdrop-blur-[6px] [background:linear-gradient(135deg,rgba(242,181,61,.08),var(--color-ay-panel)_60%)] ${cardLift} ${cardBorder} max-[760px]:py-6 max-[560px]:px-5 max-[560px]:py-5`}
+              className={`relative h-full rounded-[20px] border border-ay-gold/50 px-8 py-8 backdrop-blur-[6px] [background:linear-gradient(135deg,rgba(242,181,61,.08),rgba(6,12,9,.84)_60%)] ${cardLift} ${cardBorder} max-[760px]:py-6 max-[560px]:px-5 max-[560px]:py-5`}
             >
               <h3 className="text-[23px] font-semibold tracking-[-0.025em] text-ay-gold">Yes, if:</h3>
               <ul className="mt-5 grid list-none gap-3 p-0">
@@ -47,7 +47,7 @@ export function FitSection() {
           <Reveal variant="right" delay={0.1} className="h-full">
             <div
               style={borderDelay(2)}
-              className={`relative h-full rounded-[20px] border border-ay-line bg-ay-panel px-8 py-8 backdrop-blur-[6px] ${cardLift} ${cardBorder} max-[760px]:py-6 max-[560px]:px-5 max-[560px]:py-5`}
+              className={`relative h-full rounded-[20px] border border-ay-line bg-[rgba(6,12,9,.86)] px-8 py-8 backdrop-blur-[6px] ${cardLift} ${cardBorder} max-[760px]:py-6 max-[560px]:px-5 max-[560px]:py-5`}
             >
               <h3 className="text-[23px] font-semibold tracking-[-0.025em] text-ay-muted">Not right now, if:</h3>
               <ul className="mt-5 grid list-none gap-3 p-0">

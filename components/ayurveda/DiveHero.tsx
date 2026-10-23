@@ -16,10 +16,11 @@ const stats = [
 ];
 
 const layerPad = "px-[max(16px,env(safe-area-inset-left,0px))]";
-const layerBase = `pointer-events-none absolute inset-0 grid place-items-center ${layerPad} [&>*]:pointer-events-auto`;
+const layerBase = `pointer-events-none absolute inset-0 grid place-items-center ${layerPad} will-change-[opacity,transform] [&>*]:pointer-events-auto`;
 
 /**
- * Pinned "dive" hero: 340vh of scroll while the stage sticks. Scrolling blooms the lotus
+ * Pinned "dive" hero: 340svh of scroll while the stage sticks (220svh on phones, so the story
+ * moves on with less thumb travel). Scrolling blooms the lotus
  * (see LotusCanvas) and cross-fades three story layers.
  */
 export function DiveHero() {
@@ -50,7 +51,8 @@ export function DiveHero() {
       const b = sm(p, 0.38, 0.48) * (1 - sm(p, 0.76, 0.86));
       const c = sm(p, 0.86, 0.97);
       A.style.opacity = String(a);
-      A.style.transform = `translateY(${-(1 - a) * 40}px) scale(${1 - (1 - a) * 0.06})`;
+      // translate3d keeps the layers on the GPU, so the cross-fades don't repaint while scrolling
+      A.style.transform = `translate3d(0,${-(1 - a) * 40}px,0) scale(${1 - (1 - a) * 0.06})`;
       A.style.visibility = a < 0.02 ? "hidden" : "visible";
       B.style.opacity = b > 0 ? "1" : "0";
       B.style.visibility = b < 0.02 ? "hidden" : "visible";
@@ -58,11 +60,11 @@ export function DiveHero() {
         if (!el) return;
         const s = sm(p, 0.38 + i * 0.045, 0.46 + i * 0.045) * (1 - sm(p, 0.76, 0.86));
         el.style.opacity = String(s);
-        el.style.transform = `translateY(${(1 - s) * 26}px)`;
+        el.style.transform = `translate3d(0,${(1 - s) * 26}px,0)`;
       });
       lbSub.current!.style.opacity = String(b);
       C.style.opacity = String(c);
-      C.style.transform = `translateY(${(1 - c) * 30}px)`;
+      C.style.transform = `translate3d(0,${(1 - c) * 30}px,0)`;
       C.style.visibility = c < 0.02 ? "hidden" : "visible";
       hint.current!.style.opacity = String(1 - sm(p, 0, 0.1));
       prog.current!.style.transform = `scaleY(${P})`;
@@ -75,9 +77,9 @@ export function DiveHero() {
   return (
     <section
       id="dive"
-      className="relative h-[340vh] supports-[height:100svh]:h-[340svh] motion-reduce:h-auto motion-reduce:supports-[height:100svh]:h-auto"
+      className="relative h-[340svh] max-[560px]:h-[220svh] motion-reduce:h-auto max-[560px]:motion-reduce:h-auto"
     >
-      <div className="sticky top-0 grid h-screen place-items-center overflow-hidden supports-[height:100svh]:h-svh motion-reduce:relative motion-reduce:h-auto motion-reduce:min-h-svh motion-reduce:supports-[height:100svh]:h-auto">
+      <div className="sticky top-0 grid h-svh place-items-center overflow-hidden motion-reduce:relative motion-reduce:h-auto motion-reduce:min-h-svh">
         {/* Layer A: headline */}
         <div
           ref={la}

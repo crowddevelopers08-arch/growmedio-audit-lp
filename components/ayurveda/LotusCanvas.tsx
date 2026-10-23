@@ -5,6 +5,10 @@ import { useLanding } from "./LandingProvider";
 import { clamp, prefersReducedMotion, sm, store } from "@/lib/ayurveda/motion";
 
 type Particle = { x: number; y: number; r: number; v: number; ph: number; g: boolean };
+type Stop = { y: number; x: number; yy: number; size: number; a: number };
+
+/** Opacity multiplier for the lotus once it leaves the hero (1 = original strength). */
+const SCROLL_DIM = 0.55;
 
 const ROWS = [
   { n: 11, len: 1.0, w: 0.3, spread: 1.52 },
@@ -14,8 +18,8 @@ const ROWS = [
 ];
 
 /**
- * Full-screen glowing lotus. It blooms while the pinned hero scrolls and fades away once the
- * hero ends, so no section below has it behind. It also drives the hero's layer cross-fades every frame.
+ * Full-screen glowing lotus. It blooms while the pinned hero scrolls, then drifts beside each
+ * section down to the final call to action. It also drives the hero's layer cross-fades every frame.
  */
 export function LotusCanvas() {
   const { heroFrameRef, openModal, modalOpenRef } = useLanding();
@@ -31,25 +35,40 @@ export function LotusCanvas() {
     let W = 0, H = 0, DPR = 1, parts: Particle[] = [], P = 0, p = 0, inView = true;
     const t0 = performance.now();
     const S = { x: 0.5, yy: 0.54, size: 0.2, alpha: 1, bloom: 0, rot: 0, hero: true };
-    let heroEnd = 0, fadeEnd = 1, inited = false, lastT = performance.now(), tick = 0, popped = false, raf = 0;
+    let stops: Stop[] = [], inited = false, lastT = performance.now(), tick = 0, popped = false, raf = 0;
 
-    /* the animation lives only in the hero: it fades out as the first section scrolls in */
+    /* the lotus follows the reader: one waypoint per section, eased between them, all the way to the end */
     function buildStops() {
-      const vh = H;
-      heroEnd = dive.getBoundingClientRect().top + window.pageYOffset + dive.offsetHeight - vh;
-      const first = dive.nextElementSibling ?? dive;
-      fadeEnd = Math.max(heroEnd + 1, first.getBoundingClientRect().top + window.pageYOffset - vh * 0.3);
-    }
-
-    /** 1 inside the hero, 0 once past it. Returns whether anything needs drawing. */
-    function applyVisibility() {
-      const vis = 1 - sm(window.pageYOffset, heroEnd, fadeEnd);
-      cv.style.opacity = String(vis);
-      return vis > 0;
+      const narrow = W < 900, vh = H, f = narrow ? 0.27 : 0.31;
+      const at = (id: string) => {
+        const e = document.getElementById(id);
+        if (!e) return -1;
+        const r = e.getBoundingClientRect();
+        return r.top + window.pageYOffset + r.height / 2 - vh / 2;
+      };
+      const side = (x: number, yy: number, size: number, a: number) =>
+        narrow ? { x: 0.5, yy: 0.5, size: 0.22, a: 0.16 } : { x, yy, size, a };
+      const heroEnd = dive.getBoundingClientRect().top + window.pageYOffset + dive.offsetHeight - vh;
+      stops = [
+        { y: heroEnd, x: 0.5, yy: narrow ? 0.56 : 0.54, size: f * 1.24, a: 0.65 },
+        { y: at("problem"), ...(narrow ? { x: 0.5, yy: 0.5, size: 0.22, a: 0.2 } : { x: 0.2, yy: 0.8, size: 0.17, a: 0.5 }) },
+        { y: at("leaks"), x: 0.5, yy: 0.5, size: narrow ? 0.24 : 0.24, a: narrow ? 0.16 : 0.24 },
+        { y: at("session"), ...side(0.12, 0.46, 0.2, 0.3) },
+        { y: at("outcomes"), ...side(0.88, 0.42, 0.2, 0.3) },
+        { y: at("fit"), ...side(0.1, 0.5, 0.19, 0.28) },
+        { y: at("about"), ...side(0.88, 0.55, 0.2, 0.3) },
+        { y: at("proof"), ...side(0.9, 0.42, 0.2, 0.3) },
+        { y: at("process"), ...side(0.1, 0.5, 0.19, 0.28) },
+        { y: at("faq"), ...side(0.88, 0.5, 0.19, 0.28) },
+        { y: at("book"), x: 0.5, yy: narrow ? 0.74 : 0.8, size: narrow ? 0.26 : 0.3, a: 0.5 },
+      ].filter((s) => s.y >= 0);
+      // past the hero the lotus is a quiet backdrop, so dim it
+      for (let i = 1; i < stops.length; i++) stops[i].a *= SCROLL_DIM;
+      for (let i = 1; i < stops.length; i++) if (stops[i].y <= stops[i - 1].y) stops[i].y = stops[i - 1].y + 1;
     }
 
     function target() {
-      const narrow = W < 900, f = narrow ? 0.27 : 0.31;
+      const y = window.pageYOffset, narrow = W < 900, f = narrow ? 0.27 : 0.31;
       const base = narrow ? 0.56 : 0.54;
       const tg = {
         x: 0.5,
@@ -59,13 +78,19 @@ export function LotusCanvas() {
         b: sm(p, 0.04, 0.78),
         hero: true,
       };
-      return tg;
+      if (stops.length < 2 || y <= stops[0].y) return tg;
+      let i = 0;
+      while (i < stops.length - 2 && y >= stops[i + 1].y) i++;
+      const a = stops[i], b = stops[i + 1], k = sm(y, a.y, b.y);
+      const L = (u: number, v: number) => u + (v - u) * k;
+      return { x: L(a.x, b.x), yy: L(a.yy, b.yy), size: L(a.size, b.size), a: L(a.a, b.a), b: 1, hero: false };
     }
 
     function resize() {
-      DPR = Math.min(window.devicePixelRatio || 1, 1.75);
       W = window.innerWidth;
       H = window.innerHeight;
+      // phones have 3x screens but small GPUs; 1.5x still looks sharp for a soft glow
+      DPR = Math.min(window.devicePixelRatio || 1, W < 600 ? 1.5 : 1.75);
       buildStops();
       cv.width = Math.round(W * DPR);
       cv.height = Math.round(H * DPR);
@@ -178,7 +203,8 @@ export function LotusCanvas() {
           petal(L, row.w);
           ctx.fillStyle = gr;
           ctx.shadowColor = "rgba(242,181,61,.65)";
-          ctx.shadowBlur = S.hero ? 16 + 10 * bloom : 4;
+          // per-petal blur is the costliest part of a frame, so phones get a lighter halo
+          ctx.shadowBlur = S.hero ? (W < 600 ? 8 + 6 * bloom : 16 + 10 * bloom) : W < 600 ? 0 : 4;
           ctx.fill();
           ctx.shadowBlur = 0;
           ctx.lineWidth = 1.1;
@@ -242,10 +268,11 @@ export function LotusCanvas() {
 
     function frame(now: number) {
       setP();
-      p += (P - p) * 0.1;
-      if (Math.abs(P - p) < 0.0005) p = P;
       const dt = Math.min((now - lastT) / 1000, 0.05);
       lastT = now;
+      // time-based easing (≈ the old 0.1 per frame at 60Hz), so 120Hz phones glide at the same pace
+      p += (P - p) * (1 - Math.exp(-dt * 6.3));
+      if (Math.abs(P - p) < 0.0005) p = P;
       if (++tick % 40 === 1) buildStops();
       const tg = target(), k = inited ? 1 - Math.exp(-dt * 5.5) : 1;
       inited = true;
@@ -256,7 +283,7 @@ export function LotusCanvas() {
       S.bloom += ((tg.hero ? tg.b : 0.9 + 0.1 * Math.sin(now / 1800)) - S.bloom) * Math.max(k, 0.12);
       S.hero = tg.hero;
       S.rot = window.pageYOffset * 0.0014;
-      if (applyVisibility()) draw(now);
+      draw(now);
       if (inView) heroFrameRef.current?.(p, P);
       if (p > 0.985) autoPop();
       raf = requestAnimationFrame(frame);
@@ -278,9 +305,6 @@ export function LotusCanvas() {
     };
     window.addEventListener("resize", onResize);
     window.addEventListener("load", buildStops);
-    // reduced motion has no frame loop, so fade on scroll instead
-    const onScroll = () => applyVisibility();
-    if (reduce) window.addEventListener("scroll", onScroll, { passive: true });
 
     if (reduce) {
       p = 1;
@@ -288,7 +312,6 @@ export function LotusCanvas() {
       S.bloom = 1;
       S.size = (W < 900 ? 0.27 : 0.31) * 1.24;
       draw(performance.now());
-      applyVisibility();
     } else {
       raf = requestAnimationFrame(frame);
     }
@@ -297,7 +320,6 @@ export function LotusCanvas() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("load", buildStops);
-      window.removeEventListener("scroll", onScroll);
     };
   }, [heroFrameRef, openModal, modalOpenRef]);
 

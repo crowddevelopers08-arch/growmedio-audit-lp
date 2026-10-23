@@ -36,10 +36,14 @@ export function pushDataLayer(event: string, params: Record<string, unknown> = {
   }
 }
 
-/** Name + phone submitted, before payment. */
-export function trackLead() {
-  fbq("track", "Lead");
-  pushDataLayer("Lead");
+/**
+ * Name + phone submitted, before payment (or the Ayurveda funnel's free-session form).
+ * Pass `eventId` when the server reports the same lead to the Conversions API, so Meta
+ * counts it once.
+ */
+export function trackLead(eventId?: string) {
+  fbq("track", "Lead", {}, eventId ? { eventID: eventId } : undefined);
+  pushDataLayer("Lead", eventId ? { event_id: eventId } : {});
 }
 
 /** Razorpay checkout opened. */

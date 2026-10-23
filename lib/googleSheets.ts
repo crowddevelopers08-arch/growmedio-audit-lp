@@ -60,6 +60,18 @@ export function appendLeadToSheet(lead: { name: string; phone: string }) {
   return postToSheet({ action: "lead", name: lead.name, phone: lead.phone });
 }
 
+/** Ayurveda funnel form (app/api/ayurveda-lead) — goes to its own "Ayurveda Leads" tab. */
+export function appendAyurvedaLeadToSheet(lead: {
+  name: string;
+  phone: string;
+  email: string;
+  clinic: string;
+  occupation: string;
+  pageUrl?: string;
+}) {
+  return postToSheet({ action: "ayurveda_lead", ...lead, pageUrl: lead.pageUrl || "" });
+}
+
 /** Marks the lead with this number as Paid (adds a row if none matches). */
 export function markPaidInSheet(payer: { name?: string; phone: string }) {
   return postToSheet({ action: "paid", name: payer.name || "", phone: payer.phone });

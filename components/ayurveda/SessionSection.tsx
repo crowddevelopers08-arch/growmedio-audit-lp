@@ -26,7 +26,7 @@ function SessionCard({ n, title, text, delay, variant }: (typeof STEPS)[number] 
           c.style.setProperty("--my", `${e.clientY - r.top}px`);
         }}
         style={{ "--mx": "50%", "--my": "0%", ...borderDelay(n) } as React.CSSProperties}
-        className={`group relative h-full overflow-hidden rounded-[20px] border border-ay-line px-7 py-[30px] backdrop-blur-[6px] [background:radial-gradient(420px_circle_at_var(--mx)_var(--my),rgba(242,181,61,.13),transparent_60%),var(--color-ay-panel)] ${cardLift} ${cardBorder} ${cardShine} max-[860px]:px-6 max-[860px]:py-6 max-[560px]:rounded-2xl max-[560px]:px-5 max-[560px]:py-5`}
+        className={`group relative h-full overflow-hidden rounded-[20px] border border-ay-line px-7 py-[30px] backdrop-blur-[6px] [background:radial-gradient(420px_circle_at_var(--mx)_var(--my),rgba(242,181,61,.13),transparent_60%),rgba(6,12,9,.84)] ${cardLift} ${cardBorder} ${cardShine} max-[860px]:px-6 max-[860px]:py-6 max-[560px]:rounded-2xl max-[560px]:px-5 max-[560px]:py-5`}
       >
         {/* numbered badge that pops in, then spins a quarter turn on hover */}
         <div

@@ -7,9 +7,10 @@ import { borderDelay, cardBorder, cardLift, cardShine } from "../ui/fx";
 type Counter = { pre?: string; to: number; post?: string; label: React.ReactNode };
 
 const COUNTERS: Counter[] = [
-  { to: 600, post: "+", label: "consultations per month, up from 30, within 8 months" },
+  { to: 656, label: <>consultations last month, up from 25&ndash;30</> },
   { pre: "₹", to: 44, post: "L", label: <>monthly revenue, up from &#8377;1&nbsp;lakh</> },
-  { to: 44, post: "×", label: "in monthly revenue" },
+  { to: 44, post: "×", label: "growth in monthly revenue" },
+  { pre: "≈₹", to: 6700, label: "revenue per consultation" },
 ];
 
 function CounterCard({ pre, to, post, label, delay }: Counter & { delay: number }) {
@@ -25,7 +26,7 @@ function CounterCard({ pre, to, post, label, delay }: Counter & { delay: number 
     >
       <div
         style={borderDelay(Math.round(delay / 0.08))}
-        className={`group relative h-full overflow-hidden rounded-[18px] border border-ay-line bg-ay-panel px-6 py-7 backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[760px]:px-5 max-[760px]:py-5`}
+        className={`group relative h-full overflow-hidden rounded-[18px] border border-ay-line bg-[rgba(6,12,9,.86)] px-6 py-7 backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[760px]:px-5 max-[760px]:py-5`}
       >
         {/* gold bar fills along the top while the number counts */}
         <span
@@ -48,7 +49,7 @@ function CounterCard({ pre, to, post, label, delay }: Counter & { delay: number 
 
 export function Counters() {
   return (
-    <div className="mt-10 grid grid-cols-3 gap-[18px] max-[760px]:grid-cols-[minmax(0,1fr)] max-[760px]:gap-3 max-[560px]:mt-8">
+    <div className="mt-10 grid grid-cols-4 gap-[18px] max-[980px]:grid-cols-2 max-[760px]:gap-3 max-[560px]:mt-8">
       {COUNTERS.map((c, i) => (
         <CounterCard key={i} {...c} delay={i * 0.08} />
       ))}

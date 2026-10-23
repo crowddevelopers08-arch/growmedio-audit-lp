@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useLanding } from "./LandingProvider";
-import { Button, ButtonLink } from "./ui/Button";
-import { LeafIcon, TickIcon } from "./ui/Icons";
-import { FORM_ENDPOINT, WA_NUMBER } from "@/lib/ayurveda/config";
+import { Button } from "./ui/Button";
+import { LeafIcon } from "./ui/Icons";
+import { rememberAyurvedaLead } from "@/lib/ayurveda/handover";
+import { trackLead } from "@/lib/pixel";
 
 type FieldId = "name" | "phone" | "email" | "clinic" | "occupation";
 
@@ -22,14 +24,13 @@ const RULES: Record<FieldId, (v: string) => boolean> = {
 };
 const ORDER: FieldId[] = ["name", "phone", "email", "clinic", "occupation"];
 
-const FIELDS: Record<FieldId, { label: string; type: string; autoComplete?: string; placeholder: string; err: string; inputMode?: "tel"; list?: string }> = {
+const FIELDS: Record<FieldId, { label: string; type: string; autoComplete?: string; placeholder: string; err: string; inputMode?: "tel" }> = {
   name: { label: "Name", type: "text", autoComplete: "name", placeholder: "Dr. Your name", err: "Please enter your name." },
   phone: { label: "Phone number", type: "tel", autoComplete: "tel-national", placeholder: "98765 43210", err: "Enter a valid 10-digit phone number.", inputMode: "tel" },
   email: { label: "Email ID", type: "email", autoComplete: "email", placeholder: "you@clinic.com", err: "Enter a valid email address." },
   clinic: { label: "Clinic / Hospital name", type: "text", autoComplete: "organization", placeholder: "Your clinic or hospital", err: "Please enter your clinic or hospital name." },
-  occupation: { label: "Occupation", type: "text", placeholder: "e.g. Clinic owner, Vaidya", err: "Please enter your occupation.", list: "occ-list" },
+  occupation: { label: "Occupation", type: "text", placeholder: "e.g. Clinic owner, Vaidya", err: "Please enter your occupation." },
 };
-const OCCUPATIONS = ["Clinic owner", "Ayurveda doctor (Vaidya)", "Hospital director", "Hospital administrator", "Marketing head"];
 
 const inputCls = (bad: boolean, radius: string) =>
   `w-full border border-solid bg-ay-bg px-4 py-[11px] text-[16px] font-medium leading-[1.2] text-ay-fg transition-[border-color,box-shadow] duration-200 placeholder:text-[#7F8E84] focus:shadow-[0_0_0_3px_rgba(242,181,61,.18)] focus:outline-none ${radius} ${
@@ -45,22 +46,21 @@ export function LeadModal() {
   const lastFocus = useRef<Element | null>(null);
   const [values, setValues] = useState<Lead>({ name: "", phone: "", email: "", clinic: "", occupation: "" });
   const [bad, setBad] = useState<Partial<Record<FieldId, boolean>>>({});
-  const [sent, setSent] = useState<Lead | null>(null);
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   // open / close side effects: lock scroll, move focus, restore focus
   useEffect(() => {
     if (!modalOpen) return;
     lastFocus.current = document.activeElement;
     document.body.style.overflow = "hidden";
-    const t = setTimeout(() => {
-      if (!sent) nameRef.current?.focus();
-    }, 380);
+    const t = setTimeout(() => nameRef.current?.focus(), 380);
     return () => {
       clearTimeout(t);
       document.body.style.overflow = "";
       (lastFocus.current as HTMLElement | null)?.focus?.();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalOpen]);
 
   // Escape closes; Tab is trapped inside the dialog
@@ -93,8 +93,9 @@ export function LeadModal() {
     return ok;
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     let firstBad: FieldId | null = null;
     ORDER.forEach((id) => {
       if (!check(id) && !firstBad) firstBad = id;
@@ -110,18 +111,30 @@ export function LeadModal() {
       clinic: values.clinic.trim(),
       occupation: values.occupation.trim(),
     };
-    if (FORM_ENDPOINT) {
-      try {
-        fetch(FORM_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(d) });
-      } catch {}
+    setSubmitting(true);
+    setSubmitError("");
+    // shared by the browser pixel and the server's Conversions API event, so Meta counts one lead
+    const eventId = `ay_lead_${typeof crypto.randomUUID === "function" ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)}`;
+    try {
+      // saved to the database, then TeleCRM, the "Ayurveda Leads" sheet tab and Meta (app/api/ayurveda-lead)
+      const res = await fetch("/api/ayurveda-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...d, pageUrl: window.location.href, eventId }),
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error(json.error || "Something went wrong. Please try again.");
+      }
+      trackLead(eventId);
+      rememberAyurvedaLead({ firstName: d.name.replace(/^dr\.?\s+/i, "").split(/\s+/)[0], eventId });
+      // the button stays in its "Reserving…" state until the thank-you page loads
+      router.push("/ayurveda/thank-you");
+    } catch (err) {
+      setSubmitError(err instanceof Error && err.message !== "Failed to fetch" ? err.message : "Network error. Please try again.");
+      setSubmitting(false);
     }
-    setSent(d);
   };
-
-  const waMsg = sent
-    ? "Hi, I would like to reserve my free strategy session.\nName: " + sent.name + "\nPhone: " + sent.phone + "\nEmail: " + sent.email +
-      "\nClinic / Hospital: " + sent.clinic + "\nOccupation: " + sent.occupation
-    : "";
 
   return (
     <div
@@ -176,7 +189,6 @@ export function LeadModal() {
         </aside>
 
         <div className="px-[38px] pb-7 pt-8 max-[760px]:px-[22px] max-[760px]:pb-[22px] max-[760px]:pt-12">
-          {!sent ? (
             <div>
               <h3 id="m-title" className="text-balance text-[24px] font-semibold tracking-[-0.025em]">
                 Reserve My Free Session
@@ -194,7 +206,6 @@ export function LeadModal() {
                         type={f.type}
                         autoComplete={f.autoComplete}
                         inputMode={f.inputMode}
-                        list={f.list}
                         placeholder={f.placeholder}
                         value={values[id]}
                         onChange={(e) => {
@@ -223,63 +234,28 @@ export function LeadModal() {
                         ) : (
                           input
                         )}
-                        {id === "occupation" && (
-                          <datalist id="occ-list">
-                            {OCCUPATIONS.map((o) => (
-                              <option key={o} value={o} />
-                            ))}
-                          </datalist>
-                        )}
                         {isBad && <div className="mt-1.5 text-[13px] text-[#F08C77]">{f.err}</div>}
                       </div>
                     );
                   })}
                 </div>
-                <Button type="submit" size="block" arrow className="mt-[18px] py-4!">
-                  Reserve My Free Session
+                {submitError && (
+                  <div role="alert" className="mt-4 text-center text-[13.5px] text-[#F08C77]">
+                    {submitError}
+                  </div>
+                )}
+                <Button
+                  type="submit"
+                  size="block"
+                  arrow={!submitting}
+                  disabled={submitting}
+                  className={`mt-[18px] py-4! ${submitting ? "cursor-wait opacity-70" : ""}`}
+                >
+                  {submitting ? "Reserving…" : "Reserve My Free Session"}
                 </Button>
                 <p className="mt-3 text-center text-[12.5px] text-ay-muted">Yes. No fee, no hidden charges.</p>
               </form>
             </div>
-          ) : (
-            <div className="pb-[10px] pt-[30px] text-center">
-              <div className="mx-auto mb-[18px] grid h-16 w-16 place-items-center rounded-full bg-ay-leaf/[.14] text-ay-leaf shadow-[0_0_40px_rgba(94,224,138,.35)]">
-                <TickIcon className="h-[30px] w-[30px]" />
-              </div>
-              <h3 className="text-balance text-[26px] font-semibold tracking-[-0.025em]">Thank you, {sent.name.split(" ")[0]}</h3>
-              <p className="mt-[10px] text-ay-muted">
-                {FORM_ENDPOINT
-                  ? "We have received your details and will contact you shortly. You can also message us on WhatsApp."
-                  : "Your details are ready. Tap below to send them to us on WhatsApp."}
-              </p>
-              <div className="mt-[22px] grid gap-1.5 rounded-[14px] border border-ay-line bg-ay-bg px-[18px] py-4 text-left text-[14.5px] text-[#C3D0C6]">
-                {(
-                  [
-                    ["Name", sent.name],
-                    ["Phone", sent.phone],
-                    ["Email", sent.email],
-                    ["Clinic / Hospital", sent.clinic],
-                    ["Occupation", sent.occupation],
-                  ] as const
-                ).map(([k, v]) => (
-                  <div key={k}>
-                    <b className="mr-1.5 font-semibold text-ay-muted">{k}</b>
-                    {v}
-                  </div>
-                ))}
-              </div>
-              <ButtonLink
-                size="block"
-                arrow
-                target="_blank"
-                rel="noopener"
-                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waMsg)}`}
-                className="mt-6"
-              >
-                {FORM_ENDPOINT ? "Message us on WhatsApp " : "Send on WhatsApp "}
-              </ButtonLink>
-            </div>
-          )}
         </div>
       </div>
     </div>

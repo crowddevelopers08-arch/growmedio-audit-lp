@@ -50,8 +50,8 @@ function LeakCard({ n, on, current, title, text }: { n: number; on: boolean; cur
       style={borderDelay(n)}
       className={`group relative rounded-[18px] border px-7 py-[26px] ${cardBorder} backdrop-blur-[6px] transition-[opacity,border-color,background,transform,box-shadow] duration-500 ease-[cubic-bezier(.2,.7,.2,1)] max-[560px]:px-[18px] max-[560px]:py-5 ${
         on
-          ? "border-ay-gold/50 bg-[linear-gradient(135deg,rgba(242,181,61,.08),var(--color-ay-panel)_60%)] opacity-100"
-          : "border-ay-line bg-ay-panel opacity-[.78]"
+          ? "border-ay-gold/50 bg-[linear-gradient(135deg,rgba(242,181,61,.08),rgba(6,12,9,.84)_60%)] opacity-100"
+          : "border-ay-line bg-[rgba(6,12,9,.86)] opacity-[.78]"
       } ${current ? "[transform:translateX(8px)] shadow-[0_18px_40px_-22px_rgba(242,181,61,.55)] max-[560px]:[transform:translateX(4px)]" : ""}`}
     >
       {/* light sweep on hover, clipped to the card (the number badge sits outside it) */}

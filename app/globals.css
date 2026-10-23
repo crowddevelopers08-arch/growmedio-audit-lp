@@ -36,8 +36,8 @@
 
   /* Ayurveda funnel (/ayurveda) — namespaced with `ay-` so it never clashes with the tokens above. */
   --color-ay-bg: #050a07;
-  --color-ay-panel: #0b1510;
-  --color-ay-panel-2: #112019;
+  --color-ay-panel: #08110c;
+  --color-ay-panel-2: #0d1a13;
   --color-ay-fg: #eef3ea;
   --color-ay-muted: #bac9bf;
   --color-ay-line: rgba(255, 255, 255, 0.09);
@@ -192,6 +192,15 @@
     outline: 2px solid var(--color-ay-gold);
     outline-offset: 3px;
     border-radius: 4px;
+  }
+}
+
+/* Phones: frosted-glass blur over the always-animating lotus canvas is recomputed every frame and
+   makes scrolling stutter, so drop it and let the slightly more opaque panels carry the look. */
+@media (max-width: 760px) {
+  [data-ayurveda] [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
   }
 }
 

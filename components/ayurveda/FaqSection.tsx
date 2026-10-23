@@ -21,7 +21,7 @@ export function FaqSection() {
       <Container>
         <SectionHead center title="FAQ" />
         <Reveal variant="scale" className={`relative mx-auto mt-10 max-w-[860px] rounded-[20px] max-[560px]:mt-8 ${cardBorder}`}>
-          <div className="overflow-hidden rounded-[20px] border border-ay-line bg-ay-panel backdrop-blur-[6px]">
+          <div className="overflow-hidden rounded-[20px] border border-ay-line bg-[rgba(6,12,9,.86)] backdrop-blur-[6px]">
           {FAQS.map((f, i) => {
             const isOpen = open === i;
             return (

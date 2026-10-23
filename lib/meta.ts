@@ -30,13 +30,10 @@ export interface PurchaseEvent {
   sourceUrl?: string;
 }
 
-/** Returns `{ skipped: true }` when the API isn't configured — never throws for that. */
-export async function sendPurchaseToMeta(event: PurchaseEvent) {
-  const pixelId = process.env.META_PIXEL_ID;
-  const token = process.env.META_CONVERSIONS_API_TOKEN;
-  if (!pixelId || !token) return { skipped: true as const };
+type UserFields = Pick<PurchaseEvent, "name" | "phone" | "email" | "country">;
 
-  // Meta requires every identifier to be SHA-256 hashed before it is sent.
+/** Meta requires every identifier to be SHA-256 hashed before it is sent. */
+function hashedUserData(event: UserFields) {
   const user_data: Record<string, unknown> = {};
   if (event.phone) user_data.ph = [sha256(event.phone)];
   if (event.email) user_data.em = [sha256(event.email)];
@@ -47,25 +44,58 @@ export async function sendPurchaseToMeta(event: PurchaseEvent) {
     const last = parts.slice(1).join(" ");
     if (last) user_data.ln = [sha256(last)];
   }
+  return user_data;
+}
 
-  const payload: Record<string, unknown> = {
-    data: [
-      {
-        event_name: "Purchase",
-        event_time: Math.floor(Date.now() / 1000),
-        action_source: "website",
-        event_source_url: event.sourceUrl || undefined,
-        event_id: event.eventId,
-        user_data,
-        custom_data: {
-          value: event.value,
-          currency: event.currency,
-          content_name: "Revenue Strategy Session",
-          content_category: "consultation",
-        },
-      },
-    ],
-  };
+/** Returns `{ skipped: true }` when the API isn't configured — never throws for that. */
+export function sendPurchaseToMeta(event: PurchaseEvent) {
+  return sendEvent({
+    event_name: "Purchase",
+    event_time: Math.floor(Date.now() / 1000),
+    action_source: "website",
+    event_source_url: event.sourceUrl || undefined,
+    event_id: event.eventId,
+    user_data: hashedUserData(event),
+    custom_data: {
+      value: event.value,
+      currency: event.currency,
+      content_name: "Revenue Strategy Session",
+      content_category: "consultation",
+    },
+  });
+}
+
+export interface LeadEvent extends UserFields {
+  /** Same id the browser pixel's Lead event carries, for dedup. */
+  eventId: string;
+  contentName: string;
+  sourceUrl?: string;
+  clientIp?: string;
+  userAgent?: string;
+}
+
+/** Server-side twin of the pixel's Lead event. `{ skipped: true }` when not configured. */
+export function sendLeadToMeta(event: LeadEvent) {
+  const user_data = hashedUserData(event);
+  if (event.clientIp) user_data.client_ip_address = event.clientIp;
+  if (event.userAgent) user_data.client_user_agent = event.userAgent;
+  return sendEvent({
+    event_name: "Lead",
+    event_time: Math.floor(Date.now() / 1000),
+    action_source: "website",
+    event_source_url: event.sourceUrl || undefined,
+    event_id: event.eventId,
+    user_data,
+    custom_data: { content_name: event.contentName, content_category: "consultation" },
+  });
+}
+
+async function sendEvent(data: Record<string, unknown>) {
+  const pixelId = process.env.META_PIXEL_ID;
+  const token = process.env.META_CONVERSIONS_API_TOKEN;
+  if (!pixelId || !token) return { skipped: true as const };
+
+  const payload: Record<string, unknown> = { data: [data] };
   if (process.env.META_TEST_EVENT_CODE) {
     payload.test_event_code = process.env.META_TEST_EVENT_CODE;
   }

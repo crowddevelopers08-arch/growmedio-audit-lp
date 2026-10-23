@@ -21,7 +21,7 @@ export function ProblemSection() {
             <Reveal key={t} as="article" variant="scale" delay={i * 0.1} className="h-full">
               <div
                 style={borderDelay(i)}
-                className={`group relative h-full overflow-hidden rounded-[20px] border border-ay-line bg-ay-panel px-7 py-[30px] backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[1100px]:px-6 max-[1100px]:py-6 max-[560px]:flex max-[560px]:items-baseline max-[560px]:gap-4 max-[560px]:rounded-2xl max-[560px]:px-5 max-[560px]:py-[18px]`}
+                className={`group relative h-full overflow-hidden rounded-[20px] border border-ay-line bg-[rgba(6,12,9,.86)] px-7 py-[30px] backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[1100px]:px-6 max-[1100px]:py-6 max-[560px]:flex max-[560px]:items-baseline max-[560px]:gap-4 max-[560px]:rounded-2xl max-[560px]:px-5 max-[560px]:py-[18px]`}
               >
                 {/* number pops in after the card lands */}
                 <div
