@@ -36,6 +36,8 @@ export function LotusCanvas() {
     const t0 = performance.now();
     const S = { x: 0.5, yy: 0.54, size: 0.2, alpha: 1, bloom: 0, rot: 0, hero: true };
     let stops: Stop[] = [], inited = false, lastT = performance.now(), tick = 0, popped = false, raf = 0;
+    /** Phone mode: 1x resolution, no glow shadows, fewer particles, 30fps redraws. */
+    let lite = false, lastDraw = performance.now();
 
     /* the lotus follows the reader: one waypoint per section, eased between them, all the way to the end */
     function buildStops() {
@@ -89,13 +91,14 @@ export function LotusCanvas() {
     function resize() {
       W = window.innerWidth;
       H = window.innerHeight;
-      // phones have 3x screens but small GPUs; 1.5x still looks sharp for a soft glow
-      DPR = Math.min(window.devicePixelRatio || 1, W < 600 ? 1.5 : 1.75);
+      lite = W < 761;
+      // phones have 3x screens but small GPUs; at 1x the soft glow still reads well
+      DPR = lite ? 1 : Math.min(window.devicePixelRatio || 1, 1.75);
       buildStops();
       cv.width = Math.round(W * DPR);
       cv.height = Math.round(H * DPR);
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      const n = W < 600 ? 55 : 110;
+      const n = W < 600 ? 32 : lite ? 55 : 110;
       parts = [];
       for (let i = 0; i < n; i++)
         parts.push({ x: Math.random() * W, y: Math.random() * H, r: 0.6 + Math.random() * 1.8, v: 0.12 + Math.random() * 0.45, ph: Math.random() * 6.28, g: Math.random() < 0.35 });
@@ -111,6 +114,8 @@ export function LotusCanvas() {
 
     function draw(now: number) {
       const t = (now - t0) / 1000;
+      const step = Math.min((now - lastDraw) / (1000 / 60), 3);
+      lastDraw = now;
       ctx.clearRect(0, 0, W, H);
       const bloom = S.bloom, cx = W * S.x, cy = H * S.yy, R = Math.min(W, H) * S.size;
       const sway = S.hero ? 0 : Math.sin(t * 0.5) * 0.035;
@@ -131,19 +136,23 @@ export function LotusCanvas() {
       ctx.lineWidth = 1.4;
       ctx.strokeStyle = "rgba(242,181,61," + (0.35 + 0.4 * bloom) + ")";
       ctx.shadowColor = "rgba(242,181,61,.9)";
-      ctx.shadowBlur = 18;
+      ctx.shadowBlur = lite ? 0 : 18;
       ctx.beginPath();
       ctx.arc(0, 0, R * 1.42, 0, 6.2832);
       ctx.stroke();
       ctx.shadowBlur = 0;
       ctx.save();
       ctx.rotate(t * 0.06 + S.rot);
-      for (let i = 0; i < 96; i++) {
-        const a = (i / 96) * 6.2832, l = i % 4 === 0 ? 14 : 6;
-        ctx.strokeStyle = "rgba(242,181,61," + (i % 4 === 0 ? 0.55 : 0.25) + ")";
+      // ticks batched into two paths (major / minor) instead of 96 separate strokes
+      for (const major of [true, false]) {
+        ctx.strokeStyle = major ? "rgba(242,181,61,.55)" : "rgba(242,181,61,.25)";
         ctx.beginPath();
-        ctx.moveTo(Math.cos(a) * R * 1.5, Math.sin(a) * R * 1.5);
-        ctx.lineTo(Math.cos(a) * (R * 1.5 + l), Math.sin(a) * (R * 1.5 + l));
+        for (let i = major ? 0 : 1; i < 96; i += major ? 4 : 1) {
+          if (!major && i % 4 === 0) continue;
+          const a = (i / 96) * 6.2832, l = major ? 14 : 6;
+          ctx.moveTo(Math.cos(a) * R * 1.5, Math.sin(a) * R * 1.5);
+          ctx.lineTo(Math.cos(a) * (R * 1.5 + l), Math.sin(a) * (R * 1.5 + l));
+        }
         ctx.stroke();
       }
       ctx.restore();
@@ -160,14 +169,14 @@ export function LotusCanvas() {
       ctx.rotate(t * 0.035);
       ctx.strokeStyle = "rgba(242,181,61," + (0.08 + 0.12 * bloom) + ")";
       ctx.lineWidth = 1;
+      // one path for all 16 arcs (each ellipse rotated about the centre via its own rotation argument)
+      ctx.beginPath();
       for (let k = 0; k < 16; k++) {
-        ctx.save();
-        ctx.rotate((k / 16) * 6.2832);
-        ctx.beginPath();
-        ctx.ellipse(0, -R * 1.05, R * 0.22, R * 0.5, 0, 0, 6.2832);
-        ctx.stroke();
-        ctx.restore();
+        const a = (k / 16) * 6.2832;
+        ctx.moveTo(Math.sin(a) * R * 1.05 + Math.cos(a) * R * 0.22, -Math.cos(a) * R * 1.05 + Math.sin(a) * R * 0.22);
+        ctx.ellipse(Math.sin(a) * R * 1.05, -Math.cos(a) * R * 1.05, R * 0.22, R * 0.5, a, 0, 6.2832);
       }
+      ctx.stroke();
       ctx.restore();
       ctx.restore();
 
@@ -203,8 +212,8 @@ export function LotusCanvas() {
           petal(L, row.w);
           ctx.fillStyle = gr;
           ctx.shadowColor = "rgba(242,181,61,.65)";
-          // per-petal blur is the costliest part of a frame, so phones get a lighter halo
-          ctx.shadowBlur = S.hero ? (W < 600 ? 8 + 6 * bloom : 16 + 10 * bloom) : W < 600 ? 0 : 4;
+          // per-petal blur is the costliest part of a frame, so phones skip it (the ambient glow stays)
+          ctx.shadowBlur = lite ? 0 : S.hero ? 16 + 10 * bloom : 4;
           ctx.fill();
           ctx.shadowBlur = 0;
           ctx.lineWidth = 1.1;
@@ -236,8 +245,9 @@ export function LotusCanvas() {
       ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = "lighter";
       for (const q of parts) {
-        q.y -= q.v * (1 + bloom);
-        q.x += Math.sin(t * 0.6 + q.ph) * 0.25;
+        // `step` scales motion to the time since the last draw (phones draw at 30fps)
+        q.y -= q.v * (1 + bloom) * step;
+        q.x += Math.sin(t * 0.6 + q.ph) * 0.25 * step;
         if (q.y < -10) {
           q.y = H + 10;
           q.x = Math.random() * W;
@@ -283,7 +293,8 @@ export function LotusCanvas() {
       S.bloom += ((tg.hero ? tg.b : 0.9 + 0.1 * Math.sin(now / 1800)) - S.bloom) * Math.max(k, 0.12);
       S.hero = tg.hero;
       S.rot = window.pageYOffset * 0.0014;
-      draw(now);
+      // phones redraw the canvas at ~30fps, the hero's text fades still update every frame
+      if (!lite || now - lastDraw >= 30) draw(now);
       if (inView) heroFrameRef.current?.(p, P);
       if (p > 0.985) autoPop();
       raf = requestAnimationFrame(frame);

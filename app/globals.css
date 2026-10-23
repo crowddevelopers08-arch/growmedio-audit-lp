@@ -202,6 +202,10 @@
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
   }
+  /* a sliding background-position repaints every frame; keep it on desktop only */
+  [data-ayurveda] .animate-shimmer {
+    animation: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

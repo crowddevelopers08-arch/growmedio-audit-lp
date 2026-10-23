@@ -7,7 +7,8 @@ const HIDDEN = {
   scale: "[transform:translateY(18px)_scale(.94)] opacity-0",
   left: "[transform:translateX(-40px)] opacity-0",
   right: "[transform:translateX(40px)] opacity-0",
-  blur: "[transform:translateY(20px)] opacity-0 blur-[8px]",
+  // the blur only runs on desktop: animating a filter is costly on phones
+  blur: "[transform:translateY(20px)] opacity-0 min-[761px]:blur-[8px]",
 };
 
 export type RevealVariant = keyof typeof HIDDEN;
