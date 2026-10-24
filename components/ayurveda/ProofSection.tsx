@@ -10,7 +10,11 @@ export function ProofSection() {
       <Container>
         <SectionHead
           center
-          kicker="Proof"
+          kicker={
+            <span>
+              One of our proof&nbsp;-&nbsp;<span className="text-ay-gold">Ayush Ortho Ayurveda Clinic</span>
+            </span>
+          }
           title={<>The numbers behind &#8377;44&nbsp;lakhs.</>}
           desc="One Ayurveda clinic, one steady climb."
         />

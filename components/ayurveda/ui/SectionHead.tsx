@@ -10,9 +10,9 @@ export function SectionHead({
   desc,
   center,
 }: {
-  kicker?: string;
+  kicker?: React.ReactNode;
   title: React.ReactNode;
-  desc?: string;
+  desc?: React.ReactNode;
   center?: boolean;
 }) {
   return (

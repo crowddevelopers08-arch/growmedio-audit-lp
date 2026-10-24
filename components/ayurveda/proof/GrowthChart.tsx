@@ -183,11 +183,11 @@ export function GrowthChart() {
               return (
                 <g key={k}>
                   <line x1={ML} x2={W - MR} y1={gy} y2={gy} stroke="rgba(255,255,255,.08)" />
-                  <text x={ML - 8} y={gy + 4} textAnchor="end">
-                    {metric === "cons" ? String(k * ls) : `₹${(k * ls) / 1e5}L`}
-                  </text>
-                  <text x={W - MR + 8} y={gy + 4} style={{ fill: "rgba(94,224,138,.85)" }}>
+                  <text x={ML - 8} y={gy + 4} textAnchor="end" style={{ fill: "rgba(94,224,138,.85)" }}>
                     ₹{(k * rs) / 1e5}L
+                  </text>
+                  <text x={W - MR + 8} y={gy + 4}>
+                    {metric === "cons" ? String(k * ls) : `₹${(k * ls) / 1e5}L`}
                   </text>
                 </g>
               );

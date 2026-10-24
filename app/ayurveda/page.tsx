@@ -8,7 +8,7 @@ import { LeaksSection } from "@/components/ayurveda/LeaksSection";
 import { SessionSection } from "@/components/ayurveda/SessionSection";
 import { OutcomesSection } from "@/components/ayurveda/OutcomesSection";
 import { FitSection } from "@/components/ayurveda/FitSection";
-import { WhyAboutSection } from "@/components/ayurveda/WhyAboutSection";
+import { AboutSection } from "@/components/ayurveda/AboutSection";
 import { ProofSection } from "@/components/ayurveda/ProofSection";
 import { ProcessSection } from "@/components/ayurveda/ProcessSection";
 import { FaqSection } from "@/components/ayurveda/FaqSection";
@@ -30,7 +30,7 @@ export default function AyurvedaPage() {
         <SessionSection />
         <OutcomesSection />
         <FitSection />
-        <WhyAboutSection />
+        <AboutSection />
         <ProofSection />
         <ProcessSection />
         <FaqSection />

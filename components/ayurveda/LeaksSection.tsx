@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { FlowCard } from "./FlowCard";
 import { Container } from "./ui/Container";
 import { borderDelay, cardBorder } from "./ui/fx";
 import { Section } from "./ui/Section";
@@ -14,35 +15,6 @@ const LEAKS = [
   { title: "Poor tracking", text: "You can't see which ad brings paying patients." },
   { title: "Scaling too early", text: "More spend on a leaking system." },
 ];
-const TOTAL = String(LEAKS.length).padStart(2, "0");
-
-function Tracker({ shown }: { shown: number }) {
-  return (
-    <div
-      aria-hidden="true"
-      className={`relative mt-0 max-w-[420px] ${cardBorder} rounded-[20px] border border-ay-line-2 bg-[rgba(9,18,13,.8)] px-[26px] py-6 backdrop-blur-[6px] max-[980px]:hidden`}
-    >
-      <div className="flex items-baseline gap-2 text-[68px] font-bold leading-none tracking-[-.05em] text-ay-gold tabular-nums">
-        {/* keyed so the number and title roll in each time the active leak changes */}
-        <span key={`n${shown}`} className="inline-block animate-rise">0{shown + 1}</span>
-        <small className="text-[20px] font-medium tracking-normal text-ay-muted">/ {TOTAL}</small>
-      </div>
-      <div key={`t${shown}`} className="mt-[10px] animate-rise text-[22px] font-semibold tracking-[-.01em] [animation-delay:.06s]">
-        {LEAKS[shown].title}
-      </div>
-      <div className="mt-[18px] grid gap-1.5" style={{ gridTemplateColumns: `repeat(${LEAKS.length}, minmax(0, 1fr))` }}>
-        {LEAKS.map((s, i) => (
-          <i
-            key={s.title}
-            className={`h-1 rounded-[4px] transition-[background,box-shadow] duration-[400ms] ${
-              i <= shown ? "bg-ay-gold shadow-[0_0_10px_rgba(242,181,61,.7)]" : "bg-ay-line-2"
-            }`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function LeakCard({ n, on, current, title, text }: { n: number; on: boolean; current: boolean } & (typeof LEAKS)[number]) {
   return (
@@ -73,7 +45,7 @@ function LeakCard({ n, on, current, title, text }: { n: number; on: boolean; cur
   );
 }
 
-/** Where the money leaks: a scroll-tracked chain with a sticky counter beside it. */
+/** Where the money leaks: a scroll-tracked chain with the leaking-pipe animation pinned beside it. */
 export function LeaksSection() {
   const chainRef = useRef<HTMLDivElement>(null);
   const fillRef = useRef<HTMLDivElement>(null);
@@ -109,8 +81,8 @@ export function LeaksSection() {
           title={<TwoLine first="At ₹5L a month," second="small leaks become big losses." />}
         />
         <div className="mt-10 grid grid-cols-[minmax(0,.75fr)_minmax(0,1.25fr)] items-start gap-[56px] max-[980px]:grid-cols-[minmax(0,1fr)] max-[980px]:gap-8 max-[560px]:mt-8">
-          <div className="sticky top-[130px] max-[980px]:hidden">
-            <Tracker shown={Math.max(active, 0)} />
+          <div className="sticky top-[110px] max-[980px]:static">
+            <FlowCard />
           </div>
           <div
             ref={chainRef}
