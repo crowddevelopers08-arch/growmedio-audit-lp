@@ -151,7 +151,7 @@ export function LeadModal() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="m-title"
-        className={`relative my-auto grid w-full max-w-[900px] grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] overflow-hidden rounded-3xl border border-ay-gold/40 bg-ay-panel shadow-[0_40px_120px_-30px_rgba(237,244,204,.9),0_0_80px_-30px_rgba(0,96,47,.4)] [transition:transform_.45s_cubic-bezier(.2,.8,.2,1)] max-[760px]:grid-cols-[minmax(0,1fr)] ${
+        className={`relative my-auto grid w-full max-w-[900px] grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] overflow-hidden rounded-3xl border border-ay-gold/40 bg-ay-panel shadow-[0_40px_120px_-30px_rgba(0,40,20,.55),0_0_80px_-30px_rgba(0,96,47,.4)] [transition:transform_.45s_cubic-bezier(.2,.8,.2,1)] max-[760px]:grid-cols-[minmax(0,1fr)] ${
           modalOpen ? "[transform:none]" : "[transform:translateY(24px)_scale(.97)]"
         }`}
       >
@@ -164,7 +164,7 @@ export function LeadModal() {
           &times;
         </button>
 
-        <aside className="relative flex flex-col gap-[18px] overflow-hidden border-r border-ay-line px-[34px] py-8 [background:radial-gradient(circle_at_30%_20%,rgba(0,96,47,.18),transparent_60%),#08130D] max-[760px]:hidden">
+        <aside className="relative flex flex-col gap-[18px] overflow-hidden border-r border-ay-line px-[34px] py-8 [background:radial-gradient(circle_at_30%_20%,rgba(0,96,47,.18),transparent_60%),#e3edb5] max-[760px]:hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/ayurveda/logo.png" alt="Grow Medico" className="block h-[54px] w-auto self-start" />
           <h2 className="text-balance text-[28px] font-semibold leading-[1.15] tracking-[-0.025em]">
