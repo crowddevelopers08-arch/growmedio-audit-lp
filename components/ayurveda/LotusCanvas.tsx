@@ -7,8 +7,8 @@ import { clamp, prefersReducedMotion, sm, store } from "@/lib/ayurveda/motion";
 type Particle = { x: number; y: number; r: number; v: number; ph: number; g: boolean };
 type Stop = { y: number; x: number; yy: number; size: number; a: number };
 
-/** Opacity multiplier for the lotus once it leaves the hero (1 = original strength). */
-const SCROLL_DIM = 0.55;
+/** Opacity multiplier for the lotus once it leaves the hero (1 = original strength, 0 = hidden). */
+const SCROLL_DIM = 0;
 
 const ROWS = [
   { n: 11, len: 1.0, w: 0.3, spread: 1.52 },
@@ -121,7 +121,8 @@ export function LotusCanvas() {
       const sway = S.hero ? 0 : Math.sin(t * 0.5) * 0.035;
 
       // ambient glow
-      ctx.globalAlpha = Math.min(1, S.alpha + 0.15);
+      // the +0.15 boost tapers off near zero so a hidden lotus leaves no glow behind
+      ctx.globalAlpha = Math.min(1, S.alpha + 0.15 * Math.min(1, S.alpha / 0.1));
       const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 2.8);
       g.addColorStop(0, "rgba(242,181,61," + (0.14 + 0.26 * bloom) + ")");
       g.addColorStop(0.45, "rgba(94,224,138," + (0.04 + 0.07 * bloom) + ")");
