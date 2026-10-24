@@ -33,8 +33,8 @@ const FIELDS: Record<FieldId, { label: string; type: string; autoComplete?: stri
 };
 
 const inputCls = (bad: boolean, radius: string) =>
-  `w-full border border-solid bg-ay-bg px-4 py-[11px] text-[16px] font-medium leading-[1.2] text-ay-fg transition-[border-color,box-shadow] duration-200 placeholder:text-[#7F8E84] focus:shadow-[0_0_0_3px_rgba(242,181,61,.18)] focus:outline-none ${radius} ${
-    bad ? "border-[#E0705A] focus:border-[#E0705A]" : "border-ay-line-2 focus:border-ay-gold"
+  `w-full border border-solid bg-ay-bg px-4 py-[11px] text-[16px] font-medium leading-[1.2] text-ay-fg transition-[border-color,box-shadow] duration-200 placeholder:text-[#6b756d] focus:shadow-[0_0_0_3px_rgba(0,96,47,.18)] focus:outline-none ${radius} ${
+    bad ? "border-[#B3402B] focus:border-[#B3402B]" : "border-ay-line-2 focus:border-ay-gold"
   }`;
 
 type Lead = Record<FieldId, string>;
@@ -143,7 +143,7 @@ export function LeadModal() {
       onClick={(e) => {
         if (e.target === modalRef.current) closeModal();
       }}
-      className={`fixed inset-0 z-[100] grid place-items-center overflow-y-auto bg-[rgba(2,6,4,.78)] p-[max(16px,env(safe-area-inset-top,0px))_max(16px,env(safe-area-inset-right,0px))_max(16px,env(safe-area-inset-bottom,0px))_max(16px,env(safe-area-inset-left,0px))] backdrop-blur-[8px] [transition:opacity_.35s_ease,visibility_.35s] ${
+      className={`fixed inset-0 z-[100] grid place-items-center overflow-y-auto bg-[rgba(0,40,20,.45)] p-[max(16px,env(safe-area-inset-top,0px))_max(16px,env(safe-area-inset-right,0px))_max(16px,env(safe-area-inset-bottom,0px))_max(16px,env(safe-area-inset-left,0px))] backdrop-blur-[8px] [transition:opacity_.35s_ease,visibility_.35s] ${
         modalOpen ? "visible opacity-100" : "invisible opacity-0"
       }`}
     >
@@ -151,7 +151,7 @@ export function LeadModal() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="m-title"
-        className={`relative my-auto grid w-full max-w-[900px] grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] overflow-hidden rounded-3xl border border-ay-gold/40 bg-ay-panel shadow-[0_40px_120px_-30px_rgba(0,0,0,.9),0_0_80px_-30px_rgba(242,181,61,.4)] [transition:transform_.45s_cubic-bezier(.2,.8,.2,1)] max-[760px]:grid-cols-[minmax(0,1fr)] ${
+        className={`relative my-auto grid w-full max-w-[900px] grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] overflow-hidden rounded-3xl border border-ay-gold/40 bg-ay-panel shadow-[0_40px_120px_-30px_rgba(237,244,204,.9),0_0_80px_-30px_rgba(0,96,47,.4)] [transition:transform_.45s_cubic-bezier(.2,.8,.2,1)] max-[760px]:grid-cols-[minmax(0,1fr)] ${
           modalOpen ? "[transform:none]" : "[transform:translateY(24px)_scale(.97)]"
         }`}
       >
@@ -164,13 +164,13 @@ export function LeadModal() {
           &times;
         </button>
 
-        <aside className="relative flex flex-col gap-[18px] overflow-hidden border-r border-ay-line px-[34px] py-8 [background:radial-gradient(circle_at_30%_20%,rgba(242,181,61,.18),transparent_60%),#08130D] max-[760px]:hidden">
+        <aside className="relative flex flex-col gap-[18px] overflow-hidden border-r border-ay-line px-[34px] py-8 [background:radial-gradient(circle_at_30%_20%,rgba(0,96,47,.18),transparent_60%),#08130D] max-[760px]:hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/ayurveda/logo.png" alt="Grow Medico" className="block h-[54px] w-auto self-start" />
           <h2 className="text-balance text-[28px] font-semibold leading-[1.15] tracking-[-0.025em]">
             One hour. One-on-one strategy. Your clinic.
           </h2>
-          <ul className="m-0 grid list-none gap-3 p-0 text-[15px] text-[#C3D0C6]">
+          <ul className="m-0 grid list-none gap-3 p-0 text-[15px] text-[#3a453d]">
             {[
               "We review your real numbers: Ad account, leads, bookings.",
               "We find the leaks: Where the money goes and why.",
@@ -234,13 +234,13 @@ export function LeadModal() {
                         ) : (
                           input
                         )}
-                        {isBad && <div className="mt-1.5 text-[13px] text-[#F08C77]">{f.err}</div>}
+                        {isBad && <div className="mt-1.5 text-[13px] text-[#B3402B]">{f.err}</div>}
                       </div>
                     );
                   })}
                 </div>
                 {submitError && (
-                  <div role="alert" className="mt-4 text-center text-[13.5px] text-[#F08C77]">
+                  <div role="alert" className="mt-4 text-center text-[13.5px] text-[#B3402B]">
                     {submitError}
                   </div>
                 )}

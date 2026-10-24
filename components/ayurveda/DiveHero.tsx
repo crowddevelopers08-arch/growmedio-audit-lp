@@ -83,13 +83,13 @@ export function DiveHero() {
         {/* Layer A: headline */}
         <div
           ref={la}
-          className={`${layerBase} content-start justify-items-center bg-[radial-gradient(ellipse_75%_60%_at_50%_32%,rgba(5,10,7,.6),transparent_78%)] pb-20 pt-[clamp(40px,9vh,110px)] text-center`}
+          className={`${layerBase} content-start justify-items-center bg-[radial-gradient(ellipse_75%_60%_at_50%_32%,rgba(237,244,204,.6),transparent_78%)] pb-20 pt-[clamp(40px,9vh,110px)] text-center`}
         >
           <Kicker>Ayurveda owners!!</Kicker>
-          <h1 className="mt-[18px] max-w-[24ch] text-balance text-[clamp(28px,4.5vw,64px)] font-semibold leading-[1.08] tracking-[-0.025em] [text-shadow:0_4px_40px_rgba(0,0,0,.85),0_0_8px_rgba(5,10,7,.6)]">
+          <h1 className="mt-[18px] max-w-[24ch] text-balance text-[clamp(28px,4.5vw,64px)] font-semibold leading-[1.08] tracking-[-0.025em] [text-shadow:0_4px_40px_rgba(237,244,204,.85),0_0_8px_rgba(237,244,204,.6)]">
             Spending <span className="text-ay-gold">&#8377;5&nbsp;Lakhs</span> a month on ads? Your revenue should match it.
           </h1>
-          <p className="mt-5 max-w-[58ch] text-[clamp(16px,1.5vw,19px)] text-[#E6EEE8] [text-shadow:0_2px_20px_rgba(0,0,0,.95),0_0_6px_rgba(5,10,7,.8)]">
+          <p className="mt-5 max-w-[58ch] text-[clamp(16px,1.5vw,19px)] text-[#1f2a22] [text-shadow:0_2px_20px_rgba(237,244,204,.95),0_0_6px_rgba(237,244,204,.8)]">
             A <strong className="font-semibold text-ay-fg">free one-on-one strategy session</strong> to build your Ayurveda clinic.
           </p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
@@ -107,7 +107,7 @@ export function DiveHero() {
         >
           <p
             ref={lbSub}
-            className="mb-[18px] rounded-full border border-ay-gold/45 bg-[rgba(5,10,7,.82)] px-[18px] py-[10px] text-center text-[12.5px] font-semibold uppercase tracking-[.22em] text-[#FFD27A] backdrop-blur-[6px]"
+            className="mb-[18px] rounded-full border border-ay-gold/45 bg-[rgba(237,244,204,.82)] px-[18px] py-[10px] text-center text-[12.5px] font-semibold uppercase tracking-[.22em] text-[#00602f] backdrop-blur-[6px]"
           >
             Grow Medico
           </p>
@@ -119,7 +119,7 @@ export function DiveHero() {
                   pcs.current[i] = el;
                 }}
                 style={{ opacity: 0, ...borderDelay(i) }}
-                className={`relative flex flex-col items-start justify-center gap-1 rounded-[14px] border border-ay-line-2 bg-[rgba(8,16,11,.78)] px-[22px] py-[18px] backdrop-blur-[8px] ${cardBorder} max-[560px]:px-4 max-[560px]:py-[13px]`}
+                className={`relative flex flex-col items-start justify-center gap-1 rounded-[14px] border border-ay-line-2 bg-[rgba(246,250,223,.78)] px-[22px] py-[18px] backdrop-blur-[8px] ${cardBorder} max-[560px]:px-4 max-[560px]:py-[13px]`}
               >
                 <b className="text-[22px] font-semibold leading-[1.3] tracking-[-.02em] max-[560px]:text-[18px]">
                   <i className="mr-1.5 not-italic text-ay-gold">{s.value}</i>
@@ -135,12 +135,12 @@ export function DiveHero() {
         <div
           ref={lc}
           style={{ opacity: 0, visibility: "hidden" }}
-          className={`${layerBase} content-center justify-items-center bg-[radial-gradient(ellipse_70%_52%_at_50%_50%,rgba(5,10,7,.78),transparent_78%)] pb-20 pt-[70px] text-center`}
+          className={`${layerBase} content-center justify-items-center bg-[radial-gradient(ellipse_70%_52%_at_50%_50%,rgba(237,244,204,.78),transparent_78%)] pb-20 pt-[70px] text-center`}
         >
-          <h2 className="max-w-[30ch] text-balance text-[clamp(26px,4.2vw,58px)] font-semibold leading-[1.08] tracking-[-0.025em] [text-shadow:0_4px_40px_rgba(0,0,0,.9),0_0_8px_rgba(5,10,7,.7)]">
+          <h2 className="max-w-[30ch] text-balance text-[clamp(26px,4.2vw,58px)] font-semibold leading-[1.08] tracking-[-0.025em] [text-shadow:0_4px_40px_rgba(237,244,204,.9),0_0_8px_rgba(237,244,204,.7)]">
             <TwoLine first="Stop funding leaks." second="Start building revenue." />
           </h2>
-          <p className="mt-[18px] max-w-[48ch] text-[#F1F6F2] [text-shadow:0_2px_18px_rgba(5,10,7,1),0_0_6px_rgba(5,10,7,.9)]">
+          <p className="mt-[18px] max-w-[48ch] text-[#1f2a22] [text-shadow:0_2px_18px_rgba(237,244,204,1),0_0_6px_rgba(237,244,204,.9)]">
             We find where your ad money is leaking and build a plan to turn it into real revenue.
           </p>
           <Button arrow onClick={openModal} className="mt-7">

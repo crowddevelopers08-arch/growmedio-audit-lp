@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { cardBorder } from "./ui/fx";
 
 /* site palette (the ay- gold, leaf and muted tokens): gold for money going out, green for what lands as revenue */
-const COL = { brass: "#f2b53d", lit: "#5ee08a", brand: "#1f7a45", muted: "#bac9bf" };
+const COL = { brass: "#00602f", lit: "#3f9a52", brand: "#1f7a45", muted: "#4a4f4a" };
 
 /** f: how far down the pipe, s: side it spills to, p: chance a passing drop leaks there */
 const LEAKS = [
@@ -144,7 +144,7 @@ export function FlowCard() {
       ctx.globalAlpha = 1;
 
       const bx = 28, bw = W - 56, by = H - 46;
-      ctx.fillStyle = "rgba(255,255,255,.08)";
+      ctx.fillStyle = "rgba(0,58,28,.08)";
       ctx.fillRect(bx, by, bw, 10);
       const fg = ctx.createLinearGradient(bx, 0, bx + bw, 0);
       fg.addColorStop(0, COL.brand);
@@ -199,7 +199,7 @@ export function FlowCard() {
 
   return (
     <figure
-      className={`relative m-0 min-w-0 overflow-hidden rounded-[20px] border border-ay-line-2 bg-[rgba(9,18,13,.8)] backdrop-blur-[6px] ${cardBorder}`}
+      className={`relative m-0 min-w-0 overflow-hidden rounded-[20px] border border-ay-line-2 bg-[rgba(246,250,223,.8)] backdrop-blur-[6px] ${cardBorder}`}
     >
       <canvas
         ref={cvRef}

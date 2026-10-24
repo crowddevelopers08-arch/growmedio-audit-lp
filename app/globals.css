@@ -35,16 +35,16 @@
   --animate-ticker: ticker 34s linear infinite;
 
   /* Ayurveda funnel (/ayurveda) — namespaced with `ay-` so it never clashes with the tokens above. */
-  --color-ay-bg: #050a07;
-  --color-ay-panel: #08110c;
-  --color-ay-panel-2: #0d1a13;
-  --color-ay-fg: #eef3ea;
-  --color-ay-muted: #bac9bf;
-  --color-ay-line: rgba(255, 255, 255, 0.09);
-  --color-ay-line-2: rgba(255, 255, 255, 0.16);
-  --color-ay-gold: #f2b53d;
-  --color-ay-leaf: #5ee08a;
-  --color-ay-ink: #1b1304;
+  --color-ay-bg: #edf4cc;
+  --color-ay-panel: #f6fadf;
+  --color-ay-panel-2: #e3edb5;
+  --color-ay-fg: #003a1c;
+  --color-ay-muted: #4a4f4a;
+  --color-ay-line: rgba(0, 58, 28, 0.12);
+  --color-ay-line-2: rgba(0, 58, 28, 0.24);
+  --color-ay-gold: #00602f;
+  --color-ay-leaf: #3f9a52;
+  --color-ay-ink: #f6fadf;
 
   --font-ay: "Google Sans", "Product Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
@@ -186,7 +186,7 @@
 
 @layer base {
   [data-ayurveda] {
-    color-scheme: dark;
+    color-scheme: light;
   }
   [data-ayurveda] :focus-visible {
     outline: 2px solid var(--color-ay-gold);

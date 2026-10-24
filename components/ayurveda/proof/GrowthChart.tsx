@@ -112,7 +112,7 @@ export function GrowthChart() {
     <Reveal className="mt-[18px]">
       <div
         ref={boxRef}
-        className="rounded-[22px] border border-ay-line bg-[rgba(6,12,9,.86)] px-7 pb-[18px] pt-7 backdrop-blur-[6px] max-[560px]:px-[10px] max-[560px]:pb-3 max-[560px]:pt-[18px]"
+        className="rounded-[22px] border border-ay-line bg-[rgba(246,250,223,.86)] px-7 pb-[18px] pt-7 backdrop-blur-[6px] max-[560px]:px-[10px] max-[560px]:pb-3 max-[560px]:pt-[18px]"
       >
         <div className="mb-2 flex flex-wrap justify-between gap-x-6 gap-y-[10px] text-[14px] text-ay-muted">
           <span>
@@ -146,7 +146,7 @@ export function GrowthChart() {
             {metric === "cons" ? "Consultations" : "Revenue"}
           </span>
           <span className="inline-flex items-center gap-2">
-            <i className="h-3 w-3 rounded-[3px] bg-[rgba(94,224,138,.55)]" />
+            <i className="h-3 w-3 rounded-[3px] bg-[rgba(63,154,82,.55)]" />
             Ad spend
           </span>
         </div>
@@ -173,8 +173,8 @@ export function GrowthChart() {
           >
             <defs>
               <linearGradient id="ay-icg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor="#F2B53D" stopOpacity=".38" />
-                <stop offset="1" stopColor="#F2B53D" stopOpacity="0" />
+                <stop offset="0" stopColor="#00602f" stopOpacity=".38" />
+                <stop offset="1" stopColor="#00602f" stopOpacity="0" />
               </linearGradient>
             </defs>
 
@@ -182,8 +182,8 @@ export function GrowthChart() {
               const gy = MT + ih - (ih * k) / 4;
               return (
                 <g key={k}>
-                  <line x1={ML} x2={W - MR} y1={gy} y2={gy} stroke="rgba(255,255,255,.08)" />
-                  <text x={ML - 8} y={gy + 4} textAnchor="end" style={{ fill: "rgba(94,224,138,.85)" }}>
+                  <line x1={ML} x2={W - MR} y1={gy} y2={gy} stroke="rgba(0,58,28,.08)" />
+                  <text x={ML - 8} y={gy + 4} textAnchor="end" style={{ fill: "rgba(63,154,82,.85)" }}>
                     ₹{(k * rs) / 1e5}L
                   </text>
                   <text x={W - MR + 8} y={gy + 4}>
@@ -205,7 +205,7 @@ export function GrowthChart() {
                   width={bw}
                   height={MT + ih - by}
                   rx={3}
-                  fill={i === sel ? "rgba(94,224,138,.85)" : "rgba(94,224,138,.45)"}
+                  fill={i === sel ? "rgba(63,154,82,.85)" : "rgba(63,154,82,.45)"}
                   style={{
                     transformBox: "fill-box",
                     transformOrigin: "bottom",
@@ -227,7 +227,7 @@ export function GrowthChart() {
               strokeLinejoin="round"
               strokeDasharray={1}
               strokeDashoffset={inView ? 0 : 1}
-              className={`[filter:drop-shadow(0_0_8px_rgba(242,181,61,.7))] ${animating ? "animate-draw" : ""}`}
+              className={`[filter:drop-shadow(0_0_8px_rgba(0,96,47,.7))] ${animating ? "animate-draw" : ""}`}
             />
             <g className={`${inView ? "opacity-100" : "opacity-0"} ${animating ? "animate-fade-pts" : ""}`}>
               {pts.map(([px, py], i) => (
@@ -244,7 +244,7 @@ export function GrowthChart() {
                     {mon}
                   </text>
                   {(i === 0 || mon === "Jan") && (
-                    <text x={X(i)} y={MT + ih + 33} textAnchor="middle" style={{ fill: "rgba(186,201,191,.7)", fontSize: 11 }}>
+                    <text x={X(i)} y={MT + ih + 33} textAnchor="middle" style={{ fill: "rgba(74,79,74,.7)", fontSize: 11 }}>
                       {yr}
                     </text>
                   )}
@@ -252,14 +252,14 @@ export function GrowthChart() {
               );
             })}
 
-            <line x1={cx} x2={cx} y1={MT} y2={MT + ih} stroke="rgba(255,255,255,.35)" strokeDasharray="3 4" />
+            <line x1={cx} x2={cx} y1={MT} y2={MT + ih} stroke="rgba(0,58,28,.35)" strokeDasharray="3 4" />
             <circle cx={cx} cy={cy} r={7} fill="var(--color-ay-gold)" stroke="var(--color-ay-bg)" strokeWidth={3} />
             <rect data-hit x={ML} y={MT} width={iw} height={ih} fill="transparent" />
           </svg>
 
           <div
             ref={tipRef}
-            className="pointer-events-none absolute left-0 top-0 z-[3] min-w-[220px] rounded-[14px] border border-ay-gold/50 bg-[rgba(7,14,10,.96)] px-4 py-[14px] text-[13.5px] shadow-[0_18px_50px_-10px_rgba(0,0,0,.8)] transition-transform duration-[140ms] ease-[ease] max-[560px]:min-w-[190px] max-[560px]:px-3 max-[560px]:py-[11px] max-[560px]:text-[12.5px]"
+            className="pointer-events-none absolute left-0 top-0 z-[3] min-w-[220px] rounded-[14px] border border-ay-gold/50 bg-[rgba(246,250,223,.96)] px-4 py-[14px] text-[13.5px] shadow-[0_18px_50px_-10px_rgba(0,0,0,.8)] transition-transform duration-[140ms] ease-[ease] max-[560px]:min-w-[190px] max-[560px]:px-3 max-[560px]:py-[11px] max-[560px]:text-[12.5px]"
           >
             <b className="mb-2 block text-[15px]">{dd[0]}</b>
             <Row label="Ad spend" val={dd[1] == null ? "Not reported yet" : inr(dd[1])} />

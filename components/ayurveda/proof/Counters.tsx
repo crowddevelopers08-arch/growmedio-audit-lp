@@ -26,7 +26,7 @@ function CounterCard({ pre, to, post, label, delay }: Counter & { delay: number 
     >
       <div
         style={borderDelay(Math.round(delay / 0.08))}
-        className={`group relative h-full overflow-hidden rounded-[18px] border border-ay-line bg-[rgba(6,12,9,.86)] px-6 py-7 backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[760px]:px-5 max-[760px]:py-5`}
+        className={`group relative h-full overflow-hidden rounded-[18px] border border-ay-line bg-[rgba(246,250,223,.86)] px-6 py-7 backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[760px]:px-5 max-[760px]:py-5`}
       >
         {/* gold bar fills along the top while the number counts */}
         <span
@@ -36,7 +36,7 @@ function CounterCard({ pre, to, post, label, delay }: Counter & { delay: number 
             inView ? "scale-x-100" : "scale-x-0"
           }`}
         />
-        <div className="text-[clamp(36px,4vw,54px)] font-bold leading-none tracking-[-.04em] text-ay-gold tabular-nums transition-[text-shadow] duration-300 group-hover:[text-shadow:0_0_24px_rgba(242,181,61,.55)]">
+        <div className="text-[clamp(36px,4vw,54px)] font-bold leading-none tracking-[-.04em] text-ay-gold tabular-nums transition-[text-shadow] duration-300 group-hover:[text-shadow:0_0_24px_rgba(0,96,47,.55)]">
           {pre}
           <CountUp to={to} start={inView} />
           {post}

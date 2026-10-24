@@ -1,7 +1,7 @@
 import { Kicker } from "./Kicker";
 import { Reveal } from "./Reveal";
 
-const shadow = "[text-shadow:0_2px_24px_rgba(5,10,7,.95)]";
+const shadow = "[text-shadow:0_2px_24px_rgba(237,244,204,.95)]";
 
 /** Optional kicker + heading + optional description that opens every content section. */
 export function SectionHead({

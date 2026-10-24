@@ -7,8 +7,8 @@
  */
 const tones = {
   hero: "text-[12.5px] text-ay-gold",
-  head: "text-[18px] text-ay-muted max-[560px]:text-[14px] max-[560px]:tracking-[.16em] [text-shadow:0_2px_24px_rgba(5,10,7,.95)]",
-  final: "mt-[22px] text-[18px] text-[#E4ECE6] [text-shadow:0_2px_18px_rgba(5,10,7,.95),0_0_6px_rgba(5,10,7,.8)]",
+  head: "text-[18px] text-ay-muted max-[560px]:text-[14px] max-[560px]:tracking-[.16em] [text-shadow:0_2px_24px_rgba(237,244,204,.95)]",
+  final: "mt-[22px] text-[18px] text-[#1f2a22] [text-shadow:0_2px_18px_rgba(237,244,204,.95),0_0_6px_rgba(237,244,204,.8)]",
 };
 
 export function Kicker({ tone = "hero", children }: { tone?: keyof typeof tones; children: React.ReactNode }) {

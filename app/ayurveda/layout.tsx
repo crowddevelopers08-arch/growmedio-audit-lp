@@ -10,7 +10,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  colorScheme: "dark",
+  colorScheme: "light",
 };
 
 /* Mirrors the <body> of the standalone ayurveda funnel; tokens are the `ay-` set in app/globals.css. */
@@ -33,7 +33,7 @@ export default function AyurvedaLayout({ children }: { children: React.ReactNode
             which makes phones repaint the whole background on every scroll step. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_40%,#0C1D13_0%,#050A07_70%)] [transform:translateZ(0)]"
+          className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_40%,#F6FADF_0%,#E3EDB5_70%)] [transform:translateZ(0)]"
         />
         {children}
       </div>

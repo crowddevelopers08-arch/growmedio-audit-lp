@@ -26,12 +26,12 @@ export function OutcomesSection() {
             <Reveal key={t} variant="scale" delay={i * 0.1} className="h-full">
               <div
                 style={borderDelay(i)}
-                className={`group relative h-full overflow-hidden rounded-[18px] border border-ay-line bg-[rgba(6,12,9,.86)] px-6 py-7 backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[1100px]:py-6 max-[560px]:flex max-[560px]:items-center max-[560px]:gap-4 max-[560px]:rounded-2xl max-[560px]:px-5 max-[560px]:py-4`}
+                className={`group relative h-full overflow-hidden rounded-[18px] border border-ay-line bg-[rgba(246,250,223,.86)] px-6 py-7 backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[1100px]:py-6 max-[560px]:flex max-[560px]:items-center max-[560px]:gap-4 max-[560px]:rounded-2xl max-[560px]:px-5 max-[560px]:py-4`}
               >
                 {/* circle pops in, then the tick draws itself; the circle glows brighter on hover */}
                 <div
                   style={{ animationDelay: `${i * 0.1 + 0.4}s` }}
-                  className="grid h-11 w-11 flex-none place-items-center rounded-full bg-ay-leaf/[.14] text-ay-leaf opacity-0 shadow-[0_0_24px_rgba(94,224,138,.25)] transition-shadow duration-300 group-hover:shadow-[0_0_30px_rgba(94,224,138,.55)] group-data-[in=true]/rv:animate-pop max-[560px]:h-9 max-[560px]:w-9"
+                  className="grid h-11 w-11 flex-none place-items-center rounded-full bg-ay-leaf/[.14] text-ay-leaf opacity-0 shadow-[0_0_24px_rgba(63,154,82,.25)] transition-shadow duration-300 group-hover:shadow-[0_0_30px_rgba(63,154,82,.55)] group-data-[in=true]/rv:animate-pop max-[560px]:h-9 max-[560px]:w-9"
                 >
                   <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" className="h-5 w-5 max-[560px]:h-4 max-[560px]:w-4">
                     <path

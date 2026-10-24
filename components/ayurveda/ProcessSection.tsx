@@ -30,7 +30,7 @@ export function ProcessSection() {
         >
           <div className={`${rail} bg-ay-line`} />
           <div
-            className={`${rail} bg-[linear-gradient(90deg,var(--color-ay-leaf),var(--color-ay-gold))] shadow-[0_0_12px_rgba(242,181,61,.6)] [transition:transform_2.2s_cubic-bezier(.2,.7,.2,1)_.2s] origin-left max-[980px]:origin-top motion-reduce:[transform:none] ${
+            className={`${rail} bg-[linear-gradient(90deg,var(--color-ay-leaf),var(--color-ay-gold))] shadow-[0_0_12px_rgba(0,96,47,.6)] [transition:transform_2.2s_cubic-bezier(.2,.7,.2,1)_.2s] origin-left max-[980px]:origin-top motion-reduce:[transform:none] ${
               inView ? "[transform:none]" : "[transform:scaleX(0)] max-[980px]:[transform:scaleY(0)]"
             }`}
           />
@@ -39,7 +39,7 @@ export function ProcessSection() {
             <div key={s} className="group relative pt-[58px] text-center max-[980px]:flex max-[980px]:text-left max-[980px]:min-h-11 max-[980px]:items-center max-[980px]:pl-[66px] max-[980px]:pt-0">
               <span
                 style={{ animationDelay: `${0.2 + i * 0.55}s` }}
-                className="absolute left-[calc(50%-22px)] top-0 grid h-11 w-11 max-[980px]:left-0 place-items-center rounded-full border-2 border-ay-gold bg-ay-bg font-bold text-ay-gold opacity-0 shadow-[0_0_22px_rgba(242,181,61,.35)] transition-[background,color,box-shadow] duration-300 group-hover:bg-ay-gold group-hover:text-ay-ink group-hover:shadow-[0_0_30px_rgba(242,181,61,.7)] group-data-[in=true]/rv:animate-pop"
+                className="absolute left-[calc(50%-22px)] top-0 grid h-11 w-11 max-[980px]:left-0 place-items-center rounded-full border-2 border-ay-gold bg-ay-bg font-bold text-ay-gold opacity-0 shadow-[0_0_22px_rgba(0,96,47,.35)] transition-[background,color,box-shadow] duration-300 group-hover:bg-ay-gold group-hover:text-ay-ink group-hover:shadow-[0_0_30px_rgba(0,96,47,.7)] group-data-[in=true]/rv:animate-pop"
               >
                 {i + 1}
               </span>

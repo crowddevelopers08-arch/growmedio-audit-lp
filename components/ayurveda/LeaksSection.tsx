@@ -22,17 +22,17 @@ function LeakCard({ n, on, current, title, text }: { n: number; on: boolean; cur
       style={borderDelay(n)}
       className={`group relative rounded-[18px] border px-7 py-[26px] ${cardBorder} backdrop-blur-[6px] transition-[opacity,border-color,background,transform,box-shadow] duration-500 ease-[cubic-bezier(.2,.7,.2,1)] max-[560px]:px-[18px] max-[560px]:py-5 ${
         on
-          ? "border-ay-gold/50 bg-[linear-gradient(135deg,rgba(242,181,61,.08),rgba(6,12,9,.84)_60%)] opacity-100"
-          : "border-ay-line bg-[rgba(6,12,9,.86)] opacity-[.78]"
-      } ${current ? "[transform:translateX(8px)] shadow-[0_18px_40px_-22px_rgba(242,181,61,.55)] max-[560px]:[transform:translateX(4px)]" : ""}`}
+          ? "border-ay-gold/50 bg-[linear-gradient(135deg,rgba(0,96,47,.08),rgba(246,250,223,.84)_60%)] opacity-100"
+          : "border-ay-line bg-[rgba(246,250,223,.86)] opacity-[.78]"
+      } ${current ? "[transform:translateX(8px)] shadow-[0_18px_40px_-22px_rgba(0,96,47,.55)] max-[560px]:[transform:translateX(4px)]" : ""}`}
     >
       {/* light sweep on hover, clipped to the card (the number badge sits outside it) */}
       <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-[18px]">
-        <span className="absolute inset-0 -translate-x-full bg-[linear-gradient(110deg,transparent_25%,rgba(255,255,255,.07)_50%,transparent_75%)] transition-transform duration-700 ease-out group-hover:translate-x-full" />
+        <span className="absolute inset-0 -translate-x-full bg-[linear-gradient(110deg,transparent_25%,rgba(255,255,255,.55)_50%,transparent_75%)] transition-transform duration-700 ease-out group-hover:translate-x-full" />
       </span>
       <span
         className={`absolute -left-[46px] top-6 grid h-8 w-8 place-items-center rounded-full border-2 text-[14px] font-bold transition-all duration-500 ${
-          on ? "border-ay-gold bg-ay-gold text-ay-ink shadow-[0_0_22px_rgba(242,181,61,.6)]" : "border-ay-line-2 bg-ay-bg text-ay-muted"
+          on ? "border-ay-gold bg-ay-gold text-ay-ink shadow-[0_0_22px_rgba(0,96,47,.6)]" : "border-ay-line-2 bg-ay-bg text-ay-muted"
         } ${current ? "[transform:scale(1.12)]" : ""}`}
       >
         {/* pulsing ring around the current leak */}
@@ -91,7 +91,7 @@ export function LeaksSection() {
             <div
               ref={fillRef}
               style={{ transform: "scaleY(0)" }}
-              className="absolute left-[15px] top-2 h-[calc(100%-16px)] w-0.5 origin-top bg-[linear-gradient(var(--color-ay-gold),var(--color-ay-leaf))] shadow-[0_0_12px_rgba(242,181,61,.7)]"
+              className="absolute left-[15px] top-2 h-[calc(100%-16px)] w-0.5 origin-top bg-[linear-gradient(var(--color-ay-gold),var(--color-ay-leaf))] shadow-[0_0_12px_rgba(0,96,47,.7)]"
             />
             {LEAKS.map((s, i) => (
               <LeakCard key={s.title} n={i + 1} on={i <= active} current={i === active} {...s} />

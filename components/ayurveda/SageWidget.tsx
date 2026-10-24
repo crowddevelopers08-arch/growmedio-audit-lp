@@ -69,11 +69,11 @@ export function SageWidget() {
         href={href}
         {...hover}
         aria-label="Chat with us on WhatsApp"
-        className="pointer-events-auto relative block h-[94px] w-20 flex-none animate-bob no-underline [filter:drop-shadow(0_14px_18px_rgba(0,0,0,.6))] max-[560px]:h-[73px] max-[560px]:w-[62px]"
+        className="pointer-events-auto relative block h-[94px] w-20 flex-none animate-bob no-underline [filter:drop-shadow(0_14px_18px_rgba(237,244,204,.6))] max-[560px]:h-[73px] max-[560px]:w-[62px]"
       >
         <svg viewBox="0 0 120 140" aria-hidden="true" className="block h-full w-full overflow-visible">
-          <circle className="origin-center animate-aura [transform-box:fill-box]" cx="60" cy="68" r="56" fill="rgba(242,181,61,.16)" />
-          <circle className="origin-center animate-aura [transform-box:fill-box]" cx="60" cy="68" r="42" fill="none" stroke="#F2B53D" strokeOpacity=".5" strokeWidth="1.2" />
+          <circle className="origin-center animate-aura [transform-box:fill-box]" cx="60" cy="68" r="56" fill="rgba(0,96,47,.16)" />
+          <circle className="origin-center animate-aura [transform-box:fill-box]" cx="60" cy="68" r="42" fill="none" stroke="#00602f" strokeOpacity=".5" strokeWidth="1.2" />
           <ellipse cx="60" cy="124" rx="50" ry="13" fill="#D2741A" />
           <path d="M32 122 C30 92 42 74 60 74 C78 74 90 92 88 122 Z" fill="#F0A13A" />
           <path d="M44 78 C52 92 66 104 88 108 L86 96 C72 94 62 86 58 74 Z" fill="#C96F1A" />
@@ -89,7 +89,7 @@ export function SageWidget() {
         </svg>
         <span
           aria-hidden="true"
-          className="absolute -right-1 top-0.5 grid h-7 w-7 animate-wiggle place-items-center rounded-full bg-[#25D366] shadow-[0_6px_16px_-4px_rgba(0,0,0,.6)] max-[560px]:h-6 max-[560px]:w-6"
+          className="absolute -right-1 top-0.5 grid h-7 w-7 animate-wiggle place-items-center rounded-full bg-[#25D366] shadow-[0_6px_16px_-4px_rgba(237,244,204,.6)] max-[560px]:h-6 max-[560px]:w-6"
         >
           <WhatsAppIcon className="h-4 w-4 fill-white" />
         </span>

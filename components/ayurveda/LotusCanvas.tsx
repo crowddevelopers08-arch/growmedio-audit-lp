@@ -124,8 +124,8 @@ export function LotusCanvas() {
       // the +0.15 boost tapers off near zero so a hidden lotus leaves no glow behind
       ctx.globalAlpha = Math.min(1, S.alpha + 0.15 * Math.min(1, S.alpha / 0.1));
       const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 2.8);
-      g.addColorStop(0, "rgba(242,181,61," + (0.14 + 0.26 * bloom) + ")");
-      g.addColorStop(0.45, "rgba(94,224,138," + (0.04 + 0.07 * bloom) + ")");
+      g.addColorStop(0, "rgba(0,96,47," + (0.14 + 0.26 * bloom) + ")");
+      g.addColorStop(0.45, "rgba(63,154,82," + (0.04 + 0.07 * bloom) + ")");
       g.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
@@ -135,8 +135,8 @@ export function LotusCanvas() {
       ctx.save();
       ctx.translate(cx, cy);
       ctx.lineWidth = 1.4;
-      ctx.strokeStyle = "rgba(242,181,61," + (0.35 + 0.4 * bloom) + ")";
-      ctx.shadowColor = "rgba(242,181,61,.9)";
+      ctx.strokeStyle = "rgba(0,96,47," + (0.35 + 0.4 * bloom) + ")";
+      ctx.shadowColor = "rgba(0,96,47,.9)";
       ctx.shadowBlur = lite ? 0 : 18;
       ctx.beginPath();
       ctx.arc(0, 0, R * 1.42, 0, 6.2832);
@@ -146,7 +146,7 @@ export function LotusCanvas() {
       ctx.rotate(t * 0.06 + S.rot);
       // ticks batched into two paths (major / minor) instead of 96 separate strokes
       for (const major of [true, false]) {
-        ctx.strokeStyle = major ? "rgba(242,181,61,.55)" : "rgba(242,181,61,.25)";
+        ctx.strokeStyle = major ? "rgba(0,96,47,.55)" : "rgba(0,96,47,.25)";
         ctx.beginPath();
         for (let i = major ? 0 : 1; i < 96; i += major ? 4 : 1) {
           if (!major && i % 4 === 0) continue;
@@ -160,7 +160,7 @@ export function LotusCanvas() {
       ctx.save();
       ctx.rotate(-t * 0.09 - S.rot * 1.4);
       ctx.setLineDash([3, 10]);
-      ctx.strokeStyle = "rgba(94,224,138,.45)";
+      ctx.strokeStyle = "rgba(63,154,82,.45)";
       ctx.beginPath();
       ctx.arc(0, 0, R * 1.75, 0, 6.2832);
       ctx.stroke();
@@ -168,7 +168,7 @@ export function LotusCanvas() {
       // petal-shaped mandala arcs
       ctx.save();
       ctx.rotate(t * 0.035);
-      ctx.strokeStyle = "rgba(242,181,61," + (0.08 + 0.12 * bloom) + ")";
+      ctx.strokeStyle = "rgba(0,96,47," + (0.08 + 0.12 * bloom) + ")";
       ctx.lineWidth = 1;
       // one path for all 16 arcs (each ellipse rotated about the centre via its own rotation argument)
       ctx.beginPath();
@@ -186,7 +186,7 @@ export function LotusCanvas() {
       ctx.translate(cx, cy + R * 0.52);
       for (let r2 = 0; r2 < 3; r2++) {
         const ph = (t * 0.22 + r2 / 3) % 1;
-        ctx.strokeStyle = "rgba(94,224,138," + 0.35 * (1 - ph) + ")";
+        ctx.strokeStyle = "rgba(63,154,82," + 0.35 * (1 - ph) + ")";
         ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.ellipse(0, 0, R * (0.5 + ph * 1.3), R * (0.12 + ph * 0.28), 0, 0, 6.2832);
@@ -207,24 +207,24 @@ export function LotusCanvas() {
           ctx.save();
           ctx.rotate(ang + Math.sin(t * 0.8 + i + ri) * 0.008);
           const gr = ctx.createLinearGradient(0, 0, 0, -L);
-          gr.addColorStop(0, "rgba(214,120,28," + (0.55 + 0.1 * ri) + ")");
-          gr.addColorStop(0.55, "rgba(242,181,61," + (0.38 + 0.08 * ri) + ")");
-          gr.addColorStop(1, "rgba(255,236,190," + (0.55 + 0.08 * ri) + ")");
+          gr.addColorStop(0, "rgba(0,70,35," + (0.55 + 0.1 * ri) + ")");
+          gr.addColorStop(0.55, "rgba(0,96,47," + (0.38 + 0.08 * ri) + ")");
+          gr.addColorStop(1, "rgba(214,229,154," + (0.55 + 0.08 * ri) + ")");
           petal(L, row.w);
           ctx.fillStyle = gr;
-          ctx.shadowColor = "rgba(242,181,61,.65)";
+          ctx.shadowColor = "rgba(0,96,47,.65)";
           // per-petal blur is the costliest part of a frame, so phones skip it (the ambient glow stays)
           ctx.shadowBlur = lite ? 0 : S.hero ? 16 + 10 * bloom : 4;
           ctx.fill();
           ctx.shadowBlur = 0;
           ctx.lineWidth = 1.1;
-          ctx.strokeStyle = "rgba(255,226,150," + (0.55 + 0.1 * ri) + ")";
+          ctx.strokeStyle = "rgba(120,170,80," + (0.55 + 0.1 * ri) + ")";
           ctx.stroke();
           // vein
           ctx.beginPath();
           ctx.moveTo(0, -L * 0.12);
           ctx.lineTo(0, -L * 0.82);
-          ctx.strokeStyle = "rgba(255,240,200,.18)";
+          ctx.strokeStyle = "rgba(214,229,154,.18)";
           ctx.lineWidth = 1;
           ctx.stroke();
           ctx.restore();
@@ -233,9 +233,9 @@ export function LotusCanvas() {
       // diya-like core flame
       const fl = 1 + Math.sin(t * 5) * 0.06;
       const fg = ctx.createRadialGradient(0, -R * 0.08, 0, 0, -R * 0.08, R * 0.32);
-      fg.addColorStop(0, "rgba(255,248,220,.95)");
-      fg.addColorStop(0.4, "rgba(255,200,90," + (0.5 + 0.4 * bloom) + ")");
-      fg.addColorStop(1, "rgba(242,181,61,0)");
+      fg.addColorStop(0, "rgba(246,250,223,.95)");
+      fg.addColorStop(0.4, "rgba(120,185,90," + (0.5 + 0.4 * bloom) + ")");
+      fg.addColorStop(1, "rgba(0,96,47,0)");
       ctx.fillStyle = fg;
       ctx.beginPath();
       ctx.ellipse(0, -R * 0.1, R * 0.16 * fl, R * 0.3 * fl * (0.6 + 0.4 * bloom), 0, 0, 6.2832);
@@ -244,7 +244,7 @@ export function LotusCanvas() {
 
       // pollen / embers
       ctx.globalAlpha = 1;
-      ctx.globalCompositeOperation = "lighter";
+      ctx.globalCompositeOperation = "source-over";
       for (const q of parts) {
         // `step` scales motion to the time since the last draw (phones draw at 30fps)
         q.y -= q.v * (1 + bloom) * step;
@@ -254,7 +254,7 @@ export function LotusCanvas() {
           q.x = Math.random() * W;
         }
         const al = (0.25 + 0.55 * (0.5 + 0.5 * Math.sin(t * 1.6 + q.ph))) * (0.5 + 0.5 * bloom);
-        ctx.fillStyle = q.g ? "rgba(94,224,138," + al + ")" : "rgba(242,181,61," + al + ")";
+        ctx.fillStyle = q.g ? "rgba(63,154,82," + al + ")" : "rgba(0,96,47," + al + ")";
         ctx.beginPath();
         ctx.arc(q.x, q.y, q.r, 0, 6.2832);
         ctx.fill();

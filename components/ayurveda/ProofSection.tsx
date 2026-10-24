@@ -6,7 +6,7 @@ import { GrowthChart } from "./proof/GrowthChart";
 
 export function ProofSection() {
   return (
-    <Section id="proof" className="bg-[radial-gradient(ellipse_at_50%_0%,rgba(242,181,61,.08),transparent_60%)]">
+    <Section id="proof" className="bg-[radial-gradient(ellipse_at_50%_0%,rgba(0,96,47,.08),transparent_60%)]">
       <Container>
         <SectionHead
           center

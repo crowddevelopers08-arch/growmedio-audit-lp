@@ -21,7 +21,7 @@ export function ProblemSection() {
             <Reveal key={t} as="article" variant="scale" delay={i * 0.1} className="h-full">
               <div
                 style={borderDelay(i)}
-                className={`group relative h-full overflow-hidden rounded-[20px] border border-ay-line bg-[rgba(6,12,9,.86)] px-7 py-[30px] backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[1100px]:px-6 max-[1100px]:py-6 max-[560px]:flex max-[560px]:items-baseline max-[560px]:gap-4 max-[560px]:rounded-2xl max-[560px]:px-5 max-[560px]:py-[18px]`}
+                className={`group relative h-full overflow-hidden rounded-[20px] border border-ay-line bg-[rgba(246,250,223,.86)] px-7 py-[30px] backdrop-blur-[6px] ${cardLift} ${cardBorder} ${cardShine} max-[1100px]:px-6 max-[1100px]:py-6 max-[560px]:flex max-[560px]:items-baseline max-[560px]:gap-4 max-[560px]:rounded-2xl max-[560px]:px-5 max-[560px]:py-[18px]`}
               >
                 {/* number pops in after the card lands */}
                 <div
@@ -38,7 +38,7 @@ export function ProblemSection() {
           ))}
         </div>
         <Reveal variant="blur" delay={0.1} className="mx-auto mt-10 max-w-[900px] text-center max-[560px]:mt-8">
-          <p className="text-balance text-[clamp(22px,2.6vw,34px)] font-semibold leading-[1.2] tracking-[-0.025em] [text-shadow:0_2px_24px_rgba(5,10,7,.95)]">
+          <p className="text-balance text-[clamp(22px,2.6vw,34px)] font-semibold leading-[1.2] tracking-[-0.025em] [text-shadow:0_2px_24px_rgba(237,244,204,.95)]">
             <span className="block">The problem is rarely the budget.</span>
             {/* underline draws in under the gold line */}
             <span className="relative mt-[.12em] inline-block text-ay-gold after:absolute after:-bottom-1.5 after:left-0 after:h-[3px] after:w-full after:origin-left after:scale-x-0 after:rounded-full after:bg-[linear-gradient(90deg,var(--color-ay-gold),var(--color-ay-leaf))] after:transition-transform after:delay-700 after:duration-1000 after:content-[''] group-data-[in=true]/rv:after:scale-x-100 max-[560px]:after:hidden">

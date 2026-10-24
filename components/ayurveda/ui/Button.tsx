@@ -7,8 +7,8 @@ const base =
   "group inline-flex cursor-pointer items-center justify-center gap-[10px] rounded-xl border border-solid font-semibold leading-none no-underline transition-[transform,box-shadow,border-color,background] duration-[250ms] ease-[ease]";
 
 const variants: Record<Variant, string> = {
-  gold: "border-transparent bg-ay-gold text-ay-ink shadow-[0_0_0_1px_rgba(242,181,61,.5),0_10px_40px_-10px_rgba(242,181,61,.55)] hover:[transform:translateY(-2px)] hover:shadow-[0_0_0_1px_rgba(242,181,61,.8),0_16px_50px_-8px_rgba(242,181,61,.75)]",
-  ghost: "border-ay-line-2 bg-white/[.03] text-ay-fg hover:border-ay-gold hover:bg-ay-gold/[.08]",
+  gold: "border-transparent bg-ay-gold text-ay-ink shadow-[0_0_0_1px_rgba(0,96,47,.5),0_10px_40px_-10px_rgba(0,96,47,.55)] hover:[transform:translateY(-2px)] hover:shadow-[0_0_0_1px_rgba(0,96,47,.8),0_16px_50px_-8px_rgba(0,96,47,.75)]",
+  ghost: "border-ay-line-2 bg-[#003a1c]/[.04] text-ay-fg hover:border-ay-gold hover:bg-ay-gold/[.08]",
 };
 
 const sizes: Record<Size, string> = {
