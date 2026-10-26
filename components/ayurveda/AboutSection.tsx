@@ -8,7 +8,7 @@ const CARDS = [
     kicker: "Why is it free?",
     title: (
       <>
-        Because we&apos;d rather <span className="text-ay-gold">show you</span> than tell you.
+        Because we&apos;d rather <span className="text-ay-brand">show you</span> than tell you.
       </>
     ),
     text: "Most agencies ask for your trust first. We do it the other way round. You see how we think and what we'd do for your clinic before you decide anything.",
@@ -17,7 +17,7 @@ const CARDS = [
     kicker: "About Grow Medico",
     title: (
       <>
-        We only grow <span className="text-ay-gold">healthcare practices.</span>
+        We only grow <span className="text-ay-brand">healthcare practices.</span>
       </>
     ),
     text: "We work with clinics across India: Ayurveda, skin and hair, fertility, dental and more. We know what makes patients book, and where clinic marketing breaks.",

@@ -34,17 +34,21 @@
   --animate-blink: blink 1.8s ease-in-out infinite;
   --animate-ticker: ticker 34s linear infinite;
 
-  /* Ayurveda funnel (/ayurveda) — namespaced with `ay-` so it never clashes with the tokens above. */
-  --color-ay-bg: #050a07;
-  --color-ay-panel: #08110c;
-  --color-ay-panel-2: #0d1a13;
-  --color-ay-fg: #eef3ea;
-  --color-ay-muted: #bac9bf;
-  --color-ay-line: rgba(255, 255, 255, 0.09);
-  --color-ay-line-2: rgba(255, 255, 255, 0.16);
-  --color-ay-gold: #f2b53d;
-  --color-ay-leaf: #5ee08a;
-  --color-ay-ink: #1b1304;
+  /* Ayurveda funnel (/ayurveda) — namespaced with `ay-` so it never clashes with the tokens above.
+     White page in the Grow Medico logo colours — solid fills only, no gradients or glows:
+     White #ffffff (page background, cards, button text), Logo Grey #4d4e50 (text, hairlines),
+     Logo Green #0e8e75 (brand: buttons, highlights, bars, chart), Logo Blue #1c8fbe (accent: small details, lotus line art).
+     Muted text is Logo Grey at reduced opacity so body copy sits a step below headings. */
+  --color-ay-bg: #ffffff;
+  --color-ay-panel: #ffffff;
+  --color-ay-panel-2: #ffffff;
+  --color-ay-fg: #4d4e50;
+  --color-ay-muted: rgba(77, 78, 80, 0.85);
+  --color-ay-line: rgba(77, 78, 80, 0.16);
+  --color-ay-line-2: rgba(77, 78, 80, 0.28);
+  --color-ay-brand: #0e8e75;
+  --color-ay-accent: #1c8fbe;
+  --color-ay-ink: #ffffff;
 
   --font-ay: "Google Sans", "Product Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
@@ -61,10 +65,10 @@
   --animate-pop: pop 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
   --animate-draw-tick: draw-tick 0.6s ease-out both;
   --animate-rise: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  --animate-glow: glow 2.8s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 2.6s cubic-bezier(0.2, 0.7, 0.2, 1) 1.2s infinite;
   --animate-shimmer: shimmer 5s linear infinite;
   --animate-ring: ring 1.8s ease-out infinite;
-  --animate-border-spin: border-spin 6s linear infinite;
+  --animate-border-spin: border-spin 8s linear infinite;
 
   @keyframes border-spin {
     to { --border-angle: 360deg; }
@@ -82,9 +86,10 @@
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: none; }
   }
-  @keyframes glow {
-    0%, 100% { box-shadow: 0 0 0 1px rgba(242, 181, 61, 0.5), 0 10px 40px -10px rgba(242, 181, 61, 0.55); }
-    50% { box-shadow: 0 0 0 1px rgba(242, 181, 61, 0.85), 0 14px 60px -6px rgba(242, 181, 61, 0.8); }
+  /* primary CTA: a crisp logo-green ring that expands and fades (no blur, no glow) */
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 6px 16px -8px rgba(77, 78, 80, 0.35), 0 0 0 0 rgba(14, 142, 117, 0.5); }
+    70%, 100% { box-shadow: 0 6px 16px -8px rgba(77, 78, 80, 0.35), 0 0 0 14px rgba(14, 142, 117, 0); }
   }
   @keyframes shimmer {
     from { background-position: 200% 0; }
@@ -186,10 +191,10 @@
 
 @layer base {
   [data-ayurveda] {
-    color-scheme: dark;
+    color-scheme: light;
   }
   [data-ayurveda] :focus-visible {
-    outline: 2px solid var(--color-ay-gold);
+    outline: 2px solid var(--color-ay-brand);
     outline-offset: 3px;
     border-radius: 4px;
   }

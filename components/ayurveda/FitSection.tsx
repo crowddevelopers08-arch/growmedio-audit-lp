@@ -26,15 +26,15 @@ export function FitSection() {
           <Reveal variant="left" className="h-full">
             <div
               style={borderDelay(0)}
-              className={`relative h-full rounded-[20px] border border-ay-gold/50 px-8 py-8 backdrop-blur-[6px] [background:linear-gradient(135deg,rgba(242,181,61,.08),rgba(6,12,9,.84)_60%)] ${cardLift} ${cardBorder} max-[760px]:py-6 max-[560px]:px-5 max-[560px]:py-5`}
+              className={`relative h-full rounded-[20px] border border-ay-brand/50 px-8 py-8 backdrop-blur-[6px] bg-ay-panel ${cardLift} ${cardBorder} max-[760px]:py-6 max-[560px]:px-5 max-[560px]:py-5`}
             >
-              <h3 className="text-[23px] font-semibold tracking-[-0.025em] text-ay-gold">Yes, if:</h3>
+              <h3 className="text-[23px] font-semibold tracking-[-0.025em] text-ay-brand">Yes, if:</h3>
               <ul className="mt-5 grid list-none gap-3 p-0">
                 {YES.map((t, i) => (
                   <li key={t} style={{ transitionDelay: `${0.35 + i * 0.1}s` }} className={item}>
                     <span
                       style={{ animationDelay: `${0.45 + i * 0.1}s` }}
-                      className="inline-block font-semibold text-ay-leaf opacity-0 group-data-[in=true]/rv:animate-pop"
+                      className="inline-block font-semibold text-ay-muted opacity-0 group-data-[in=true]/rv:animate-pop"
                     >
                       &#10003;
                     </span>
@@ -47,12 +47,12 @@ export function FitSection() {
           <Reveal variant="right" delay={0.1} className="h-full">
             <div
               style={borderDelay(2)}
-              className={`relative h-full rounded-[20px] border border-ay-line bg-[rgba(6,12,9,.86)] px-8 py-8 backdrop-blur-[6px] ${cardLift} ${cardBorder} max-[760px]:py-6 max-[560px]:px-5 max-[560px]:py-5`}
+              className={`relative h-full rounded-[20px] border border-ay-line bg-ay-panel px-8 py-8 backdrop-blur-[6px] ${cardLift} ${cardBorder} max-[760px]:py-6 max-[560px]:px-5 max-[560px]:py-5`}
             >
               <h3 className="text-[23px] font-semibold tracking-[-0.025em] text-ay-muted">Not right now, if:</h3>
               <ul className="mt-5 grid list-none gap-3 p-0">
                 {NOT_YET.map((t, i) => (
-                  <li key={t} style={{ transitionDelay: `${0.45 + i * 0.1}s` }} className={`${item} text-[#98A89D]`}>
+                  <li key={t} style={{ transitionDelay: `${0.45 + i * 0.1}s` }} className={`${item} text-ay-fg`}>
                     <span className="font-semibold">&#10007;</span>
                     {t}
                   </li>

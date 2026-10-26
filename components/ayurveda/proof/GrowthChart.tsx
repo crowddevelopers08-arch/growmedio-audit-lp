@@ -36,7 +36,7 @@ function Row({ label, val, hi }: { label: string; val: string; hi?: boolean }) {
   return (
     <div className="flex justify-between gap-[18px] py-[3px] text-ay-muted">
       <span>{label}</span>
-      <span className={`text-right font-semibold tabular-nums ${hi ? "text-ay-gold" : "text-ay-fg"}`}>{val}</span>
+      <span className={`text-right font-semibold tabular-nums ${hi ? "text-ay-brand" : "text-ay-fg"}`}>{val}</span>
     </div>
   );
 }
@@ -112,13 +112,13 @@ export function GrowthChart() {
     <Reveal className="mt-[18px]">
       <div
         ref={boxRef}
-        className="rounded-[22px] border border-ay-line bg-[rgba(6,12,9,.86)] px-7 pb-[18px] pt-7 backdrop-blur-[6px] max-[560px]:px-[10px] max-[560px]:pb-3 max-[560px]:pt-[18px]"
+        className="rounded-[22px] border border-ay-line bg-ay-panel px-7 pb-[18px] pt-7 backdrop-blur-[6px] max-[560px]:px-[10px] max-[560px]:pb-3 max-[560px]:pt-[18px]"
       >
-        <div className="mb-2 flex flex-wrap justify-between gap-x-6 gap-y-[10px] text-[14px] text-ay-muted">
+        <div className="mb-2 flex flex-wrap justify-between gap-x-6 gap-y-[10px] text-[15px] font-medium text-ay-muted">
           <span>
             <b className="text-[16px] font-semibold text-ay-fg">Month by month, Aug 2025 to Sep 2026</b>
           </span>
-          <div role="group" aria-label="Chart metric" className="inline-flex rounded-full border border-ay-line-2 bg-white/[.04] p-1">
+          <div role="group" aria-label="Chart metric" className="inline-flex rounded-full border border-ay-line-2 bg-ay-fg/[.04] p-1">
             {(
               [
                 ["cons", "Consultations"],
@@ -130,8 +130,8 @@ export function GrowthChart() {
                 type="button"
                 aria-pressed={metric === m}
                 onClick={() => setMetric(m)}
-                className={`cursor-pointer rounded-full border-0 px-4 py-[9px] text-[13px] font-semibold leading-none transition-[background,color] duration-200 ${
-                  metric === m ? "bg-ay-gold text-ay-ink" : "bg-transparent text-ay-muted"
+                className={`cursor-pointer rounded-full border-0 px-4 py-[9px] text-[14.5px] font-bold leading-none transition-[background,color] duration-200 ${
+                  metric === m ? "bg-ay-brand text-ay-ink" : "bg-transparent text-ay-muted"
                 }`}
               >
                 {label}
@@ -140,13 +140,13 @@ export function GrowthChart() {
           </div>
         </div>
 
-        <div className="mb-1.5 mt-1 flex flex-wrap gap-x-[22px] gap-y-2 text-[13px] text-ay-muted">
+        <div className="mb-1.5 mt-1 flex flex-wrap gap-x-[22px] gap-y-2 text-[14.5px] font-medium text-ay-muted">
           <span className="inline-flex items-center gap-2">
-            <i className="h-[3px] w-[22px] rounded-[3px] bg-ay-gold" />
+            <i className="h-[3px] w-[22px] rounded-[3px] bg-ay-brand" />
             {metric === "cons" ? "Consultations" : "Revenue"}
           </span>
           <span className="inline-flex items-center gap-2">
-            <i className="h-3 w-3 rounded-[3px] bg-[rgba(94,224,138,.55)]" />
+            <i className="h-3 w-3 rounded-[3px] bg-[rgba(14,142,117,.55)]" />
             Ad spend
           </span>
         </div>
@@ -162,7 +162,7 @@ export function GrowthChart() {
             viewBox={`0 0 ${W} ${H}`}
             width={W}
             height={H}
-            className="block h-auto w-full overflow-visible text-[12px] [&_text]:fill-ay-muted"
+            className="block h-auto w-full overflow-visible text-[13.5px] font-medium [&_text]:fill-ay-muted"
             onPointerMove={(e) => {
               if ((e.target as Element).hasAttribute("data-hit")) setSel(idxFrom(e));
             }}
@@ -171,19 +171,13 @@ export function GrowthChart() {
               if (e.pointerType === "mouse") setSel(n - 1);
             }}
           >
-            <defs>
-              <linearGradient id="ay-icg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor="#F2B53D" stopOpacity=".38" />
-                <stop offset="1" stopColor="#F2B53D" stopOpacity="0" />
-              </linearGradient>
-            </defs>
 
             {[0, 1, 2, 3, 4].map((k) => {
               const gy = MT + ih - (ih * k) / 4;
               return (
                 <g key={k}>
-                  <line x1={ML} x2={W - MR} y1={gy} y2={gy} stroke="rgba(255,255,255,.08)" />
-                  <text x={ML - 8} y={gy + 4} textAnchor="end" style={{ fill: "rgba(94,224,138,.85)" }}>
+                  <line x1={ML} x2={W - MR} y1={gy} y2={gy} stroke="rgba(77,78,80,.1)" />
+                  <text x={ML - 8} y={gy + 4} textAnchor="end" style={{ fill: "rgba(77,78,80,.65)" }}>
                     ₹{(k * rs) / 1e5}L
                   </text>
                   <text x={W - MR + 8} y={gy + 4}>
@@ -205,7 +199,7 @@ export function GrowthChart() {
                   width={bw}
                   height={MT + ih - by}
                   rx={3}
-                  fill={i === sel ? "rgba(94,224,138,.85)" : "rgba(94,224,138,.45)"}
+                  fill={i === sel ? "rgba(14,142,117,.85)" : "rgba(14,142,117,.45)"}
                   style={{
                     transformBox: "fill-box",
                     transformOrigin: "bottom",
@@ -216,22 +210,22 @@ export function GrowthChart() {
               );
             })}
 
-            <path d={area} fill="url(#ay-icg)" className={`${inView ? "opacity-100" : "opacity-0"} ${animating ? "animate-fade-area" : ""}`} />
+            <path d={area} fill="rgba(14,142,117,.08)" className={`${inView ? "opacity-100" : "opacity-0"} ${animating ? "animate-fade-area" : ""}`} />
             <path
               d={path}
               pathLength={1}
               fill="none"
-              stroke="var(--color-ay-gold)"
+              stroke="var(--color-ay-brand)"
               strokeWidth={3.2}
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeDasharray={1}
               strokeDashoffset={inView ? 0 : 1}
-              className={`[filter:drop-shadow(0_0_8px_rgba(242,181,61,.7))] ${animating ? "animate-draw" : ""}`}
+              className={` ${animating ? "animate-draw" : ""}`}
             />
             <g className={`${inView ? "opacity-100" : "opacity-0"} ${animating ? "animate-fade-pts" : ""}`}>
               {pts.map(([px, py], i) => (
-                <circle key={i} cx={px} cy={py} r={small ? 3 : 4} fill="var(--color-ay-bg)" stroke="var(--color-ay-gold)" strokeWidth={2.2} />
+                <circle key={i} cx={px} cy={py} r={small ? 3 : 4} fill="var(--color-ay-bg)" stroke="var(--color-ay-brand)" strokeWidth={2.2} />
               ))}
             </g>
 
@@ -244,7 +238,7 @@ export function GrowthChart() {
                     {mon}
                   </text>
                   {(i === 0 || mon === "Jan") && (
-                    <text x={X(i)} y={MT + ih + 33} textAnchor="middle" style={{ fill: "rgba(186,201,191,.7)", fontSize: 11 }}>
+                    <text x={X(i)} y={MT + ih + 33} textAnchor="middle" style={{ fill: "rgba(77,78,80,.65)", fontSize: 13 }}>
                       {yr}
                     </text>
                   )}
@@ -252,16 +246,16 @@ export function GrowthChart() {
               );
             })}
 
-            <line x1={cx} x2={cx} y1={MT} y2={MT + ih} stroke="rgba(255,255,255,.35)" strokeDasharray="3 4" />
-            <circle cx={cx} cy={cy} r={7} fill="var(--color-ay-gold)" stroke="var(--color-ay-bg)" strokeWidth={3} />
+            <line x1={cx} x2={cx} y1={MT} y2={MT + ih} stroke="rgba(28,143,190,.35)" strokeDasharray="3 4" />
+            <circle cx={cx} cy={cy} r={7} fill="var(--color-ay-brand)" stroke="var(--color-ay-bg)" strokeWidth={3} />
             <rect data-hit x={ML} y={MT} width={iw} height={ih} fill="transparent" />
           </svg>
 
           <div
             ref={tipRef}
-            className="pointer-events-none absolute left-0 top-0 z-[3] min-w-[220px] rounded-[14px] border border-ay-gold/50 bg-[rgba(7,14,10,.96)] px-4 py-[14px] text-[13.5px] shadow-[0_18px_50px_-10px_rgba(0,0,0,.8)] transition-transform duration-[140ms] ease-[ease] max-[560px]:min-w-[190px] max-[560px]:px-3 max-[560px]:py-[11px] max-[560px]:text-[12.5px]"
+            className="pointer-events-none absolute left-0 top-0 z-[3] min-w-[220px] rounded-[14px] border border-ay-brand/50 bg-ay-panel px-4 py-[14px] text-[15px] font-medium shadow-[0_18px_40px_-16px_rgba(77,78,80,.3)] transition-transform duration-[140ms] ease-[ease] max-[560px]:min-w-[190px] max-[560px]:px-3 max-[560px]:py-[11px] max-[560px]:text-[14px]"
           >
-            <b className="mb-2 block text-[15px]">{dd[0]}</b>
+            <b className="mb-2 block text-[15px] font-medium">{dd[0]}</b>
             <Row label="Ad spend" val={dd[1] == null ? "Not reported yet" : inr(dd[1])} />
             <Row label="Consultations" val={String(dd[2])} hi={metric === "cons"} />
             <Row label="Revenue" val={(dd[0] === "Sep 2026" ? "≈ " : "") + inr(dd[3])} hi={metric === "rev"} />
@@ -275,7 +269,7 @@ export function GrowthChart() {
           </div>
         </div>
 
-        <p className="mt-[10px] px-2 text-[12.5px] text-ay-muted">
+        <p className="mt-[10px] px-2 text-[14px] font-medium text-ay-muted">
           Hover or tap any month to see ad spend, consultations and revenue. Revenue per &#8377;1 of ad spend is revenue divided by ad
           spend.
         </p>

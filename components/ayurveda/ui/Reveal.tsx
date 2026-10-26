@@ -3,8 +3,8 @@
 import { useInView } from "../useInView";
 
 const HIDDEN = {
-  up: "[transform:translateY(30px)] opacity-0",
-  scale: "[transform:translateY(18px)_scale(.94)] opacity-0",
+  up: "[transform:translateY(24px)] opacity-0",
+  scale: "[transform:translateY(18px)_scale(.96)] opacity-0",
   left: "[transform:translateX(-40px)] opacity-0",
   right: "[transform:translateX(40px)] opacity-0",
   // the blur only runs on desktop: animating a filter is costly on phones
@@ -32,7 +32,7 @@ export function Reveal({ as: Tag = "div", delay = 0, variant = "up", className =
       ref={ref}
       data-in={inView}
       style={{ transitionDelay: `${delay}s` }}
-      className={`group/rv transition-[opacity,transform,filter] duration-[900ms] ease-[cubic-bezier(.2,.7,.2,1)] motion-reduce:[transform:none] motion-reduce:opacity-100 motion-reduce:blur-none ${
+      className={`group/rv transition-[opacity,transform,filter] duration-[800ms] ease-[cubic-bezier(.16,1,.3,1)] motion-reduce:[transform:none] motion-reduce:opacity-100 motion-reduce:blur-none ${
         inView ? "[transform:none] opacity-100 blur-none" : HIDDEN[variant]
       } ${className}`}
     >

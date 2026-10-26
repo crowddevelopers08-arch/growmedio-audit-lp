@@ -6,13 +6,13 @@ import { GrowthChart } from "./proof/GrowthChart";
 
 export function ProofSection() {
   return (
-    <Section id="proof" className="bg-[radial-gradient(ellipse_at_50%_0%,rgba(242,181,61,.08),transparent_60%)]">
+    <Section id="proof" className="">
       <Container>
         <SectionHead
           center
           kicker={
             <span>
-              One of our proof&nbsp;-&nbsp;<span className="text-ay-gold">Ayush Ortho Ayurveda Clinic</span>
+              One of our proof&nbsp;-&nbsp;<span className="text-ay-brand">Ayush Ortho Ayurveda Clinic</span>
             </span>
           }
           title={<>The numbers behind &#8377;44&nbsp;lakhs.</>}

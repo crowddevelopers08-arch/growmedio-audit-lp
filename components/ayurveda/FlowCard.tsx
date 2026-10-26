@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 import { cardBorder } from "./ui/fx";
 
-/* site palette (the ay- gold, leaf and muted tokens): gold for money going out, green for what lands as revenue */
-const COL = { brass: "#f2b53d", lit: "#5ee08a", brand: "#1f7a45", muted: "#bac9bf" };
+/* site palette (the ay- brand, accent and muted tokens): blue for money going out, green for what lands as revenue */
+const COL = { brass: "#1C8FBE", lit: "#0E8E75", brand: "#0E8E75", muted: "rgba(77,78,80,.72)" };
 
 /** f: how far down the pipe, s: side it spills to, p: chance a passing drop leaks there */
 const LEAKS = [
@@ -104,13 +104,10 @@ export function FlowCard() {
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
       ctx.textBaseline = "middle";
-      ctx.font = `500 ${W < 420 ? 11.5 : 13.5}px ${font}`;
+      ctx.font = `600 ${W < 420 ? 12.5 : 14.5}px ${font}`;
       (ctx as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing = "1.2px";
 
-      const g = ctx.createLinearGradient(0, y0, 0, y1);
-      g.addColorStop(0, COL.brass);
-      g.addColorStop(1, COL.lit);
-      ctx.strokeStyle = g;
+      ctx.strokeStyle = COL.brass;
       ctx.lineWidth = 1.2;
       ctx.globalAlpha = 0.55;
       ctx.beginPath();
@@ -127,29 +124,23 @@ export function FlowCard() {
       });
 
       ctx.textAlign = "center";
-      ctx.fillStyle = COL.brass;
+      ctx.fillStyle = COL.lit;
       ctx.fillText("AD SPEND · ₹5,00,000 / MONTH", cx, 24);
 
       for (const p of parts) {
         const col = p.st === 2 ? COL.lit : COL.brass;
         ctx.globalAlpha = Math.max(0, p.a);
-        ctx.shadowColor = col;
-        ctx.shadowBlur = 8;
         ctx.fillStyle = col;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.shadowBlur = 0;
       ctx.globalAlpha = 1;
 
       const bx = 28, bw = W - 56, by = H - 46;
-      ctx.fillStyle = "rgba(255,255,255,.08)";
+      ctx.fillStyle = "rgba(77,78,80,.08)";
       ctx.fillRect(bx, by, bw, 10);
-      const fg = ctx.createLinearGradient(bx, 0, bx + bw, 0);
-      fg.addColorStop(0, COL.brand);
-      fg.addColorStop(1, COL.lit);
-      ctx.fillStyle = fg;
+      ctx.fillStyle = COL.brand;
       ctx.fillRect(bx, by, Math.max(2, bw * fill), 10);
       ctx.textAlign = "left";
       ctx.fillStyle = COL.lit;
@@ -199,7 +190,7 @@ export function FlowCard() {
 
   return (
     <figure
-      className={`relative m-0 min-w-0 overflow-hidden rounded-[20px] border border-ay-line-2 bg-[rgba(9,18,13,.8)] backdrop-blur-[6px] ${cardBorder}`}
+      className={`relative m-0 min-w-0 overflow-hidden rounded-[20px] border border-ay-line-2 bg-ay-panel backdrop-blur-[6px] ${cardBorder}`}
     >
       <canvas
         ref={cvRef}
@@ -207,7 +198,7 @@ export function FlowCard() {
         aria-label="Animated diagram: ad spend falls through a pipe with five leaks, and only a part of it reaches revenue at the bottom"
         className="block h-[clamp(400px,calc(100svh-230px),540px)] w-full max-[980px]:h-[clamp(430px,90vw,520px)]"
       />
-      <figcaption className="border-t border-ay-line px-5 py-[14px] text-[12.5px] font-medium uppercase leading-[1.5] tracking-[.1em] text-ay-muted">
+      <figcaption className="border-t border-ay-line px-5 py-[14px] text-[14px] font-semibold uppercase leading-[1.5] tracking-[.1em] text-ay-muted">
         Illustrative · a month of ad spend, and what leaks before it becomes revenue
       </figcaption>
     </figure>

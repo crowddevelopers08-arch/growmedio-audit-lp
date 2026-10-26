@@ -1,7 +1,7 @@
 import { Kicker } from "./Kicker";
 import { Reveal } from "./Reveal";
 
-const shadow = "[text-shadow:0_2px_24px_rgba(5,10,7,.95)]";
+const shadow = "";
 
 /** Optional kicker + heading + optional description that opens every content section. */
 export function SectionHead({
@@ -28,12 +28,12 @@ export function SectionHead({
   );
 }
 
-/** Two-line heading where the second line is gold. */
+/** Two-line heading where the second line is green. */
 export function TwoLine({ first, second }: { first: React.ReactNode; second: React.ReactNode }) {
   return (
     <>
       <span className="block">{first}</span>
-      <span className="mt-[.12em] block text-ay-gold">{second}</span>
+      <span className="mt-[.12em] block text-ay-brand">{second}</span>
     </>
   );
 }

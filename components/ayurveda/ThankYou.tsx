@@ -57,11 +57,11 @@ export function ThankYou() {
 
   return (
     <main className="relative z-[1] flex min-h-dvh flex-col">
-      <header className="border-b border-ay-line bg-[rgba(5,10,7,.72)] backdrop-blur-[14px]">
+      <header className="border-b border-ay-line bg-[rgba(255,255,255,.92)] backdrop-blur-[14px]">
         <Container className="flex items-center py-[13px] max-[560px]:py-2.5">
           <Link href="/ayurveda" aria-label="Grow Medico home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/ayurveda/logo.png" alt="Grow Medico" className="block h-[54px] w-auto max-[560px]:h-10" />
+            <img src="/ayurveda/logo-light.png" alt="Grow Medico" className="block h-[46px] w-auto max-[560px]:h-[34px]" />
           </Link>
         </Container>
       </header>
@@ -69,15 +69,15 @@ export function ThankYou() {
       <section className="relative flex-1 overflow-hidden py-16 max-[560px]:py-11">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-[-200px] h-[520px] w-[900px] -translate-x-1/2 bg-[radial-gradient(closest-side,rgba(242,181,61,.16),rgba(94,224,138,.05)_55%,transparent_75%)]"
+          className="pointer-events-none absolute left-1/2 top-[-200px] h-[520px] w-[900px] -translate-x-1/2"
         />
         <Container className="relative">
           <div className="mx-auto max-w-[660px] text-center">
-            <div className="mx-auto grid h-[72px] w-[72px] animate-pop place-items-center rounded-full bg-ay-leaf/[.14] text-ay-leaf shadow-[0_0_40px_rgba(94,224,138,.35)]">
+            <div className="mx-auto grid h-[72px] w-[72px] animate-pop place-items-center rounded-full bg-ay-accent/[.14] text-ay-muted">
               <TickIcon className="h-[34px] w-[34px]" />
             </div>
 
-            <p className="mt-6 text-[12.5px] font-semibold uppercase tracking-[.2em] text-ay-gold">Request received</p>
+            <p className="mt-6 text-[14px] font-bold uppercase tracking-[.2em] text-ay-brand">Request received</p>
             <h1 className="mt-3 text-balance text-[clamp(30px,4.4vw,48px)] font-semibold leading-[1.1] tracking-[-0.025em]">
               {firstName ? `Thank you, ${firstName}.` : "Thank you."} Your free session is reserved.
             </h1>
@@ -85,7 +85,7 @@ export function ThankYou() {
               We have received your details. Our team will contact you shortly to confirm your one-on-one strategy session.
             </p>
 
-            <div className="mt-9 rounded-[22px] border border-ay-line bg-[rgba(6,12,9,.86)] p-7 text-left backdrop-blur-[6px] max-[560px]:p-5">
+            <div className="mt-9 rounded-[22px] border border-ay-line bg-ay-panel p-7 text-left backdrop-blur-[6px] max-[560px]:p-5">
               <h2 className="text-[18px] font-semibold">What happens next</h2>
               <ol className="m-0 mt-5 grid list-none gap-5 p-0">
                 {NEXT_STEPS.map((s, i) => (
@@ -94,22 +94,22 @@ export function ThankYou() {
                     style={{ animationDelay: `${0.2 + i * 0.15}s` }}
                     className="flex animate-rise gap-4"
                   >
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-ay-gold font-bold text-ay-gold shadow-[0_0_18px_rgba(242,181,61,.3)]">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-ay-brand font-bold text-ay-brand">
                       {i + 1}
                     </span>
                     <div>
                       <div className="font-semibold">{s.title}</div>
-                      <p className="mt-1 text-[15px] text-ay-muted">{s.body}</p>
+                      <p className="mt-1 text-[15px] font-medium text-ay-muted">{s.body}</p>
                     </div>
                   </li>
                 ))}
               </ol>
             </div>
 
-            <ul className="m-0 mx-auto mt-7 grid max-w-[480px] list-none gap-2.5 p-0 text-left text-[15px] text-[#C3D0C6]">
+            <ul className="m-0 mx-auto mt-7 grid max-w-[480px] list-none gap-2.5 p-0 text-left text-[15px] font-medium text-ay-fg">
               {["No fee, no hidden charges.", "One hour, one-on-one, built around your clinic's numbers."].map((t) => (
                 <li key={t} className="relative pl-[26px]">
-                  <LeafIcon className="absolute left-0 top-[.45em] h-[14px] w-[14px] fill-ay-leaf" />
+                  <LeafIcon className="absolute left-0 top-[.45em] h-[14px] w-[14px] fill-ay-muted" />
                   {t}
                 </li>
               ))}
@@ -122,7 +122,7 @@ export function ThankYou() {
                   Message us on WhatsApp
                 </ButtonLink>
               )}
-              <ButtonLink href="/ayurveda" variant={HAS_WA ? "ghost" : "gold"} size="lg">
+              <ButtonLink href="/ayurveda" variant={HAS_WA ? "ghost" : "brand"} size="lg">
                 Back to the page
               </ButtonLink>
             </div>
@@ -130,7 +130,7 @@ export function ThankYou() {
         </Container>
       </section>
 
-      <footer className="border-t border-ay-line py-6 text-center text-[13.5px] text-ay-muted">
+      <footer className="border-t border-ay-line py-6 text-center text-[15px] font-medium text-ay-muted">
         &copy; Grow Medico. All rights reserved.
       </footer>
     </main>

@@ -33,8 +33,8 @@ const FIELDS: Record<FieldId, { label: string; type: string; autoComplete?: stri
 };
 
 const inputCls = (bad: boolean, radius: string) =>
-  `w-full border border-solid bg-ay-bg px-4 py-[11px] text-[16px] font-medium leading-[1.2] text-ay-fg transition-[border-color,box-shadow] duration-200 placeholder:text-[#7F8E84] focus:shadow-[0_0_0_3px_rgba(242,181,61,.18)] focus:outline-none ${radius} ${
-    bad ? "border-[#E0705A] focus:border-[#E0705A]" : "border-ay-line-2 focus:border-ay-gold"
+  `w-full border border-solid bg-ay-bg px-4 py-[11px] text-[16px] font-medium leading-[1.2] text-ay-fg transition-[border-color,box-shadow] duration-200 placeholder:text-ay-muted focus:shadow-[0_0_0_3px_rgba(14,142,117,.14)] focus:outline-none ${radius} ${
+    bad ? "border-[#4D4E50] shadow-[0_0_0_3px_rgba(77,78,80,.12)] focus:border-[#4D4E50]" : "border-ay-line-2 focus:border-ay-brand"
   }`;
 
 type Lead = Record<FieldId, string>;
@@ -143,7 +143,7 @@ export function LeadModal() {
       onClick={(e) => {
         if (e.target === modalRef.current) closeModal();
       }}
-      className={`fixed inset-0 z-[100] grid place-items-center overflow-y-auto bg-[rgba(2,6,4,.78)] p-[max(16px,env(safe-area-inset-top,0px))_max(16px,env(safe-area-inset-right,0px))_max(16px,env(safe-area-inset-bottom,0px))_max(16px,env(safe-area-inset-left,0px))] backdrop-blur-[8px] [transition:opacity_.35s_ease,visibility_.35s] ${
+      className={`fixed inset-0 z-[100] grid place-items-center overflow-y-auto bg-[rgba(77,78,80,.55)] p-[max(16px,env(safe-area-inset-top,0px))_max(16px,env(safe-area-inset-right,0px))_max(16px,env(safe-area-inset-bottom,0px))_max(16px,env(safe-area-inset-left,0px))] backdrop-blur-[8px] [transition:opacity_.35s_ease,visibility_.35s] ${
         modalOpen ? "visible opacity-100" : "invisible opacity-0"
       }`}
     >
@@ -151,7 +151,7 @@ export function LeadModal() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="m-title"
-        className={`relative my-auto grid w-full max-w-[900px] grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] overflow-hidden rounded-3xl border border-ay-gold/40 bg-ay-panel shadow-[0_40px_120px_-30px_rgba(0,0,0,.9),0_0_80px_-30px_rgba(242,181,61,.4)] [transition:transform_.45s_cubic-bezier(.2,.8,.2,1)] max-[760px]:grid-cols-[minmax(0,1fr)] ${
+        className={`relative my-auto grid w-full max-w-[900px] grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] overflow-hidden rounded-3xl border border-ay-brand/40 bg-ay-panel shadow-[0_30px_80px_-30px_rgba(77,78,80,.45)] [transition:transform_.45s_cubic-bezier(.2,.8,.2,1)] max-[760px]:grid-cols-[minmax(0,1fr)] ${
           modalOpen ? "[transform:none]" : "[transform:translateY(24px)_scale(.97)]"
         }`}
       >
@@ -159,31 +159,31 @@ export function LeadModal() {
           type="button"
           aria-label="Close form"
           onClick={closeModal}
-          className="absolute right-[14px] top-[14px] z-[2] grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ay-line-2 bg-ay-panel-2 text-[20px] leading-none text-ay-fg hover:border-ay-gold"
+          className="absolute right-[14px] top-[14px] z-[2] grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ay-line-2 bg-ay-panel-2 text-[20px] leading-none text-ay-fg hover:border-ay-brand"
         >
           &times;
         </button>
 
-        <aside className="relative flex flex-col gap-[18px] overflow-hidden border-r border-ay-line px-[34px] py-8 [background:radial-gradient(circle_at_30%_20%,rgba(242,181,61,.18),transparent_60%),#08130D] max-[760px]:hidden">
+        <aside className="relative flex flex-col gap-[18px] overflow-hidden border-r border-ay-line px-[34px] py-8 bg-ay-bg max-[760px]:hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/ayurveda/logo.png" alt="Grow Medico" className="block h-[54px] w-auto self-start" />
+          <img src="/ayurveda/logo-light.png" alt="Grow Medico" className="block h-[46px] w-auto self-start" />
           <h2 className="text-balance text-[28px] font-semibold leading-[1.15] tracking-[-0.025em]">
             One hour. One-on-one strategy. Your clinic.
           </h2>
-          <ul className="m-0 grid list-none gap-3 p-0 text-[15px] text-[#C3D0C6]">
+          <ul className="m-0 grid list-none gap-3 p-0 text-[15px] font-medium text-ay-fg">
             {[
               "We review your real numbers: Ad account, leads, bookings.",
               "We find the leaks: Where the money goes and why.",
               "We build your plan live: Clear steps to fix and scale your revenue.",
             ].map((t) => (
               <li key={t} className="relative pl-[26px]">
-                <LeafIcon className="absolute left-0 top-[.45em] h-[14px] w-[14px] fill-ay-leaf" />
+                <LeafIcon className="absolute left-0 top-[.45em] h-[14px] w-[14px] fill-ay-muted" />
                 {t}
               </li>
             ))}
           </ul>
-          <div className="mt-auto border-t border-ay-line pt-[18px] text-[13.5px] text-ay-muted">
-            <b className="block text-[30px] tracking-[-.03em] text-ay-gold">30 &rarr; 600+</b>
+          <div className="mt-auto border-t border-ay-line pt-[18px] text-[15px] font-medium text-ay-muted">
+            <b className="block text-[30px] tracking-[-.03em] text-ay-brand">30 &rarr; 600+</b>
             consultations per month within 8 months at Ayush Ortho
           </div>
         </aside>
@@ -193,7 +193,7 @@ export function LeadModal() {
               <h3 id="m-title" className="text-balance text-[24px] font-semibold tracking-[-0.025em]">
                 Reserve My Free Session
               </h3>
-              <p className="mt-1.5 text-[15px] text-ay-muted">Fill out the short form. Join your one-on-one session.</p>
+              <p className="mt-1.5 text-[15px] font-medium text-ay-muted">Fill out the short form. Join your one-on-one session.</p>
               <form noValidate onSubmit={onSubmit}>
                 <div className="mt-5 grid gap-3">
                   {ORDER.map((id) => {
@@ -221,7 +221,7 @@ export function LeadModal() {
                     );
                     return (
                       <div key={id}>
-                        <label htmlFor={`f-${id}`} className="mb-[5px] block text-[12.5px] font-semibold uppercase tracking-[.1em] text-ay-muted">
+                        <label htmlFor={`f-${id}`} className="mb-[5px] block text-[14px] font-bold uppercase tracking-[.1em] text-ay-muted">
                           {f.label}
                         </label>
                         {id === "phone" ? (
@@ -234,13 +234,13 @@ export function LeadModal() {
                         ) : (
                           input
                         )}
-                        {isBad && <div className="mt-1.5 text-[13px] text-[#F08C77]">{f.err}</div>}
+                        {isBad && <div className="mt-1.5 text-[14.5px] font-medium text-ay-brand">{f.err}</div>}
                       </div>
                     );
                   })}
                 </div>
                 {submitError && (
-                  <div role="alert" className="mt-4 text-center text-[13.5px] text-[#F08C77]">
+                  <div role="alert" className="mt-4 text-center text-[15px] font-medium text-ay-brand">
                     {submitError}
                   </div>
                 )}
@@ -253,7 +253,7 @@ export function LeadModal() {
                 >
                   {submitting ? "Reserving…" : "Reserve My Free Session"}
                 </Button>
-                <p className="mt-3 text-center text-[12.5px] text-ay-muted">Yes. No fee, no hidden charges.</p>
+                <p className="mt-3 text-center text-[14px] font-medium text-ay-muted">Yes. No fee, no hidden charges.</p>
               </form>
             </div>
         </div>
