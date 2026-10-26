@@ -5,6 +5,7 @@ import { useLanding } from "./LandingProvider";
 import { Button } from "./ui/Button";
 import { borderDelay, cardBorder, ctaPulse } from "./ui/fx";
 import { Kicker } from "./ui/Kicker";
+import { RollText } from "./ui/RollText";
 import { TwoLine } from "./ui/SectionHead";
 import { prefersReducedMotion, sm } from "@/lib/ayurveda/motion";
 
@@ -87,7 +88,7 @@ export function DiveHero() {
         >
           <Kicker>Ayurveda owners!!</Kicker>
           <h1 className="mt-[18px] max-w-[24ch] text-balance text-[clamp(28px,4.5vw,64px)] font-semibold leading-[1.08] tracking-[-0.025em]">
-            Spending <span className="text-ay-brand">&#8377;5&nbsp;Lakhs</span> a month on ads? Your revenue should match it.
+            Spending <RollText text={"₹5 Lakhs"} className="text-ay-brand" /> a month on ads? Your revenue should match it.
           </h1>
           <p className="mt-5 max-w-[58ch] text-[clamp(16px,1.5vw,19px)] text-ay-fg">
             A <strong className="font-semibold text-ay-fg">free one-on-one strategy session</strong> to build your Ayurveda clinic.

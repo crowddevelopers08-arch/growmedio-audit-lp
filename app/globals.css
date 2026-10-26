@@ -69,9 +69,15 @@
   --animate-shimmer: shimmer 5s linear infinite;
   --animate-ring: ring 1.8s ease-out infinite;
   --animate-border-spin: border-spin 8s linear infinite;
+  --animate-reel: reel 1.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 
   @keyframes border-spin {
     to { --border-angle: 360deg; }
+  }
+  /* hero RollText: each reel rolls from its first character up to the final one (--to) */
+  @keyframes reel {
+    from { transform: translate(-50%, 0); }
+    to { transform: translate(-50%, var(--to)); }
   }
   @keyframes pop {
     0% { transform: scale(0); opacity: 0; }
