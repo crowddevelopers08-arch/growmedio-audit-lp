@@ -4,16 +4,9 @@ import { useInView } from "../useInView";
 import { CountUp } from "./CountUp";
 import { borderDelay, cardBorder, cardLift, cardShine } from "../ui/fx";
 
-type Counter = { pre?: string; to: number; post?: string; label: React.ReactNode };
+export type Counter = { pre?: string; to: number; decimals?: number; post?: string; label: React.ReactNode };
 
-const COUNTERS: Counter[] = [
-  { to: 656, label: <>consultations last month, up from 25&ndash;30</> },
-  { pre: "₹", to: 44, post: "L", label: <>monthly revenue, up from &#8377;1&nbsp;lakh</> },
-  { to: 44, post: "×", label: "growth in monthly revenue" },
-  { pre: "≈₹", to: 6700, label: "revenue per consultation" },
-];
-
-function CounterCard({ pre, to, post, label, delay }: Counter & { delay: number }) {
+function CounterCard({ pre, to, decimals, post, label, delay }: Counter & { delay: number }) {
   const [ref, inView] = useInView<HTMLDivElement>();
   return (
     // outer handles the entrance, inner handles hover, so the two transforms never fight
@@ -36,9 +29,9 @@ function CounterCard({ pre, to, post, label, delay }: Counter & { delay: number 
             inView ? "scale-x-100" : "scale-x-0"
           }`}
         />
-        <div className="text-[clamp(36px,4vw,54px)] font-bold leading-none tracking-[-.04em] text-ay-brand tabular-nums transition-[text-shadow] duration-300">
+        <div className="text-[clamp(30px,4vw,54px)] font-bold leading-none tracking-[-.04em] text-ay-brand tabular-nums transition-[text-shadow] duration-300">
           {pre}
-          <CountUp to={to} start={inView} />
+          <CountUp to={to} decimals={decimals} start={inView} />
           {post}
         </div>
         <div className="mt-3 text-[14.5px] font-medium text-ay-muted">{label}</div>
@@ -47,10 +40,10 @@ function CounterCard({ pre, to, post, label, delay }: Counter & { delay: number 
   );
 }
 
-export function Counters() {
+export function Counters({ items, flush }: { items: Counter[]; flush?: boolean }) {
   return (
-    <div className="mt-10 grid grid-cols-4 gap-[18px] max-[980px]:grid-cols-2 max-[760px]:gap-3 max-[560px]:mt-8">
-      {COUNTERS.map((c, i) => (
+    <div className={`${flush ? "" : "mt-10 max-[560px]:mt-8"} grid grid-cols-4 gap-[18px] max-[980px]:grid-cols-2 max-[760px]:gap-3`}>
+      {items.map((c, i) => (
         <CounterCard key={i} {...c} delay={i * 0.08} />
       ))}
     </div>

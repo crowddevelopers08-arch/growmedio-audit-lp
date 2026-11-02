@@ -32,6 +32,8 @@
 export interface Testimonial {
   /** The client's own words, trimmed but not rewritten. */
   quote: string;
+  /** Dummy text written by us, for local layout previews only. Never published, whatever consentOnFile says. */
+  sample?: string;
   /** As they want to be credited, e.g. "Team Advanced Adgro Hair". */
   name: string;
   /** Shown under the credit, e.g. "Hair Restoration". */
@@ -101,6 +103,24 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Team AVN",
     specialty: "Healthcare",
     consentOnFile: true,
+  },
+  // Waiting on these clients: `sample` is our own dummy text for previewing the layout on the local dev
+  // server only. Add their own approved words as `quote` and set consentOnFile to true to publish.
+  {
+    quote: "",
+    sample:
+      "Working with a team that focuses only on healthcare made a real difference. Our campaigns became easier to follow, and we could see which enquiries were turning into consultations.",
+    name: "Team VK Ayurveda",
+    specialty: "Ayurveda",
+    consentOnFile: false,
+  },
+  {
+    quote: "",
+    sample:
+      "What we valued most was the clarity. Instead of long reports, we got straightforward numbers on enquiries and appointments, which made it simpler to decide where to focus our marketing.",
+    name: "Team Madhavbaug",
+    specialty: "Ayurveda",
+    consentOnFile: false,
   },
 ];
 

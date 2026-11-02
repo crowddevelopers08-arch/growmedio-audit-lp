@@ -4,28 +4,40 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useInView } from "../useInView";
 import { Reveal } from "../ui/Reveal";
 
-/** [month, ad spend, consultations, revenue]; spend is null where not yet provided */
-const D: [string, number | null, number, number][] = [
-  ["Aug 2025", 58740.26, 35, 172935],
-  ["Sep 2025", 85312.57, 48, 168411],
-  ["Oct 2025", 61494.29, 48, 235570],
-  ["Nov 2025", 87314.61, 54, 342685],
-  ["Dec 2025", 101983.04, 105, 657503],
-  ["Jan 2026", 111762.81, 90, 448429],
-  ["Feb 2026", 90921.19, 66, 336016],
-  ["Mar 2026", 81335.72, 66, 461788],
-  ["Apr 2026", 87749.1, 101, 475532],
-  ["May 2026", 101829.8, 167, 905993],
-  ["Jun 2026", 178556.54, 240, 2128892],
-  ["Jul 2026", 236787.9, 520, 3194278],
-  ["Aug 2026", 220651.23, 564, 3659396],
-  ["Sep 2026", null, 656, 4400000],
-];
+export type ChartPoint = {
+  /** Axis label, e.g. "Aug" */
+  label: string;
+  /** Optional second axis line, e.g. "2025" */
+  sub?: string;
+  /** Tooltip heading, e.g. "Aug 2025" */
+  title: string;
+  /** Bar height; null where not reported */
+  bar: number | null;
+  /** The two line metrics, in the same order as ChartData.metrics */
+  values: [number, number];
+};
 
-type Metric = "cons" | "rev";
+type TipRow = { label: string; val: string; metric?: 0 | 1 };
+
+export type ChartData = {
+  title: string;
+  ariaLabel: string;
+  note: string;
+  barName: string;
+  formatBarAxis: (v: number) => string;
+  metrics: [{ name: string; formatAxis: (v: number) => string }, { name: string; formatAxis: (v: number) => string }];
+  points: ChartPoint[];
+  /** Tooltip rows; `metric` highlights a row while that metric is selected. */
+  rows: (p: ChartPoint) => TipRow[];
+  /** Optional rows under a divider in the tooltip. */
+  details?: (p: ChartPoint) => TipRow[];
+  /** Separate categories rather than a time series: no trend line, wider bars. */
+  categories?: boolean;
+};
+
 const MT = 16, MB = 44;
 
-const inr = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
+export const inr = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 function nice(max: number) {
   const raw = max / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / p;
@@ -41,14 +53,15 @@ function Row({ label, val, hi }: { label: string; val: string; hi?: boolean }) {
   );
 }
 
-/** Interactive month-by-month chart: consultations or revenue as a line, ad spend as bars. */
-export function GrowthChart() {
+/** Interactive chart: one of two metrics as a line (or points, for categories), a third figure as bars. */
+export function GrowthChart({ data }: { data: ChartData }) {
+  const D = data.points;
   const [boxRef, inView] = useInView<HTMLDivElement>();
   const hostRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
   const [W, setW] = useState(800);
-  const [metric, setMetric] = useState<Metric>("cons");
+  const [metric, setMetric] = useState<0 | 1>(0);
   const [sel, setSel] = useState(D.length - 1);
   const [settled, setSettled] = useState(false);
 
@@ -71,15 +84,15 @@ export function GrowthChart() {
   const small = W < 520;
   const H = small ? 300 : W < 800 ? 340 : 380;
   const ML = small ? 40 : 54, MR = small ? 42 : 60;
-  const iw = W - ML - MR, ih = H - MT - MB, n = D.length, step = iw / n, bw = Math.min(34, step * 0.58);
-  const key = metric === "cons" ? 2 : 3;
-  const ls = nice(Math.max(...D.map((d) => d[key] as number)));
-  const rs = nice(Math.max(...D.flatMap((d) => (d[1] == null ? [] : [d[1]]))));
+  const iw = W - ML - MR, ih = H - MT - MB, n = D.length, step = iw / n;
+  const bw = Math.min(data.categories ? 110 : 34, step * 0.58);
+  const ls = nice(Math.max(...D.map((d) => d.values[metric])));
+  const rs = nice(Math.max(...D.flatMap((d) => (d.bar == null ? [] : [d.bar]))));
   const X = (i: number) => ML + step * (i + 0.5);
   const YL = (v: number) => MT + ih - (v / (ls * 4)) * ih;
   const YR = (v: number) => MT + ih - (v / (rs * 4)) * ih;
 
-  const pts = D.map((d, j) => [X(j), YL(d[key] as number)] as const);
+  const pts = D.map((d, j) => [X(j), YL(d.values[metric])] as const);
   let path = `M${pts[0][0]} ${pts[0][1]}`;
   for (let i = 0; i < pts.length - 1; i++) {
     const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
@@ -88,18 +101,19 @@ export function GrowthChart() {
   }
   const area = `${path} L${pts[n - 1][0]} ${MT + ih} L${pts[0][0]} ${MT + ih} Z`;
 
-  const dd = D[sel], cx = X(sel), cy = YL(dd[key] as number);
+  const dd = D[sel], cx = X(sel), cy = YL(dd.values[metric]);
+  const details = data.details?.(dd) ?? [];
 
-  // keep the tooltip beside the selected month, inside the chart
+  // keep the tooltip beside the selected point, inside the chart
   useLayoutEffect(() => {
     const tip = tipRef.current!;
     const tw = tip.offsetWidth || 220, th = tip.offsetHeight || 150;
     let left = cx + 16;
-    if (left + tw > W - 4) left = cx - 16 - tw;
+    if (left + tw > W - MR) left = cx - 16 - tw;
     if (left < 4) left = 4;
     const top = clamp(cy - th / 2, 4, H - MB - th);
     tip.style.transform = `translate(${left}px,${top}px)`;
-  }, [cx, cy, W, H, metric]);
+  }, [cx, cy, W, H, MR, metric]);
 
   const idxFrom = (e: React.PointerEvent) => {
     const r = svgRef.current!.getBoundingClientRect(), x = (e.clientX - r.left) * (W / r.width);
@@ -116,25 +130,20 @@ export function GrowthChart() {
       >
         <div className="mb-2 flex flex-wrap justify-between gap-x-6 gap-y-[10px] text-[15px] font-medium text-ay-muted">
           <span>
-            <b className="text-[16px] font-semibold text-ay-fg">Month by month, Aug 2025 to Sep 2026</b>
+            <b className="text-[16px] font-semibold text-ay-fg">{data.title}</b>
           </span>
           <div role="group" aria-label="Chart metric" className="inline-flex rounded-full border border-ay-line-2 bg-ay-fg/[.04] p-1">
-            {(
-              [
-                ["cons", "Consultations"],
-                ["rev", "Revenue"],
-              ] as const
-            ).map(([m, label]) => (
+            {data.metrics.map((m, i) => (
               <button
-                key={m}
+                key={m.name}
                 type="button"
-                aria-pressed={metric === m}
-                onClick={() => setMetric(m)}
+                aria-pressed={metric === i}
+                onClick={() => setMetric(i as 0 | 1)}
                 className={`cursor-pointer rounded-full border-0 px-4 py-[9px] text-[14.5px] font-bold leading-none transition-[background,color] duration-200 ${
-                  metric === m ? "bg-ay-brand text-ay-ink" : "bg-transparent text-ay-muted"
+                  metric === i ? "bg-ay-brand text-ay-ink" : "bg-transparent text-ay-muted"
                 }`}
               >
-                {label}
+                {m.name}
               </button>
             ))}
           </div>
@@ -142,21 +151,16 @@ export function GrowthChart() {
 
         <div className="mb-1.5 mt-1 flex flex-wrap gap-x-[22px] gap-y-2 text-[14.5px] font-medium text-ay-muted">
           <span className="inline-flex items-center gap-2">
-            <i className="h-[3px] w-[22px] rounded-[3px] bg-ay-brand" />
-            {metric === "cons" ? "Consultations" : "Revenue"}
+            {data.categories ? <i className="h-3 w-3 rounded-full bg-ay-brand" /> : <i className="h-[3px] w-[22px] rounded-[3px] bg-ay-brand" />}
+            {data.metrics[metric].name}
           </span>
           <span className="inline-flex items-center gap-2">
             <i className="h-3 w-3 rounded-[3px] bg-[rgba(14,142,117,.55)]" />
-            Ad spend
+            {data.barName}
           </span>
         </div>
 
-        <div
-          ref={hostRef}
-          role="img"
-          aria-label="Chart of monthly consultations, revenue and ad spend from August 2025 to September 2026. Hover or tap a month for details."
-          className="relative touch-pan-y"
-        >
+        <div ref={hostRef} role="img" aria-label={data.ariaLabel} className="relative touch-pan-y">
           <svg
             ref={svgRef}
             viewBox={`0 0 ${W} ${H}`}
@@ -178,18 +182,18 @@ export function GrowthChart() {
                 <g key={k}>
                   <line x1={ML} x2={W - MR} y1={gy} y2={gy} stroke="rgba(77,78,80,.1)" />
                   <text x={ML - 8} y={gy + 4} textAnchor="end" style={{ fill: "rgba(77,78,80,.65)" }}>
-                    ₹{(k * rs) / 1e5}L
+                    {data.formatBarAxis(k * rs)}
                   </text>
                   <text x={W - MR + 8} y={gy + 4}>
-                    {metric === "cons" ? String(k * ls) : `₹${(k * ls) / 1e5}L`}
+                    {data.metrics[metric].formatAxis(k * ls)}
                   </text>
                 </g>
               );
             })}
 
             {D.map((d, i) => {
-              if (d[1] == null) return null;
-              const by = YR(d[1]);
+              if (d.bar == null) return null;
+              const by = YR(d.bar);
               return (
                 <rect
                   key={i}
@@ -210,19 +214,23 @@ export function GrowthChart() {
               );
             })}
 
-            <path d={area} fill="rgba(14,142,117,.08)" className={`${inView ? "opacity-100" : "opacity-0"} ${animating ? "animate-fade-area" : ""}`} />
-            <path
-              d={path}
-              pathLength={1}
-              fill="none"
-              stroke="var(--color-ay-brand)"
-              strokeWidth={3.2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeDasharray={1}
-              strokeDashoffset={inView ? 0 : 1}
-              className={` ${animating ? "animate-draw" : ""}`}
-            />
+            {!data.categories && (
+              <>
+                <path d={area} fill="rgba(14,142,117,.08)" className={`${inView ? "opacity-100" : "opacity-0"} ${animating ? "animate-fade-area" : ""}`} />
+                <path
+                  d={path}
+                  pathLength={1}
+                  fill="none"
+                  stroke="var(--color-ay-brand)"
+                  strokeWidth={3.2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeDasharray={1}
+                  strokeDashoffset={inView ? 0 : 1}
+                  className={` ${animating ? "animate-draw" : ""}`}
+                />
+              </>
+            )}
             <g className={`${inView ? "opacity-100" : "opacity-0"} ${animating ? "animate-fade-pts" : ""}`}>
               {pts.map(([px, py], i) => (
                 <circle key={i} cx={px} cy={py} r={small ? 3 : 4} fill="var(--color-ay-bg)" stroke="var(--color-ay-brand)" strokeWidth={2.2} />
@@ -230,16 +238,16 @@ export function GrowthChart() {
             </g>
 
             {D.map((d, i) => {
-              const [mon, yr] = d[0].split(" ");
-              if (small && i % 2 !== 0 && i !== n - 1) return null;
+              // phones label every other point, always ending on the last one without crowding it
+              if (small && !data.categories && ((i % 2 !== 0 && i !== n - 1) || i === n - 2)) return null;
               return (
                 <g key={i}>
                   <text x={X(i)} y={MT + ih + 18} textAnchor="middle">
-                    {mon}
+                    {d.label}
                   </text>
-                  {(i === 0 || mon === "Jan") && (
+                  {d.sub && (
                     <text x={X(i)} y={MT + ih + 33} textAnchor="middle" style={{ fill: "rgba(77,78,80,.65)", fontSize: 13 }}>
-                      {yr}
+                      {d.sub}
                     </text>
                   )}
                 </g>
@@ -255,24 +263,22 @@ export function GrowthChart() {
             ref={tipRef}
             className="pointer-events-none absolute left-0 top-0 z-[3] min-w-[220px] rounded-[14px] border border-ay-brand/50 bg-ay-panel px-4 py-[14px] text-[15px] font-medium shadow-[0_18px_40px_-16px_rgba(77,78,80,.3)] transition-transform duration-[140ms] ease-[ease] max-[560px]:min-w-[190px] max-[560px]:px-3 max-[560px]:py-[11px] max-[560px]:text-[14px]"
           >
-            <b className="mb-2 block text-[15px] font-medium">{dd[0]}</b>
-            <Row label="Ad spend" val={dd[1] == null ? "Not reported yet" : inr(dd[1])} />
-            <Row label="Consultations" val={String(dd[2])} hi={metric === "cons"} />
-            <Row label="Revenue" val={(dd[0] === "Sep 2026" ? "≈ " : "") + inr(dd[3])} hi={metric === "rev"} />
-            {dd[1] != null && (
+            <b className="mb-2 block text-[15px] font-medium">{dd.title}</b>
+            {data.rows(dd).map((r) => (
+              <Row key={r.label} label={r.label} val={r.val} hi={r.metric === metric} />
+            ))}
+            {details.length > 0 && (
               <>
                 <hr className="my-2 border-0 border-t border-ay-line" />
-                <Row label="Revenue per ₹1 of ad spend" val={"₹" + (dd[3] / dd[1]).toFixed(1)} />
-                <Row label="Ad spend per consultation" val={inr(dd[1] / dd[2])} />
+                {details.map((r) => (
+                  <Row key={r.label} label={r.label} val={r.val} />
+                ))}
               </>
             )}
           </div>
         </div>
 
-        <p className="mt-[10px] px-2 text-[14px] font-medium text-ay-muted">
-          Hover or tap any month to see ad spend, consultations and revenue. Revenue per &#8377;1 of ad spend is revenue divided by ad
-          spend.
-        </p>
+        <p className="mt-[10px] px-2 text-[14px] font-medium text-ay-muted">{data.note}</p>
       </div>
     </Reveal>
   );

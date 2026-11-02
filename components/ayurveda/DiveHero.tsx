@@ -5,7 +5,6 @@ import { useLanding } from "./LandingProvider";
 import { Button } from "./ui/Button";
 import { borderDelay, cardBorder, ctaPulse } from "./ui/fx";
 import { Kicker } from "./ui/Kicker";
-import { RollText } from "./ui/RollText";
 import { TwoLine } from "./ui/SectionHead";
 import { prefersReducedMotion, sm } from "@/lib/ayurveda/motion";
 
@@ -84,14 +83,14 @@ export function DiveHero() {
         {/* Layer A: headline */}
         <div
           ref={la}
-          className={`${layerBase} content-start justify-items-center pb-20 pt-[clamp(40px,9vh,110px)] text-center`}
+          className={`${layerBase} content-start justify-items-center pb-20 pt-[clamp(24px,5vh,64px)] text-center`}
         >
           <Kicker>Ayurveda owners!!</Kicker>
-          <h1 className="mt-[18px] max-w-[24ch] text-balance text-[clamp(28px,4.5vw,64px)] font-semibold leading-[1.08] tracking-[-0.025em]">
-            Spending <RollText text={"₹5 Lakhs"} className="text-ay-brand" /> a month on ads? Your revenue should match it.
+          <h1 className="mt-[18px] max-w-[40ch] text-balance text-[clamp(26px,3.6vw,52px)] font-semibold leading-[1.08] tracking-[-0.025em]">
+            India’s Biggest Ayurveda Brands Don’t Hire Generalists. <span className="text-ay-brand">They Hire Us.</span>
           </h1>
           <p className="mt-5 max-w-[58ch] text-[clamp(16px,1.5vw,19px)] text-ay-fg">
-            A <strong className="font-semibold text-ay-fg">free one-on-one strategy session</strong> to build your Ayurveda clinic.
+            <strong className="font-semibold text-ay-fg">Award-winning marketing Agency</strong>, built exclusively for Ayurveda
           </p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <Button arrow onClick={openModal} className={`${ctaPulse} max-[560px]:w-full`}>
