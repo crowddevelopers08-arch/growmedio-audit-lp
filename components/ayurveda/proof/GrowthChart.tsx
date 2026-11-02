@@ -13,19 +13,20 @@ export type ChartPoint = {
   title: string;
   /** Bar height; null where not reported */
   bar: number | null;
-  /** The two line metrics, in the same order as ChartData.metrics */
-  values: [number, number];
+  /** The line metrics, in the same order as ChartData.metrics */
+  values: number[];
 };
 
-type TipRow = { label: string; val: string; metric?: 0 | 1 };
+type TipRow = { label: string; val: string; metric?: number };
 
 export type ChartData = {
   title: string;
   ariaLabel: string;
   note: string;
-  barName: string;
-  formatBarAxis: (v: number) => string;
-  metrics: [{ name: string; formatAxis: (v: number) => string }, { name: string; formatAxis: (v: number) => string }];
+  /** Leave out for a chart with no bars and no left axis. */
+  bars?: { name: string; formatAxis: (v: number) => string };
+  /** One or two; the tabs only appear with two. */
+  metrics: { name: string; formatAxis: (v: number) => string }[];
   points: ChartPoint[];
   /** Tooltip rows; `metric` highlights a row while that metric is selected. */
   rows: (p: ChartPoint) => TipRow[];
@@ -37,7 +38,6 @@ export type ChartData = {
 
 const MT = 16, MB = 44;
 
-export const inr = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 function nice(max: number) {
   const raw = max / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / p;
@@ -61,7 +61,7 @@ export function GrowthChart({ data }: { data: ChartData }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
   const [W, setW] = useState(800);
-  const [metric, setMetric] = useState<0 | 1>(0);
+  const [metric, setMetric] = useState(0);
   const [sel, setSel] = useState(D.length - 1);
   const [settled, setSettled] = useState(false);
 
@@ -87,7 +87,7 @@ export function GrowthChart({ data }: { data: ChartData }) {
   const iw = W - ML - MR, ih = H - MT - MB, n = D.length, step = iw / n;
   const bw = Math.min(data.categories ? 110 : 34, step * 0.58);
   const ls = nice(Math.max(...D.map((d) => d.values[metric])));
-  const rs = nice(Math.max(...D.flatMap((d) => (d.bar == null ? [] : [d.bar]))));
+  const rs = data.bars ? nice(Math.max(...D.flatMap((d) => (d.bar == null ? [] : [d.bar])))) : 1;
   const X = (i: number) => ML + step * (i + 0.5);
   const YL = (v: number) => MT + ih - (v / (ls * 4)) * ih;
   const YR = (v: number) => MT + ih - (v / (rs * 4)) * ih;
@@ -132,21 +132,23 @@ export function GrowthChart({ data }: { data: ChartData }) {
           <span>
             <b className="text-[16px] font-semibold text-ay-fg">{data.title}</b>
           </span>
-          <div role="group" aria-label="Chart metric" className="inline-flex rounded-full border border-ay-line-2 bg-ay-fg/[.04] p-1">
-            {data.metrics.map((m, i) => (
-              <button
-                key={m.name}
-                type="button"
-                aria-pressed={metric === i}
-                onClick={() => setMetric(i as 0 | 1)}
-                className={`cursor-pointer rounded-full border-0 px-4 py-[9px] text-[14.5px] font-bold leading-none transition-[background,color] duration-200 ${
-                  metric === i ? "bg-ay-brand text-ay-ink" : "bg-transparent text-ay-muted"
-                }`}
-              >
-                {m.name}
-              </button>
-            ))}
-          </div>
+          {data.metrics.length > 1 && (
+            <div role="group" aria-label="Chart metric" className="inline-flex rounded-full border border-ay-line-2 bg-ay-fg/[.04] p-1">
+              {data.metrics.map((m, i) => (
+                <button
+                  key={m.name}
+                  type="button"
+                  aria-pressed={metric === i}
+                  onClick={() => setMetric(i)}
+                  className={`cursor-pointer rounded-full border-0 px-4 py-[9px] text-[14.5px] font-bold leading-none transition-[background,color] duration-200 ${
+                    metric === i ? "bg-ay-brand text-ay-ink" : "bg-transparent text-ay-muted"
+                  }`}
+                >
+                  {m.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="mb-1.5 mt-1 flex flex-wrap gap-x-[22px] gap-y-2 text-[14.5px] font-medium text-ay-muted">
@@ -154,10 +156,12 @@ export function GrowthChart({ data }: { data: ChartData }) {
             {data.categories ? <i className="h-3 w-3 rounded-full bg-ay-brand" /> : <i className="h-[3px] w-[22px] rounded-[3px] bg-ay-brand" />}
             {data.metrics[metric].name}
           </span>
-          <span className="inline-flex items-center gap-2">
-            <i className="h-3 w-3 rounded-[3px] bg-[rgba(14,142,117,.55)]" />
-            {data.barName}
-          </span>
+          {data.bars && (
+            <span className="inline-flex items-center gap-2">
+              <i className="h-3 w-3 rounded-[3px] bg-[rgba(14,142,117,.55)]" />
+              {data.bars.name}
+            </span>
+          )}
         </div>
 
         <div ref={hostRef} role="img" aria-label={data.ariaLabel} className="relative touch-pan-y">
@@ -181,9 +185,11 @@ export function GrowthChart({ data }: { data: ChartData }) {
               return (
                 <g key={k}>
                   <line x1={ML} x2={W - MR} y1={gy} y2={gy} stroke="rgba(77,78,80,.1)" />
-                  <text x={ML - 8} y={gy + 4} textAnchor="end" style={{ fill: "rgba(77,78,80,.65)" }}>
-                    {data.formatBarAxis(k * rs)}
-                  </text>
+                  {data.bars && (
+                    <text x={ML - 8} y={gy + 4} textAnchor="end" style={{ fill: "rgba(77,78,80,.65)" }}>
+                      {data.bars.formatAxis(k * rs)}
+                    </text>
+                  )}
                   <text x={W - MR + 8} y={gy + 4}>
                     {data.metrics[metric].formatAxis(k * ls)}
                   </text>

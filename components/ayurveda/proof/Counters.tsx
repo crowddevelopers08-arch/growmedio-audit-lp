@@ -40,9 +40,9 @@ function CounterCard({ pre, to, decimals, post, label, delay }: Counter & { dela
   );
 }
 
-export function Counters({ items, flush }: { items: Counter[]; flush?: boolean }) {
+export function Counters({ items }: { items: Counter[] }) {
   return (
-    <div className={`${flush ? "" : "mt-10 max-[560px]:mt-8"} grid grid-cols-4 gap-[18px] max-[980px]:grid-cols-2 max-[760px]:gap-3`}>
+    <div className="mt-10 grid grid-cols-4 gap-[18px] max-[980px]:grid-cols-2 max-[760px]:gap-3 max-[560px]:mt-8">
       {items.map((c, i) => (
         <CounterCard key={i} {...c} delay={i * 0.08} />
       ))}
