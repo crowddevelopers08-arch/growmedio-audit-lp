@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { cardBorder } from "./ui/fx";
 
 /* site palette (the ay- brand, accent and muted tokens): blue for money going out, green for what lands as revenue */
-const COL = { brass: "#F2B84B", lit: "#16D492", brand: "#16D492", muted: "rgba(243,245,247,.72)" };
+const COL = { brass: "#1C8FBE", lit: "#0E8E75", brand: "#0E8E75", muted: "rgba(77,78,80,.72)" };
 
 /** f: how far down the pipe, s: side it spills to, p: chance a passing drop leaks there */
 const LEAKS = [
@@ -138,7 +138,7 @@ export function FlowCard() {
       ctx.globalAlpha = 1;
 
       const bx = 28, bw = W - 56, by = H - 46;
-      ctx.fillStyle = "rgba(243,245,247,.08)";
+      ctx.fillStyle = "rgba(77,78,80,.08)";
       ctx.fillRect(bx, by, bw, 10);
       ctx.fillStyle = COL.brand;
       ctx.fillRect(bx, by, Math.max(2, bw * fill), 10);

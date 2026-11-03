@@ -158,7 +158,7 @@ export function GrowthChart({ data }: { data: ChartData }) {
           </span>
           {data.bars && (
             <span className="inline-flex items-center gap-2">
-              <i className="h-3 w-3 rounded-[3px] bg-[rgba(22,212,146,.55)]" />
+              <i className="h-3 w-3 rounded-[3px] bg-[rgba(14,142,117,.55)]" />
               {data.bars.name}
             </span>
           )}
@@ -184,9 +184,9 @@ export function GrowthChart({ data }: { data: ChartData }) {
               const gy = MT + ih - (ih * k) / 4;
               return (
                 <g key={k}>
-                  <line x1={ML} x2={W - MR} y1={gy} y2={gy} stroke="rgba(243,245,247,.1)" />
+                  <line x1={ML} x2={W - MR} y1={gy} y2={gy} stroke="rgba(77,78,80,.1)" />
                   {data.bars && (
-                    <text x={ML - 8} y={gy + 4} textAnchor="end" style={{ fill: "rgba(243,245,247,.65)" }}>
+                    <text x={ML - 8} y={gy + 4} textAnchor="end" style={{ fill: "rgba(77,78,80,.65)" }}>
                       {data.bars.formatAxis(k * rs)}
                     </text>
                   )}
@@ -209,7 +209,7 @@ export function GrowthChart({ data }: { data: ChartData }) {
                   width={bw}
                   height={MT + ih - by}
                   rx={3}
-                  fill={i === sel ? "rgba(22,212,146,.85)" : "rgba(22,212,146,.45)"}
+                  fill={i === sel ? "rgba(14,142,117,.85)" : "rgba(14,142,117,.45)"}
                   style={{
                     transformBox: "fill-box",
                     transformOrigin: "bottom",
@@ -222,7 +222,7 @@ export function GrowthChart({ data }: { data: ChartData }) {
 
             {!data.categories && (
               <>
-                <path d={area} fill="rgba(22,212,146,.08)" className={`${inView ? "opacity-100" : "opacity-0"} ${animating ? "animate-fade-area" : ""}`} />
+                <path d={area} fill="rgba(14,142,117,.08)" className={`${inView ? "opacity-100" : "opacity-0"} ${animating ? "animate-fade-area" : ""}`} />
                 <path
                   d={path}
                   pathLength={1}
@@ -252,7 +252,7 @@ export function GrowthChart({ data }: { data: ChartData }) {
                     {d.label}
                   </text>
                   {d.sub && (
-                    <text x={X(i)} y={MT + ih + 33} textAnchor="middle" style={{ fill: "rgba(243,245,247,.65)", fontSize: 13 }}>
+                    <text x={X(i)} y={MT + ih + 33} textAnchor="middle" style={{ fill: "rgba(77,78,80,.65)", fontSize: 13 }}>
                       {d.sub}
                     </text>
                   )}
@@ -260,14 +260,14 @@ export function GrowthChart({ data }: { data: ChartData }) {
               );
             })}
 
-            <line x1={cx} x2={cx} y1={MT} y2={MT + ih} stroke="rgba(242,184,75,.35)" strokeDasharray="3 4" />
+            <line x1={cx} x2={cx} y1={MT} y2={MT + ih} stroke="rgba(28,143,190,.35)" strokeDasharray="3 4" />
             <circle cx={cx} cy={cy} r={7} fill="var(--color-ay-brand)" stroke="var(--color-ay-bg)" strokeWidth={3} />
             <rect data-hit x={ML} y={MT} width={iw} height={ih} fill="transparent" />
           </svg>
 
           <div
             ref={tipRef}
-            className="pointer-events-none absolute left-0 top-0 z-[3] min-w-[220px] rounded-[14px] border border-ay-brand/50 bg-ay-panel px-4 py-[14px] text-[15px] font-medium shadow-[0_18px_40px_-16px_rgba(0,0,0,.3)] transition-transform duration-[140ms] ease-[ease] max-[560px]:min-w-[190px] max-[560px]:px-3 max-[560px]:py-[11px] max-[560px]:text-[14px]"
+            className="pointer-events-none absolute left-0 top-0 z-[3] min-w-[220px] rounded-[14px] border border-ay-brand/50 bg-ay-panel px-4 py-[14px] text-[15px] font-medium shadow-[0_18px_40px_-16px_rgba(77,78,80,.3)] transition-transform duration-[140ms] ease-[ease] max-[560px]:min-w-[190px] max-[560px]:px-3 max-[560px]:py-[11px] max-[560px]:text-[14px]"
           >
             <b className="mb-2 block text-[15px] font-medium">{dd.title}</b>
             {data.rows(dd).map((r) => (

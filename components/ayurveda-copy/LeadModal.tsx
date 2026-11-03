@@ -33,8 +33,8 @@ const FIELDS: Record<FieldId, { label: string; type: string; autoComplete?: stri
 };
 
 const inputCls = (bad: boolean, radius: string) =>
-  `w-full border border-solid bg-ay-bg px-4 py-[11px] text-[16px] font-medium leading-[1.2] text-ay-fg transition-[border-color,box-shadow] duration-200 placeholder:text-ay-muted focus:shadow-[0_0_0_3px_rgba(22,212,146,.14)] focus:outline-none ${radius} ${
-    bad ? "border-[#FF6B6B] shadow-[0_0_0_3px_rgba(255,107,107,.15)] focus:border-[#FF6B6B]" : "border-ay-line-2 focus:border-ay-brand"
+  `w-full border border-solid bg-ay-bg px-4 py-[11px] text-[16px] font-medium leading-[1.2] text-ay-fg transition-[border-color,box-shadow] duration-200 placeholder:text-ay-muted focus:shadow-[0_0_0_3px_rgba(14,142,117,.14)] focus:outline-none ${radius} ${
+    bad ? "border-[#4D4E50] shadow-[0_0_0_3px_rgba(77,78,80,.12)] focus:border-[#4D4E50]" : "border-ay-line-2 focus:border-ay-brand"
   }`;
 
 type Lead = Record<FieldId, string>;
@@ -143,7 +143,7 @@ export function LeadModal() {
       onClick={(e) => {
         if (e.target === modalRef.current) closeModal();
       }}
-      className={`fixed inset-0 z-[100] grid place-items-center overflow-y-auto bg-[rgba(0,0,0,.7)] p-[max(16px,env(safe-area-inset-top,0px))_max(16px,env(safe-area-inset-right,0px))_max(16px,env(safe-area-inset-bottom,0px))_max(16px,env(safe-area-inset-left,0px))] backdrop-blur-[8px] [transition:opacity_.35s_ease,visibility_.35s] ${
+      className={`fixed inset-0 z-[100] grid place-items-center overflow-y-auto bg-[rgba(77,78,80,.55)] p-[max(16px,env(safe-area-inset-top,0px))_max(16px,env(safe-area-inset-right,0px))_max(16px,env(safe-area-inset-bottom,0px))_max(16px,env(safe-area-inset-left,0px))] backdrop-blur-[8px] [transition:opacity_.35s_ease,visibility_.35s] ${
         modalOpen ? "visible opacity-100" : "invisible opacity-0"
       }`}
     >
@@ -151,7 +151,7 @@ export function LeadModal() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="m-title"
-        className={`relative my-auto grid w-full max-w-[900px] grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] overflow-hidden rounded-3xl border border-ay-brand/40 bg-ay-panel shadow-[0_30px_80px_-30px_rgba(0,0,0,.45)] [transition:transform_.45s_cubic-bezier(.2,.8,.2,1)] max-[760px]:grid-cols-[minmax(0,1fr)] ${
+        className={`relative my-auto grid w-full max-w-[900px] grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] overflow-hidden rounded-3xl border border-ay-brand/40 bg-ay-panel shadow-[0_30px_80px_-30px_rgba(77,78,80,.45)] [transition:transform_.45s_cubic-bezier(.2,.8,.2,1)] max-[760px]:grid-cols-[minmax(0,1fr)] ${
           modalOpen ? "[transform:none]" : "[transform:translateY(24px)_scale(.97)]"
         }`}
       >
@@ -166,7 +166,7 @@ export function LeadModal() {
 
         <aside className="relative flex flex-col gap-[18px] overflow-hidden border-r border-ay-line px-[34px] py-8 bg-ay-bg max-[760px]:hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/gm-logo-dark.png" alt="Grow Medico" className="block h-[46px] w-auto self-start" />
+          <img src="/ayurveda/logo-light.png" alt="Grow Medico" className="block h-[46px] w-auto self-start" />
           <h2 className="text-balance text-[28px] font-semibold leading-[1.15] tracking-[-0.025em]">
             One hour. One-on-one strategy. Your clinic.
           </h2>
@@ -234,13 +234,13 @@ export function LeadModal() {
                         ) : (
                           input
                         )}
-                        {isBad && <div className="mt-1.5 text-[14.5px] font-medium text-[#FF6B6B]">{f.err}</div>}
+                        {isBad && <div className="mt-1.5 text-[14.5px] font-medium text-ay-brand">{f.err}</div>}
                       </div>
                     );
                   })}
                 </div>
                 {submitError && (
-                  <div role="alert" className="mt-4 text-center text-[15px] font-medium text-[#FF6B6B]">
+                  <div role="alert" className="mt-4 text-center text-[15px] font-medium text-ay-brand">
                     {submitError}
                   </div>
                 )}

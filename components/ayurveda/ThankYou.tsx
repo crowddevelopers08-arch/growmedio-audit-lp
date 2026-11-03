@@ -57,11 +57,11 @@ export function ThankYou() {
 
   return (
     <main className="relative z-[1] flex min-h-dvh flex-col">
-      <header className="border-b border-ay-line bg-[rgba(255,255,255,.92)] backdrop-blur-[14px]">
+      <header className="border-b border-ay-line bg-[rgba(7,8,10,.92)] backdrop-blur-[14px]">
         <Container className="flex items-center py-[13px] max-[560px]:py-2.5">
           <Link href="/ayurveda" aria-label="Grow Medico home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/ayurveda/logo-light.png" alt="Grow Medico" className="block h-[46px] w-auto max-[560px]:h-[34px]" />
+            <img src="/gm-logo-dark.png" alt="Grow Medico" className="block h-[46px] w-auto max-[560px]:h-[34px]" />
           </Link>
         </Container>
       </header>

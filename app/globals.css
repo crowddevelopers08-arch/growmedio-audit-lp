@@ -66,7 +66,7 @@
   --animate-draw-tick: draw-tick 0.6s ease-out both;
   --animate-rise: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   --animate-pulse-ring: pulse-ring 2.6s cubic-bezier(0.2, 0.7, 0.2, 1) 1.2s infinite;
-  --animate-pulse-ring-copy: pulse-ring-copy 2.6s cubic-bezier(0.2, 0.7, 0.2, 1) 1.2s infinite;
+  --animate-pulse-ring-dark: pulse-ring-dark 2.6s cubic-bezier(0.2, 0.7, 0.2, 1) 1.2s infinite;
   --animate-shimmer: shimmer 5s linear infinite;
   --animate-ring: ring 1.8s ease-out infinite;
   --animate-border-spin: border-spin 12s linear infinite;
@@ -88,7 +88,7 @@
     to { opacity: 1; transform: none; }
   }
   /* primary CTA: a crisp logo-green ring that expands and fades (no blur, no glow) */
-  @keyframes pulse-ring-copy {
+  @keyframes pulse-ring-dark {
     0% { box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(22, 212, 146, 0.5); }
     70%, 100% { box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.35), 0 0 0 14px rgba(22, 212, 146, 0); }
   }
@@ -198,8 +198,9 @@
   [data-ayurveda] {
     color-scheme: light;
   }
-  /* /ayurveda-copy: the same page in the main page colours (see the tokens at the top of this file). */
-  [data-ayurveda-copy] {
+  /* /ayurveda: the funnel in the default page's colours (see the tokens at the top of this file).
+     /ayurveda-copy keeps the white Grow Medico logo-colour theme, the `ay-` defaults above. */
+  [data-ayurveda-dark] {
     color-scheme: dark;
     --color-ay-bg: #07080a;
     --color-ay-panel: #101318;

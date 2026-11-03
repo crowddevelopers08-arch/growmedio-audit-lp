@@ -126,7 +126,7 @@ export function LotusCanvas() {
       ctx.save();
       ctx.translate(cx, cy);
       ctx.lineWidth = 1.4;
-      ctx.strokeStyle = "rgba(242,184,75," + (0.35 + 0.4 * bloom) + ")";
+      ctx.strokeStyle = "rgba(28,143,190," + (0.35 + 0.4 * bloom) + ")";
       ctx.beginPath();
       ctx.arc(0, 0, R * 1.42, 0, 6.2832);
       ctx.stroke();
@@ -134,7 +134,7 @@ export function LotusCanvas() {
       ctx.rotate(t * 0.06 + S.rot);
       // ticks batched into two paths (major / minor) instead of 96 separate strokes
       for (const major of [true, false]) {
-        ctx.strokeStyle = major ? "rgba(242,184,75,.55)" : "rgba(242,184,75,.25)";
+        ctx.strokeStyle = major ? "rgba(28,143,190,.55)" : "rgba(28,143,190,.25)";
         ctx.beginPath();
         for (let i = major ? 0 : 1; i < 96; i += major ? 4 : 1) {
           if (!major && i % 4 === 0) continue;
@@ -148,7 +148,7 @@ export function LotusCanvas() {
       ctx.save();
       ctx.rotate(-t * 0.09 - S.rot * 1.4);
       ctx.setLineDash([3, 10]);
-      ctx.strokeStyle = "rgba(22,212,146,.4)";
+      ctx.strokeStyle = "rgba(14,142,117,.4)";
       ctx.beginPath();
       ctx.arc(0, 0, R * 1.75, 0, 6.2832);
       ctx.stroke();
@@ -156,7 +156,7 @@ export function LotusCanvas() {
       // petal-shaped mandala arcs
       ctx.save();
       ctx.rotate(t * 0.035);
-      ctx.strokeStyle = "rgba(242,184,75," + (0.18 + 0.2 * bloom) + ")";
+      ctx.strokeStyle = "rgba(28,143,190," + (0.18 + 0.2 * bloom) + ")";
       ctx.lineWidth = 1;
       // one path for all 16 arcs (each ellipse rotated about the centre via its own rotation argument)
       ctx.beginPath();
@@ -174,7 +174,7 @@ export function LotusCanvas() {
       ctx.translate(cx, cy + R * 0.52);
       for (let r2 = 0; r2 < 3; r2++) {
         const ph = (t * 0.22 + r2 / 3) % 1;
-        ctx.strokeStyle = "rgba(22,212,146," + 0.5 * (1 - ph) + ")";
+        ctx.strokeStyle = "rgba(14,142,117," + 0.5 * (1 - ph) + ")";
         ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.ellipse(0, 0, R * (0.5 + ph * 1.3), R * (0.12 + ph * 0.28), 0, 0, 6.2832);
@@ -195,16 +195,16 @@ export function LotusCanvas() {
           ctx.save();
           ctx.rotate(ang + Math.sin(t * 0.8 + i + ri) * 0.008);
           petal(L, row.w);
-          ctx.fillStyle = "rgba(22,212,146," + (0.12 + 0.06 * ri) + ")";
+          ctx.fillStyle = "rgba(14,142,117," + (0.12 + 0.06 * ri) + ")";
           ctx.fill();
           ctx.lineWidth = 1.1;
-          ctx.strokeStyle = "rgba(242,184,75," + (0.55 + 0.1 * ri) + ")";
+          ctx.strokeStyle = "rgba(28,143,190," + (0.55 + 0.1 * ri) + ")";
           ctx.stroke();
           // vein
           ctx.beginPath();
           ctx.moveTo(0, -L * 0.12);
           ctx.lineTo(0, -L * 0.82);
-          ctx.strokeStyle = "rgba(242,184,75,.18)";
+          ctx.strokeStyle = "rgba(28,143,190,.18)";
           ctx.lineWidth = 1;
           ctx.stroke();
           ctx.restore();
@@ -212,7 +212,7 @@ export function LotusCanvas() {
       });
       // diya-like core flame
       const fl = 1 + Math.sin(t * 5) * 0.06;
-      ctx.fillStyle = "rgba(242,184,75,.9)";
+      ctx.fillStyle = "rgba(28,143,190,.9)";
       ctx.beginPath();
       ctx.ellipse(0, -R * 0.1, R * 0.16 * fl, R * 0.3 * fl * (0.6 + 0.4 * bloom), 0, 0, 6.2832);
       ctx.fill();
@@ -229,7 +229,7 @@ export function LotusCanvas() {
           q.x = Math.random() * W;
         }
         const al = (0.25 + 0.55 * (0.5 + 0.5 * Math.sin(t * 1.6 + q.ph))) * (0.5 + 0.5 * bloom);
-        ctx.fillStyle = q.g ? "rgba(22,212,146," + al + ")" : "rgba(242,184,75," + al + ")";
+        ctx.fillStyle = q.g ? "rgba(14,142,117," + al + ")" : "rgba(28,143,190," + al + ")";
         ctx.beginPath();
         ctx.arc(q.x, q.y, q.r, 0, 6.2832);
         ctx.fill();

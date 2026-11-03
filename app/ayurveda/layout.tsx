@@ -30,11 +30,11 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  colorScheme: "light",
-  themeColor: "#ffffff",
+  colorScheme: "dark",
+  themeColor: "#07080a",
 };
 
-/* Mirrors the <body> of the standalone ayurveda funnel; tokens are the `ay-` set in app/globals.css. */
+/* Mirrors the <body> of the standalone ayurveda funnel; the `ay-` tokens are re-coloured to the main page theme by [data-ayurveda-dark] in app/globals.css. */
 export default function AyurvedaLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
@@ -48,6 +48,7 @@ export default function AyurvedaLayout({ children }: { children: React.ReactNode
       />
       <div
         data-ayurveda
+        data-ayurveda-dark
         className="relative isolate min-h-dvh overflow-x-clip bg-ay-bg font-ay text-[17px] leading-[1.6] text-ay-fg antialiased max-[560px]:text-[16px]"
       >
         {/* The page background, pinned to the viewport. A fixed layer instead of `background-attachment: fixed`,
