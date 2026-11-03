@@ -18,12 +18,12 @@ const VIDEOS: Video[] = [
   {
     id: "rohit-sane",
     title: "Dr. Rohit Sane, founder of Madhavbaug",
-    poster: `${CLOUDINARY}/so_3/v1793685856/Dr._Rohit_Sane_Testimonial.jpg`,
+    poster: "/ayurveda/video-rohit-sane.jpg",
     src: `${CLOUDINARY}/v1793685856/Dr._Rohit_Sane_Testimonial.mp4`,
     wide: true,
   },
-  { id: "8KvwD99H73Q", title: "AVN client video", poster: "https://i.ytimg.com/vi/8KvwD99H73Q/maxresdefault.jpg" },
-  { id: "4gyg-J7JGDs", title: "Client video", poster: "https://i.ytimg.com/vi/4gyg-J7JGDs/maxresdefault.jpg" },
+  { id: "8KvwD99H73Q", title: "AVN client video", poster: "/ayurveda/video-avn.jpg" },
+  { id: "4gyg-J7JGDs", title: "Client video", poster: "/ayurveda/video-concept.jpg" },
 ];
 
 /** Client videos. Each card shows a poster and only loads its video once played, one video at a time. */
@@ -52,7 +52,7 @@ export function VideoSection() {
                     type="button"
                     onClick={() => setPlayingId(video.id)}
                     aria-label={`Play ${video.title}`}
-                    className="group absolute inset-0 flex cursor-pointer items-center justify-center border-0 bg-cover bg-center"
+                    className="group absolute inset-0 flex cursor-pointer items-end justify-center border-0 bg-cover bg-center pb-5"
                     style={{ backgroundImage: `url(${video.poster})` }}
                   >
                     <span className="flex h-14 w-14 items-center justify-center rounded-full bg-ay-brand text-ay-ink transition-transform duration-300 group-hover:[transform:scale(1.1)]">
