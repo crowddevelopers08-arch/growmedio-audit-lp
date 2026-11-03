@@ -1,0 +1,31 @@
+"use client";
+
+import { useState } from "react";
+import { useLanding } from "./LandingProvider";
+
+export function Banner() {
+  const { openModal } = useLanding();
+  const [hidden, setHidden] = useState(false);
+  if (hidden) return null;
+
+  return (
+    <div className="relative z-[31] flex items-center justify-center gap-[14px] border-b border-ay-line bg-ay-panel py-[9px] pl-4 pr-[44px] text-center text-[15px] font-medium max-[560px]:py-2 max-[560px]:pl-3 max-[560px]:pr-9 max-[560px]:text-[14px] max-[560px]:leading-[1.4]">
+      <span>Scale Your Ayurveda Clinic’s Revenue with a Free One-on-One Strategy Session.</span>
+      <button
+        type="button"
+        onClick={openModal}
+        className="cursor-pointer rounded-lg border-0 bg-ay-brand max-[560px]:hidden px-[14px] py-[7px] text-[14.5px] font-bold leading-[normal] text-ay-ink"
+      >
+        Reserve My Free Session
+      </button>
+      <button
+        type="button"
+        aria-label="Dismiss"
+        onClick={() => setHidden(true)}
+        className="absolute right-[max(10px,env(safe-area-inset-right,0px))] top-1/2 h-7 w-7 -translate-y-1/2 cursor-pointer border-0 bg-transparent text-[18px] leading-none text-ay-muted"
+      >
+        &times;
+      </button>
+    </div>
+  );
+}
