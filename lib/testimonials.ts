@@ -32,7 +32,7 @@
 export interface Testimonial {
   /** The client's own words, trimmed but not rewritten. */
   quote: string;
-  /** Dummy text written by us, for local layout previews only. Never published, whatever consentOnFile says. */
+  /** A draft written by us to send the client for approval. Never published, whatever consentOnFile says. */
   sample?: string;
   /** As they want to be credited, e.g. "Team Advanced Adgro Hair". */
   name: string;
@@ -104,8 +104,8 @@ export const TESTIMONIALS: Testimonial[] = [
     specialty: "Healthcare",
     consentOnFile: true,
   },
-  // Waiting on these clients: `sample` is our own dummy text for previewing the layout on the local dev
-  // server only. Add their own approved words as `quote` and set consentOnFile to true to publish.
+  // Waiting on these clients: `sample` is our own draft to send them for approval and is never shown.
+  // Add their approved words as `quote` and set consentOnFile to true to publish.
   {
     quote: "",
     sample:

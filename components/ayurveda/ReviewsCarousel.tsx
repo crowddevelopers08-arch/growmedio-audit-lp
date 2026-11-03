@@ -36,12 +36,12 @@ function Card({ review, index, width }: { review: ReviewCard; index: number; wid
 /**
  * Auto-advancing, endlessly looping row of reviews. The list is rendered twice so the row can keep
  * moving; once it reaches the copy it jumps back to the start without a transition, which looks seamless.
- * With fewer reviews than fit in a row there is nothing to scroll, so they sit centred and still.
+ * With fewer reviews than the screen fits, the row shows just that many wider cards, so it still moves.
  */
 export function ReviewsCarousel({ reviews }: { reviews: ReviewCard[] }) {
   const n = reviews.length;
-  const perView = useSyncExternalStore(subscribe, getPerView, () => 4);
-  const loops = n > 1 && n >= perView;
+  const perView = Math.min(useSyncExternalStore(subscribe, getPerView, () => 4), n);
+  const loops = n > 1;
   const [index, setIndex] = useState(0);
   const [animate, setAnimate] = useState(true);
   const [paused, setPaused] = useState(false);
