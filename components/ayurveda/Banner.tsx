@@ -10,7 +10,7 @@ export function Banner() {
 
   return (
     <div className="relative z-[31] flex items-center justify-center gap-[14px] border-b border-ay-line bg-ay-panel py-[9px] pl-4 pr-[44px] text-center text-[15px] font-medium max-[560px]:py-2 max-[560px]:pl-3 max-[560px]:pr-9 max-[560px]:text-[14px] max-[560px]:leading-[1.4]">
-      <span>A free one-on-one strategy session to build your Ayurveda clinic.</span>
+      <span>Scale Your Ayurveda Clinic’s Revenue with a Free One-on-One Strategy Session.</span>
       <button
         type="button"
         onClick={openModal}

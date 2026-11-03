@@ -10,6 +10,7 @@ import { OutcomesSection } from "@/components/ayurveda/OutcomesSection";
 import { FitSection } from "@/components/ayurveda/FitSection";
 import { AboutSection } from "@/components/ayurveda/AboutSection";
 import { ProofSection } from "@/components/ayurveda/ProofSection";
+import { VideoSection } from "@/components/ayurveda/VideoSection";
 import { ReviewsSection } from "@/components/ayurveda/ReviewsSection";
 import { ProcessSection } from "@/components/ayurveda/ProcessSection";
 import { FaqSection } from "@/components/ayurveda/FaqSection";
@@ -33,6 +34,7 @@ export default function AyurvedaPage() {
         <FitSection />
         <AboutSection />
         <ProofSection />
+        <VideoSection />
         <ReviewsSection />
         <ProcessSection />
         <FaqSection />
