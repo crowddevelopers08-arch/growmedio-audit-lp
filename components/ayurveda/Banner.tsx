@@ -6,7 +6,7 @@ import { useLanding } from "./LandingProvider";
 export function Banner() {
   const { openModal } = useLanding();
   const [hidden, setHidden] = useState(false);
-  if (hidden) return null;
+  if (hidden) return null;  
 
   return (
     <div className="relative z-[31] flex items-center justify-center gap-[14px] border-b border-ay-line bg-ay-panel py-[9px] pl-4 pr-[44px] text-center text-[15px] font-medium max-[560px]:py-2 max-[560px]:pl-3 max-[560px]:pr-9 max-[560px]:text-[14px] max-[560px]:leading-[1.4]">
